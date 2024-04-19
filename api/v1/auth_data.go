@@ -1,4 +1,4 @@
-package v0
+package v1
 
 import (
 	"encoding/json"
@@ -118,38 +118,39 @@ func (o AuthData) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableAuthData struct {
-	value *AuthData
-	isSet bool
-}
-
-func (v NullableAuthData) Get() *AuthData {
-	return v.value
-}
-
-func (v *NullableAuthData) Set(val *AuthData) {
-	v.value = val
-	v.isSet = true
-}
-
-func (v NullableAuthData) IsSet() bool {
-	return v.isSet
-}
-
-func (v *NullableAuthData) Unset() {
-	v.value = nil
-	v.isSet = false
-}
-
-func NewNullableAuthData(val *AuthData) *NullableAuthData {
-	return &NullableAuthData{value: val, isSet: true}
-}
-
-func (v NullableAuthData) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.value)
-}
-
-func (v *NullableAuthData) UnmarshalJSON(src []byte) error {
-	v.isSet = true
-	return json.Unmarshal(src, &v.value)
-}
+//
+//type NullableAuthData struct {
+//	value *AuthData
+//	isSet bool
+//}
+//
+//func (v NullableAuthData) Get() *AuthData {
+//	return v.value
+//}
+//
+//func (v *NullableAuthData) Set(val *AuthData) {
+//	v.value = val
+//	v.isSet = true
+//}
+//
+//func (v NullableAuthData) IsSet() bool {
+//	return v.isSet
+//}
+//
+//func (v *NullableAuthData) Unset() {
+//	v.value = nil
+//	v.isSet = false
+//}
+//
+//func NewNullableAuthData(val *AuthData) *NullableAuthData {
+//	return &NullableAuthData{value: val, isSet: true}
+//}
+//
+//func (v NullableAuthData) MarshalJSON() ([]byte, error) {
+//	return json.Marshal(v.value)
+//}
+//
+//func (v *NullableAuthData) UnmarshalJSON(src []byte) error {
+//	v.isSet = true
+//	return json.Unmarshal(src, &v.value)
+//}

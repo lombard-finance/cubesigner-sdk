@@ -1,4 +1,4 @@
-package v0
+package v1
 
 import (
 	"encoding/json"
@@ -240,38 +240,39 @@ func (o ClientSessionInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableClientSessionInfo struct {
-	value *ClientSessionInfo
-	isSet bool
-}
-
-func (v NullableClientSessionInfo) Get() *ClientSessionInfo {
-	return v.value
-}
-
-func (v *NullableClientSessionInfo) Set(val *ClientSessionInfo) {
-	v.value = val
-	v.isSet = true
-}
-
-func (v NullableClientSessionInfo) IsSet() bool {
-	return v.isSet
-}
-
-func (v *NullableClientSessionInfo) Unset() {
-	v.value = nil
-	v.isSet = false
-}
-
-func NewNullableClientSessionInfo(val *ClientSessionInfo) *NullableClientSessionInfo {
-	return &NullableClientSessionInfo{value: val, isSet: true}
-}
-
-func (v NullableClientSessionInfo) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.value)
-}
-
-func (v *NullableClientSessionInfo) UnmarshalJSON(src []byte) error {
-	v.isSet = true
-	return json.Unmarshal(src, &v.value)
-}
+//
+//type NullableClientSessionInfo struct {
+//	value *ClientSessionInfo
+//	isSet bool
+//}
+//
+//func (v NullableClientSessionInfo) Get() *ClientSessionInfo {
+//	return v.value
+//}
+//
+//func (v *NullableClientSessionInfo) Set(val *ClientSessionInfo) {
+//	v.value = val
+//	v.isSet = true
+//}
+//
+//func (v NullableClientSessionInfo) IsSet() bool {
+//	return v.isSet
+//}
+//
+//func (v *NullableClientSessionInfo) Unset() {
+//	v.value = nil
+//	v.isSet = false
+//}
+//
+//func NewNullableClientSessionInfo(val *ClientSessionInfo) *NullableClientSessionInfo {
+//	return &NullableClientSessionInfo{value: val, isSet: true}
+//}
+//
+//func (v NullableClientSessionInfo) MarshalJSON() ([]byte, error) {
+//	return json.Marshal(v.value)
+//}
+//
+//func (v *NullableClientSessionInfo) UnmarshalJSON(src []byte) error {
+//	v.isSet = true
+//	return json.Unmarshal(src, &v.value)
+//}

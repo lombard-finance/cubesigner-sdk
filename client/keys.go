@@ -6,12 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) CreateKeyRequest(org string, request *v0.CreateKeyRequest) (*v0.DeriveKey200Response, error) {
+func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey200Response, error) {
 	encoded, err := encodeJSONRequest(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, err := cli.post(fmt.Sprintf("/v0/org/%s/keys", org), encoded)
+	response, err := cli.post("/v0/org/:org_id/keys", encoded)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}
@@ -22,8 +22,8 @@ func (cli *Client) CreateKeyRequest(org string, request *v0.CreateKeyRequest) (*
 	return &decoded, err
 }
 
-func (cli *Client) GetKeyInOrg(org string, key string) (*v0.GetKeyInOrg200Response, error) {
-	response, err := cli.get(fmt.Sprintf("/v0/org/%s/keys/%s", org, key))
+func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
+	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", key))
 	if err != nil {
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}

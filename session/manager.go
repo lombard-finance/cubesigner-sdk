@@ -1,7 +1,7 @@
 package session
 
 import (
-	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
+	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"github.com/lombard-finance/cubesigner-sdk/client"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -100,7 +100,7 @@ func (ssm *SignerSessionManager) refresh() error {
 	if err != nil {
 		return err
 	}
-	data, err := cli.RefreshToken(v0.NewAuthData(csi.Epoch, csi.EpochToken, csi.RefreshToken))
+	data, err := cli.RefreshToken(v1.NewAuthData(csi.Epoch, csi.EpochToken, csi.RefreshToken))
 	if err != nil {
 		return errors.Wrap(err, "refresh token")
 	}

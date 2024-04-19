@@ -1,4 +1,4 @@
-package v0
+package v1
 
 import (
 	"encoding/json"
@@ -126,38 +126,39 @@ func (o OidcAuth200Response) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableOidcAuth200Response struct {
-	value *OidcAuth200Response
-	isSet bool
-}
-
-func (v NullableOidcAuth200Response) Get() *OidcAuth200Response {
-	return v.value
-}
-
-func (v *NullableOidcAuth200Response) Set(val *OidcAuth200Response) {
-	v.value = val
-	v.isSet = true
-}
-
-func (v NullableOidcAuth200Response) IsSet() bool {
-	return v.isSet
-}
-
-func (v *NullableOidcAuth200Response) Unset() {
-	v.value = nil
-	v.isSet = false
-}
-
-func NewNullableOidcAuth200Response(val *OidcAuth200Response) *NullableOidcAuth200Response {
-	return &NullableOidcAuth200Response{value: val, isSet: true}
-}
-
-func (v NullableOidcAuth200Response) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.value)
-}
-
-func (v *NullableOidcAuth200Response) UnmarshalJSON(src []byte) error {
-	v.isSet = true
-	return json.Unmarshal(src, &v.value)
-}
+//
+//type NullableOidcAuth200Response struct {
+//	value *OidcAuth200Response
+//	isSet bool
+//}
+//
+//func (v NullableOidcAuth200Response) Get() *OidcAuth200Response {
+//	return v.value
+//}
+//
+//func (v *NullableOidcAuth200Response) Set(val *OidcAuth200Response) {
+//	v.value = val
+//	v.isSet = true
+//}
+//
+//func (v NullableOidcAuth200Response) IsSet() bool {
+//	return v.isSet
+//}
+//
+//func (v *NullableOidcAuth200Response) Unset() {
+//	v.value = nil
+//	v.isSet = false
+//}
+//
+//func NewNullableOidcAuth200Response(val *OidcAuth200Response) *NullableOidcAuth200Response {
+//	return &NullableOidcAuth200Response{value: val, isSet: true}
+//}
+//
+//func (v NullableOidcAuth200Response) MarshalJSON() ([]byte, error) {
+//	return json.Marshal(v.value)
+//}
+//
+//func (v *NullableOidcAuth200Response) UnmarshalJSON(src []byte) error {
+//	v.isSet = true
+//	return json.Unmarshal(src, &v.value)
+//}

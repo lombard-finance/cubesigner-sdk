@@ -1,6 +1,8 @@
 package session
 
-import v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
+import (
+	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
+)
 
 type SignerSessionData struct {
 	OrgID      string `json:"org_id"`
@@ -11,7 +13,7 @@ type SignerSessionData struct {
 	Env        struct {
 		DevCubeSignerStack EnvInterface `json:"Dev-CubeSignerStack"`
 	} `json:"env"`
-	SessionInfo v0.ClientSessionInfo `json:"session_info"`
+	SessionInfo v1.ClientSessionInfo `json:"session_info"`
 }
 
 type SignerSessionLifetime struct {
