@@ -5,6 +5,23 @@ import (
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
+// IKeyInfo Helper interface to use for KeyInfo and GetKeyInOrg200Response
+type IKeyInfo interface {
+	GetCreated() int64
+	GetEditPolicy() EditPolicy
+	GetLastModified() int64
+	GetMetadata() interface{}
+	GetVersion() int64
+	GetEnabled() bool
+	GetKeyId() string
+	GetKeyType() api.KeyType
+	GetMaterialId() string
+	GetOwner() string
+	GetPolicy() []map[string]interface{}
+	GetPublicKey() string
+	GetPurpose() string
+}
+
 // KeyInfo struct for KeyInfo
 type KeyInfo struct {
 	Created      api.NullableInt64 `json:"created,omitempty"`
