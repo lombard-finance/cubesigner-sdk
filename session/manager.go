@@ -23,6 +23,8 @@ type SignerSessionManager struct {
 	sessionExp time.Time
 
 	timeout time.Duration
+
+	stopChan chan bool
 }
 
 func NewSignerSessionManager(storage Storage, logger *logrus.Entry, timeout time.Duration) (*SignerSessionManager, error) {
@@ -38,6 +40,7 @@ func NewSignerSessionManager(storage Storage, logger *logrus.Entry, timeout time
 		tokenExp:   time.Unix(st.SessionInfo.AuthTokenExp, 0),
 		sessionExp: time.Unix(st.Expiration, 0),
 		refreshing: false,
+		stopChan:   make(chan bool),
 	}, nil
 }
 
@@ -132,16 +135,25 @@ func (ssm *SignerSessionManager) hasExpired() bool {
 	return hasTimestampExpired(ssm.sessionExp, 0)
 }
 
-func (ssm *SignerSessionManager) autoRefresh() {
+func (ssm *SignerSessionManager) AutoRefresh() {
 	go func() {
-		for true {
-			// TODO: listen for stop
-			if err := ssm.refreshIfNeeded(); err != nil {
-				ssm.logger.WithError(err).Error("failed to auto refresh")
+		for {
+			select {
+			case <-ssm.stopChan:
+				return
+			default:
+				if err := ssm.refreshIfNeeded(); err != nil {
+					ssm.logger.WithError(err).Error("failed to auto refresh")
+				}
+				time.Sleep(DefaultExpirationBuffer)
 			}
-			time.Sleep(DefaultExpirationBuffer)
 		}
 	}()
+}
+
+func (ssm *SignerSessionManager) StopAutoRefresh() {
+	// TODO: implement graceful stop with storage export
+	ssm.stopChan <- true
 }
 
 func hasTimestampExpired(exp time.Time, buffer time.Duration) bool {
