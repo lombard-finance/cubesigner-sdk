@@ -37,7 +37,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [v0.0.1] - 2024-04-19
 
-### Feautures
+### Features
 
 * (session) Implement session management
 * (client) Implemented API methods:
@@ -46,3 +46,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
   * `/v1/org/:org_id/token/refresh`
   * `/v0/org/:org_id/keys`
   * `/v0/org/:org_id/keys/:key`
+
+### Features
+
+* (session) Implement base64 session decoding
