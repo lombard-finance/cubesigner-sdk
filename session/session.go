@@ -1,7 +1,10 @@
 package session
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
+	"github.com/pkg/errors"
 )
 
 type SignerSessionData struct {
@@ -35,4 +38,19 @@ type EnvInterface struct {
 	DefaultCredentialRpID   string `json:"DefaultCredentialRpId"`
 	EncExportS3BucketName   any    `json:"EncExportS3BucketName"`
 	DeletedKeysS3BucketName any    `json:"DeletedKeysS3BucketName"`
+}
+
+func NewFromBase64(data string) (*SignerSessionData, error) {
+	bytes, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode string")
+	}
+
+	var sessionData SignerSessionData
+	err = json.Unmarshal(bytes, &sessionData)
+	if err != nil {
+		return nil, errors.Wrap(err, "unmarshal")
+	}
+
+	return &sessionData, err
 }
