@@ -47,6 +47,15 @@ Ref: https://keepachangelog.com/en/1.0.0/
   * `/v0/org/:org_id/keys`
   * `/v0/org/:org_id/keys/:key`
 
+## [v0.0.2] - 2024-04-22
+
 ### Features
 
 * (session) Implement base64 session decoding
+
+## [v0.0.3] - 2024-04-22
+
+### Features
+
+* (api) Add common `IKeyInfo` interface
+* (session) Implement `AutoRefresh` and `StopAutoRefresh`
