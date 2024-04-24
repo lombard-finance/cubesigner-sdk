@@ -59,3 +59,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (api) Add common `IKeyInfo` interface
 * (session) Implement `AutoRefresh` and `StopAutoRefresh`
+
+## [v0.0.4] - 2024-04-24
+
+### Bug Fixes
+
+* (client) Escape key id

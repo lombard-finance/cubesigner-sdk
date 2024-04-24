@@ -98,6 +98,9 @@ func (cli *Client) get(endpoint string) (io.Reader, error) {
 		WithField("endpoint", endpoint)
 	log.Trace("GET request")
 
+	// replace known path variables
+	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
+
 	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
 	if err != nil {
 		return nil, errors.Wrap(err, "invalid endpoint")
