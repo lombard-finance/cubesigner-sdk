@@ -67,21 +67,18 @@ func (ssm *SignerSessionManager) refreshIfNeeded() error {
 		if ssm.refreshing {
 			// wait until done refreshing
 			for ssm.refreshing {
-				ssm.logger.Info("waiting to session be refreshed")
 				time.Sleep(time.Millisecond * 100)
 			}
 			return nil
 		}
 
 		// refresh
-		ssm.logger.Info("start refreshing")
 		ssm.refreshing = true
 		err := ssm.refresh()
 		ssm.refreshing = false
 		if err != nil {
 			return errors.Wrap(err, "refresh")
 		}
-		ssm.logger.Info("refreshed")
 	}
 
 	return nil
