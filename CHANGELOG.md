@@ -60,8 +60,15 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * (api) Add common `IKeyInfo` interface
 * (session) Implement `AutoRefresh` and `StopAutoRefresh`
 
-## [v0.0.4] - 2024-04-24
+## [v0.0.4] - 2024-05-29
 
 ### Bug Fixes
 
 * (client) Escape key id
+
+### Features
+
+* (client) Ability to override headers
+* (roles) Implemented API methods:
+    * `PUT /v0/org/:org_id/roles/:role_id/add_keys`
+    * `POST /v0/org/:org_id/roles/:role_id/tokens`
