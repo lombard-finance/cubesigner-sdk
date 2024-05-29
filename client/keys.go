@@ -12,7 +12,7 @@ func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, err := cli.post("/v0/org/:org_id/keys", encoded)
+	response, err := cli.post("/v0/org/:org_id/keys", encoded, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}
@@ -24,7 +24,7 @@ func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey
 }
 
 func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
-	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", url.PathEscape(key)))
+	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", url.PathEscape(key)), nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}

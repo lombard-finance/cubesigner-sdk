@@ -92,7 +92,7 @@ func (cli *Client) addExtraHeaders(req *http.Request) {
 	}
 }
 
-func (cli *Client) get(endpoint string) (io.Reader, error) {
+func (cli *Client) get(endpoint string, overrideHeaders map[string]string) (io.Reader, error) {
 	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
 		WithField("address", cli.address).
 		WithField("endpoint", endpoint)
@@ -113,6 +113,11 @@ func (cli *Client) get(endpoint string) (io.Reader, error) {
 		return nil, errors.Wrap(err, "failed to create GET request")
 	}
 	cli.addExtraHeaders(req)
+	if overrideHeaders != nil {
+		for key, value := range overrideHeaders {
+			req.Header.Set(key, value)
+		}
+	}
 
 	resp, err := cli.client.Do(req)
 	if err != nil {
@@ -149,19 +154,19 @@ func (cli *Client) get(endpoint string) (io.Reader, error) {
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPost, body)
+func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPut, body)
+func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPatch, body)
+func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader) (io.Reader, error) {
+func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
 	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
 		WithField("address", cli.address).
 		WithField("endpoint", endpoint).
@@ -189,6 +194,12 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	cli.addExtraHeaders(req)
 	req.Header.Set("Content-type", "application/json")
 	//req.Header.Set("Accept", "application/json")
+
+	if overrideHeaders != nil {
+		for key, value := range overrideHeaders {
+			req.Header.Set(key, value)
+		}
+	}
 
 	// do the request
 	resp, err := cli.client.Do(req)
