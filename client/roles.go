@@ -50,3 +50,24 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 	}
 	return &decoded, err
 }
+
+func (cli *Client) GetKeysInRole(roleId string) (*v0.ListRoleKeys200Response, error) {
+	roleTokenResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
+		Purpose: "ListRoleKeys",
+	}, roleId)
+	if err != nil {
+		return nil, errors.Wrap(err, "role token for request")
+	}
+
+	overrideHeaders := map[string]string{
+		"Authorization": roleTokenResp.Token,
+	}
+
+	// TODO: implement pagination
+	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/roles/%s/keys", roleId), overrideHeaders)
+	if err != nil {
+		return nil, errors.Wrap(err, "request ListRoleKeys")
+	}
+	decoded, err := decodeJSONResponse[v0.ListRoleKeys200Response](response)
+	return &decoded, nil
+}

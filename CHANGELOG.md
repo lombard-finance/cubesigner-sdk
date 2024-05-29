@@ -72,3 +72,10 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * (roles) Implemented API methods:
     * `PUT /v0/org/:org_id/roles/:role_id/add_keys`
     * `POST /v0/org/:org_id/roles/:role_id/tokens`
+
+## [v0.0.5] - 2024-05-29
+
+### Features
+
+* (roles) Implemented API methods:
+    * `GET /v0/org/:org_id/roles/:role_id/keys`
