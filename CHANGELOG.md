@@ -78,6 +78,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 ### Bug Fixes
 
 * (roles) No need to use session token for `/add_keys` and `/tokens`
+* (roles) Sanitaze role id
 
 ### Features
 
