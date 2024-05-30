@@ -79,6 +79,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (roles) No need to use session token for `/add_keys` and `/tokens`
 * (roles) Sanitize role id
+* (roles) Add readable response for `/add_keys`
 
 ### Features
 

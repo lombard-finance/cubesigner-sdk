@@ -4,7 +4,6 @@ import (
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"github.com/pkg/errors"
-	"io/ioutil"
 	"net/url"
 	"strings"
 )
@@ -26,7 +25,7 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 	return &decoded, err
 }
 
-func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string) ([]byte, error) {
+func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string) (*v0.AddKeysToRole200Rsponse, error) {
 	//roleTokenResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 	//	Purpose: "AddKeysToRole",
 	//}, roleId)
@@ -48,11 +47,11 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 	if err != nil {
 		return nil, errors.Wrap(err, "request AddKeysToRole")
 	}
-	body, err := ioutil.ReadAll(response)
+	decoded, err := decodeJSONResponse[v0.AddKeysToRole200Rsponse](response)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "decode")
 	}
-	return body, err
+	return &decoded, err
 }
 
 func (cli *Client) GetKeysInRole(roleId string) (*v0.ListRoleKeys200Response, error) {
