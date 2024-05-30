@@ -75,6 +75,10 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## [v0.0.5] - 2024-05-29
 
+### Bug Fixes
+
+* (roles) No need to use session token for `/add_keys` and `/tokens`
+
 ### Features
 
 * (roles) Implemented API methods:
