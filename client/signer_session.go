@@ -10,7 +10,7 @@ func (cli *Client) RefreshToken(request *v1.AuthData) (*v1.OidcAuth200Response, 
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, err := cli.patch("/v1/org/:org_id/token/refresh", encoded, nil)
+	response, err := cli.patch("/v1/org/:org_id/token/refresh", encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"io"
@@ -92,7 +93,7 @@ func (cli *Client) addExtraHeaders(req *http.Request) {
 	}
 }
 
-func (cli *Client) get(endpoint string, overrideHeaders map[string]string) (io.Reader, error) {
+func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
 	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
 		WithField("address", cli.address).
 		WithField("endpoint", endpoint)
@@ -106,12 +107,18 @@ func (cli *Client) get(endpoint string, overrideHeaders map[string]string) (io.R
 		return nil, errors.Wrap(err, "invalid endpoint")
 	}
 
+	if page != nil {
+		page.Apply(requestEndpoint)
+		log.WithField("query", requestEndpoint.Query().Encode())
+	}
+
 	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
 	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, requestEndpoint.String(), nil)
 	if err != nil {
 		cancel()
 		return nil, errors.Wrap(err, "failed to create GET request")
 	}
+
 	cli.addExtraHeaders(req)
 	if overrideHeaders != nil {
 		for key, value := range overrideHeaders {
@@ -154,19 +161,19 @@ func (cli *Client) get(endpoint string, overrideHeaders map[string]string) (io.R
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders)
+func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders, page)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders)
+func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders, page)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
-	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders)
+func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders, page)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string) (io.Reader, error) {
+func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
 	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
 		WithField("address", cli.address).
 		WithField("endpoint", endpoint).
@@ -177,9 +184,13 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	// build url
 	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
-	log.Info(requestEndpoint.String()) // TODO: remove
 	if err != nil {
 		return nil, errors.Wrap(err, "invalid endpoint")
+	}
+
+	if page != nil {
+		page.Apply(requestEndpoint)
+		log.WithField("query", requestEndpoint.Query().Encode())
 	}
 
 	// build request

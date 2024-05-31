@@ -3,6 +3,7 @@ package client
 import (
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
+	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
 	"github.com/pkg/errors"
 	"net/url"
 	"strings"
@@ -14,7 +15,7 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 		return nil, errors.Wrap(err, "encode")
 	}
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/tokens", ":role_id", url.PathEscape(roleId), -1)
-	response, err := cli.post(endpoint, encoded, nil)
+	response, err := cli.post(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateRoleToken")
 	}
@@ -26,24 +27,12 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 }
 
 func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string) (*v0.AddKeysToRole200Rsponse, error) {
-	//roleTokenResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
-	//	Purpose: "AddKeysToRole",
-	//}, roleId)
-	//if err != nil {
-	//	return nil, errors.Wrap(err, "role token for request")
-	//}
-	//
-	//overrideHeaders := map[string]string{
-	//	"Authorization": roleTokenResp.Token,
-	//	"SignerAuth":    roleTokenResp.Token,
-	//}
-
 	encoded, err := encodeJSONRequest(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/add_keys", ":role_id", url.PathEscape(roleId), -1)
-	response, err := cli.put(endpoint, encoded, nil)
+	response, err := cli.put(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AddKeysToRole")
 	}
@@ -54,23 +43,10 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 	return &decoded, err
 }
 
-func (cli *Client) GetKeysInRole(roleId string) (*v0.ListRoleKeys200Response, error) {
-	//roleTokenResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
-	//	Purpose: "ListRoleKeys",
-	//}, roleId)
-	//if err != nil {
-	//	return nil, errors.Wrap(err, "role token for request")
-	//}
-
-	//overrideHeaders := map[string]string{
-	//	"Authorization": roleTokenResp.Token,
-	//	"SignerAuth":    roleTokenResp.Token,
-	//}
-
+func (cli *Client) GetKeysInRole(roleId string, page *pagination.Page) (*v0.ListRoleKeys200Response, error) {
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/keys", ":role_id", url.PathEscape(roleId), -1)
 
-	// TODO: implement pagination
-	response, err := cli.get(endpoint, nil)
+	response, err := cli.get(endpoint, nil, page)
 	if err != nil {
 		return nil, errors.Wrap(err, "request ListRoleKeys")
 	}

@@ -6,7 +6,7 @@ import (
 )
 
 func (cli *Client) AboutMeLegacy() (*v0.AboutMeLegacy200Response, error) {
-	response, err := cli.get("/v0/about_me", nil)
+	response, err := cli.get("/v0/about_me", nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AboutMeLegacy")
 	}
@@ -15,7 +15,7 @@ func (cli *Client) AboutMeLegacy() (*v0.AboutMeLegacy200Response, error) {
 }
 
 func (cli *Client) AboutMe() (*v0.AboutMeLegacy200Response, error) {
-	response, err := cli.get("/v0/org/:org_id/user/me", nil)
+	response, err := cli.get("/v0/org/:org_id/user/me", nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AboutMe")
 	}

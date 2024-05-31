@@ -83,5 +83,6 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ### Features
 
+* (pagination) Implement pagination
 * (roles) Implemented API methods:
     * `GET /v0/org/:org_id/roles/:role_id/keys`
