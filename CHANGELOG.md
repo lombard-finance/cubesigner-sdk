@@ -73,7 +73,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
     * `PUT /v0/org/:org_id/roles/:role_id/add_keys`
     * `POST /v0/org/:org_id/roles/:role_id/tokens`
 
-## [v0.0.5] - 2024-05-29
+## [v0.0.5] - 2024-06-05
 
 ### Bug Fixes
 
@@ -86,3 +86,5 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * (pagination) Implement pagination
 * (roles) Implemented API methods:
     * `GET /v0/org/:org_id/roles/:role_id/keys`
+* (btc) Implemented API methods: 
+    * `POST /v0/org/:org_id/btc/taproot/sign/:pubkey` 
