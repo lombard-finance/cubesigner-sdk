@@ -174,10 +174,15 @@ func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[st
 }
 
 func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
-	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
-		WithField("address", cli.address).
-		WithField("endpoint", endpoint).
-		WithField("method", method)
+	log := cli.logger.WithFields(map[string]interface{}{
+		"address":  cli.address,
+		"endpoint": endpoint,
+		"method":   method,
+	})
+
+	// copy body
+	var buf bytes.Buffer
+	tee := io.TeeReader(body, &buf)
 
 	// replace path variables
 	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
@@ -195,9 +200,10 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	// build request
 	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
-	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), body)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), tee)
 	if err != nil {
-		cancel()
 		return nil, errors.Wrap(err, "create request with context")
 	}
 
@@ -215,31 +221,30 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	// do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
-		cancel()
 		return nil, errors.Wrap(err, "do request")
 	}
 	defer resp.Body.Close()
 
-	data, err := io.ReadAll(resp.Body)
+	responseData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		cancel()
 		return nil, errors.Wrap(err, "read response")
 	}
 
+	log.WithField("status_code", resp.StatusCode)
+
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		log.Trace("status_code", resp.StatusCode)
-		log.Trace("data", string(data))
-		log.Tracef("%s failed", method)
-		cancel()
-		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s, Data: %s", method, resp.StatusCode, endpoint, data)
+		requestData, err := io.ReadAll(&buf)
+		if err != nil {
+			log.WithError(err).Warn("failed to read request data")
+		} else {
+			log.Tracef("request: %s", string(requestData))
+		}
+		log.Tracef("response: %s", string(responseData))
+
+		return nil, errors.Errorf("%s requiest with status code: %d", method, resp.StatusCode)
 	}
-	cancel()
-
-	log.Trace("response", string(data))
-	log.Tracef("%s response", method)
-
-	return bytes.NewReader(data), nil
+	return bytes.NewReader(responseData), nil
 }
 
 // close closes the client, freeing up resources.

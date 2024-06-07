@@ -9,14 +9,14 @@ type BtcTxOut struct {
 	// The script which must be satisfied for the output to be spent.
 	ScriptPubkey string `json:"script_pubkey"`
 	// The value of the output, in satoshis.
-	Value int64 `json:"value"`
+	Value uint64 `json:"value"`
 }
 
 // NewBtcTxOut instantiates a new BtcTxOut object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBtcTxOut(scriptPubkey string, value int64) *BtcTxOut {
+func NewBtcTxOut(scriptPubkey string, value uint64) *BtcTxOut {
 	this := BtcTxOut{}
 	this.ScriptPubkey = scriptPubkey
 	this.Value = value
@@ -56,9 +56,9 @@ func (o *BtcTxOut) SetScriptPubkey(v string) {
 }
 
 // GetValue returns the Value field value
-func (o *BtcTxOut) GetValue() int64 {
+func (o *BtcTxOut) GetValue() uint64 {
 	if o == nil {
-		var ret int64
+		var ret uint64
 		return ret
 	}
 
@@ -67,7 +67,7 @@ func (o *BtcTxOut) GetValue() int64 {
 
 // GetValueOk returns a tuple with the Value field value
 // and a boolean to check if the value has been set.
-func (o *BtcTxOut) GetValueOk() (*int64, bool) {
+func (o *BtcTxOut) GetValueOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -75,7 +75,7 @@ func (o *BtcTxOut) GetValueOk() (*int64, bool) {
 }
 
 // SetValue sets field value
-func (o *BtcTxOut) SetValue(v int64) {
+func (o *BtcTxOut) SetValue(v uint64) {
 	o.Value = v
 }
 
