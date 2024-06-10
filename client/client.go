@@ -174,18 +174,18 @@ func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[st
 }
 
 func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
-	log := cli.logger.WithFields(map[string]interface{}{
-		"address":  cli.address,
-		"endpoint": endpoint,
-		"method":   method,
-	})
-
 	// copy body
 	var buf bytes.Buffer
 	tee := io.TeeReader(body, &buf)
 
 	// replace path variables
 	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
+
+	log := cli.logger.WithFields(map[string]interface{}{
+		"address":  cli.address,
+		"endpoint": endpoint,
+		"method":   method,
+	})
 
 	// build url
 	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
@@ -242,7 +242,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 		}
 		log.Tracef("response: %s", string(responseData))
 
-		return nil, errors.Errorf("%s requiest with status code: %d", method, resp.StatusCode)
+		return nil, errors.Errorf("%s request with status code: %d", method, resp.StatusCode)
 	}
 	return bytes.NewReader(responseData), nil
 }

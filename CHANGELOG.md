@@ -90,4 +90,5 @@ Ref: https://keepachangelog.com/en/1.0.0/
     * `POST /v0/org/:org_id/btc/taproot/sign/:pubkey` 
 
 ### Improvements
+
 * (client) Refactor logging for requests with body
