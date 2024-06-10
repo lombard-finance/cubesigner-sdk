@@ -7,7 +7,19 @@ import (
 	"strings"
 )
 
-func (cli *Client) SignTaproot(pubkey string, request *v0.TaprootSignRequest) (*v0.TaprootSignResponse, error) {
+func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignRequest) (*v0.TaprootSignResponse, error) {
+	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
+		Purpose: "sign taproot",
+		Scopes:  []string{"sign:btc:taproot"},
+	}, roleId)
+	if err != nil {
+		return nil, errors.Wrap(err, "create role token")
+	}
+
+	headers := map[string]string{
+		"Authorization": authResp.GetToken(),
+	}
+
 	encoded, err := encodeJSONRequest(request)
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
@@ -16,7 +28,7 @@ func (cli *Client) SignTaproot(pubkey string, request *v0.TaprootSignRequest) (*
 	// replace path variables
 	endpoint := strings.Replace("/v0/org/:org_id/btc/taproot/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
 
-	response, err := cli.post(endpoint, encoded, nil, nil)
+	response, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request SignTaproot")
 	}
