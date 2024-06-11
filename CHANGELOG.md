@@ -87,7 +87,8 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * (roles) Implemented API methods:
     * `GET /v0/org/:org_id/roles/:role_id/keys`
 * (btc) Implemented API methods: 
-    * `POST /v0/org/:org_id/btc/taproot/sign/:pubkey` 
+    * `POST /v0/org/:org_id/btc/taproot/sign/:pubkey`
+    * `POST /v0/org/:org_id/btc/sign/:pubkey`
 
 ### Improvements
 
