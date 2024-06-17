@@ -73,7 +73,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
     * `PUT /v0/org/:org_id/roles/:role_id/add_keys`
     * `POST /v0/org/:org_id/roles/:role_id/tokens`
 
-## [v0.0.5] - 2024-06-05
+## [v0.0.5] - 2024-06-17
 
 ### Bug Fixes
 
