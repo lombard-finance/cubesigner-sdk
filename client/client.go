@@ -161,19 +161,19 @@ func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page 
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders, page)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders, page)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders, page)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
 	// copy body
 	var buf bytes.Buffer
 	tee := io.TeeReader(body, &buf)
@@ -190,7 +190,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	// build url
 	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
 	if err != nil {
-		return nil, errors.Wrap(err, "invalid endpoint")
+		return nil, 0, errors.Wrap(err, "invalid endpoint")
 	}
 
 	if page != nil {
@@ -204,7 +204,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), tee)
 	if err != nil {
-		return nil, errors.Wrap(err, "create request with context")
+		return nil, 0, errors.Wrap(err, "create request with context")
 	}
 
 	// add headers
@@ -221,13 +221,13 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	// do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "do request")
+		return nil, 0, errors.Wrap(err, "do request")
 	}
 	defer resp.Body.Close()
 
 	responseData, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "read response")
+		return nil, 0, errors.Wrap(err, "read response")
 	}
 
 	log.WithField("status_code", resp.StatusCode)
@@ -242,9 +242,9 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 		}
 		log.Tracef("response: %s", string(responseData))
 
-		return nil, errors.Errorf("%s request with status code: %d", method, resp.StatusCode)
+		return nil, 0, errors.Errorf("%s request with status code: %d", method, resp.StatusCode)
 	}
-	return bytes.NewReader(responseData), nil
+	return bytes.NewReader(responseData), resp.StatusCode, nil
 }
 
 // close closes the client, freeing up resources.

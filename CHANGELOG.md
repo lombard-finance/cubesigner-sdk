@@ -93,3 +93,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 ### Improvements
 
 * (client) Refactor logging for requests with body
+
+## [v0.0.6] - 2024-06-18
+
+### Features
+
+* (btc) Return MFA accepted response
