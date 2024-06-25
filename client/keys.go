@@ -12,7 +12,7 @@ func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, err := cli.post("/v0/org/:org_id/keys", encoded, nil, nil)
+	response, _, err := cli.post("/v0/org/:org_id/keys", encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}

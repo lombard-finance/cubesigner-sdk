@@ -15,7 +15,7 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 		return nil, errors.Wrap(err, "encode")
 	}
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/tokens", ":role_id", url.PathEscape(roleId), -1)
-	response, err := cli.post(endpoint, encoded, nil, nil)
+	response, _, err := cli.post(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateRoleToken")
 	}
@@ -32,7 +32,7 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 		return nil, errors.Wrap(err, "encode")
 	}
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/add_keys", ":role_id", url.PathEscape(roleId), -1)
-	response, err := cli.put(endpoint, encoded, nil, nil)
+	response, _, err := cli.put(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AddKeysToRole")
 	}
