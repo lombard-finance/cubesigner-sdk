@@ -2,19 +2,18 @@ package v0
 
 import (
 	"encoding/json"
-	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
 // ErrorResponseAccepted struct for ErrorResponseAccepted
 type ErrorResponseAccepted struct {
-	MfaRequired api.AcceptedValueOneOfMfaRequired `json:"MfaRequired"`
+	MfaRequired AcceptedValueOneOfMfaRequired `json:"MfaRequired"`
 }
 
 // NewErrorResponseAccepted instantiates a new ErrorResponseAccepted object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewErrorResponseAccepted(mfaRequired api.AcceptedValueOneOfMfaRequired) *ErrorResponseAccepted {
+func NewErrorResponseAccepted(mfaRequired AcceptedValueOneOfMfaRequired) *ErrorResponseAccepted {
 	this := ErrorResponseAccepted{}
 	this.MfaRequired = mfaRequired
 	return &this
@@ -29,9 +28,9 @@ func NewErrorResponseAcceptedWithDefaults() *ErrorResponseAccepted {
 }
 
 // GetMfaRequired returns the MfaRequired field value
-func (o *ErrorResponseAccepted) GetMfaRequired() api.AcceptedValueOneOfMfaRequired {
+func (o *ErrorResponseAccepted) GetMfaRequired() AcceptedValueOneOfMfaRequired {
 	if o == nil {
-		var ret api.AcceptedValueOneOfMfaRequired
+		var ret AcceptedValueOneOfMfaRequired
 		return ret
 	}
 
@@ -40,7 +39,7 @@ func (o *ErrorResponseAccepted) GetMfaRequired() api.AcceptedValueOneOfMfaRequir
 
 // GetMfaRequiredOk returns a tuple with the MfaRequired field value
 // and a boolean to check if the value has been set.
-func (o *ErrorResponseAccepted) GetMfaRequiredOk() (*api.AcceptedValueOneOfMfaRequired, bool) {
+func (o *ErrorResponseAccepted) GetMfaRequiredOk() (*AcceptedValueOneOfMfaRequired, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -48,7 +47,7 @@ func (o *ErrorResponseAccepted) GetMfaRequiredOk() (*api.AcceptedValueOneOfMfaRe
 }
 
 // SetMfaRequired sets field value
-func (o *ErrorResponseAccepted) SetMfaRequired(v api.AcceptedValueOneOfMfaRequired) {
+func (o *ErrorResponseAccepted) SetMfaRequired(v AcceptedValueOneOfMfaRequired) {
 	o.MfaRequired = v
 }
 
