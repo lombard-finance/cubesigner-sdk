@@ -2,9 +2,10 @@ package client
 
 import (
 	"fmt"
+	"net/url"
+
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
-	"net/url"
 )
 
 func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey200Response, error) {
@@ -29,6 +30,9 @@ func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}
 	decoded, err := decodeJSONResponse[v0.GetKeyInOrg200Response](response)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode")
+	}
 	return &decoded, nil
 }
 
