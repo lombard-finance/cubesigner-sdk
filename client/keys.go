@@ -36,6 +36,27 @@ func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
 	return &decoded, nil
 }
 
+func (cli *Client) GetKeyInOrgForRole(key, role string) (*v0.GetKeyInOrg200Response, error) {
+	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
+		Purpose: "get key",
+		Scopes:  []string{"manage:key:get"},
+	}, role)
+	if err != nil {
+		return nil, errors.Wrap(err, "create role token")
+	}
+
+	headers := map[string]string{
+		"Authorization": authResp.GetToken(),
+	}
+
+	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", url.PathEscape(key)), headers, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "request GetKeyInOrg")
+	}
+	decoded, err := decodeJSONResponse[v0.GetKeyInOrg200Response](response)
+	return &decoded, nil
+}
+
 // TODO: CreateKeyImportKeyRequest => CreateKeyImportKey200Response
 // TODO: DeleteKeyRequest => SetEmailOtp200Response
 // TODO: DeriveKeyRequest => DeriveKey200Response
