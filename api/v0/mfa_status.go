@@ -1,7 +1,7 @@
 package v0
 
-// MfaRequestStatus struct
-type MfaRequestStatus struct {
+// MfaStatus struct
+type MfaStatus struct {
 	// Users who are allowed to approve. Must be non-empty.
 	AllowedApprovers []string `json:"allowed_approvers"`
 	// Allowed approval types. When omitted, defaults to any.
@@ -15,12 +15,12 @@ type MfaRequestStatus struct {
 	// TODO: add request_comparer that only has Eq option
 }
 
-// NewMfaRequestStatus instantiates a new MfaRequestStatus object
+// NewMfaStatus instantiates a new MfaStatus object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMfaRequestStatus(allowedApprovers []string, allowedMfaTypes []MfaType, approvedBy map[string]MfaApprovalInfo, count int32, numAuthFactors int32) *MfaRequestStatus {
-	this := MfaRequestStatus{}
+func NewMfaStatus(allowedApprovers []string, allowedMfaTypes []MfaType, approvedBy map[string]MfaApprovalInfo, count int32, numAuthFactors int32) *MfaStatus {
+	this := MfaStatus{}
 	this.AllowedApprovers = allowedApprovers
 	this.AllowedMfaTypes = allowedMfaTypes
 	this.ApprovedBy = approvedBy
@@ -29,16 +29,16 @@ func NewMfaRequestStatus(allowedApprovers []string, allowedMfaTypes []MfaType, a
 	return &this
 }
 
-// NewMfaRequestStatusWithDefaults instantiates a new MfaRequestStatus object
+// NewMfaStatusWithDefaults instantiates a new MfaStatus object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewMfaRequestStatusWithDefaults() *MfaRequestStatus {
-	this := MfaRequestStatus{}
+func NewMfaStatusWithDefaults() *MfaStatus {
+	this := MfaStatus{}
 	return &this
 }
 
 // GetAllowedApprovers returns the AllowedApprovers field value
-func (o *MfaRequestStatus) GetAllowedApprovers() []string {
+func (o *MfaStatus) GetAllowedApprovers() []string {
 	if o == nil {
 		var ret []string
 		return ret
@@ -48,7 +48,7 @@ func (o *MfaRequestStatus) GetAllowedApprovers() []string {
 
 // GetAllowedApproversOk returns a tuple with the AllowedApprovers field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestStatus) GetAllowedApproversOk() (*[]string, bool) {
+func (o *MfaStatus) GetAllowedApproversOk() (*[]string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -56,12 +56,12 @@ func (o *MfaRequestStatus) GetAllowedApproversOk() (*[]string, bool) {
 }
 
 // SetAllowedApprovers sets the AllowedApprovers field value
-func (o *MfaRequestStatus) SetAllowedApprovers(v []string) {
+func (o *MfaStatus) SetAllowedApprovers(v []string) {
 	o.AllowedApprovers = v
 }
 
 // GetAllowedMfaTypes returns the AllowedMfaTypes field value if set, zero value otherwise
-func (o *MfaRequestStatus) GetAllowedMfaTypes() []MfaType {
+func (o *MfaStatus) GetAllowedMfaTypes() []MfaType {
 	if o == nil || o.AllowedMfaTypes == nil {
 		var ret []MfaType
 		return ret
@@ -71,7 +71,7 @@ func (o *MfaRequestStatus) GetAllowedMfaTypes() []MfaType {
 
 // GetAllowedMfaTypesOk returns a tuple with the AllowedMfaTypes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *MfaRequestStatus) GetAllowedMfaTypesOk() (*[]MfaType, bool) {
+func (o *MfaStatus) GetAllowedMfaTypesOk() (*[]MfaType, bool) {
 	if o == nil || o.AllowedMfaTypes == nil {
 		return nil, false
 	}
@@ -79,12 +79,12 @@ func (o *MfaRequestStatus) GetAllowedMfaTypesOk() (*[]MfaType, bool) {
 }
 
 // SetAllowedMfaTypes sets the AllowedMfaTypes field value
-func (o *MfaRequestStatus) SetAllowedMfaTypes(v []MfaType) {
+func (o *MfaStatus) SetAllowedMfaTypes(v []MfaType) {
 	o.AllowedMfaTypes = v
 }
 
 // GetApprovedBy returns the ApprovedBy field value
-func (o *MfaRequestStatus) GetApprovedBy() map[string]MfaApprovalInfo {
+func (o *MfaStatus) GetApprovedBy() map[string]MfaApprovalInfo {
 	if o == nil {
 		var ret map[string]MfaApprovalInfo
 		return ret
@@ -94,7 +94,7 @@ func (o *MfaRequestStatus) GetApprovedBy() map[string]MfaApprovalInfo {
 
 // GetApprovedByOk returns a tuple with the ApprovedBy field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestStatus) GetApprovedByOk() (*map[string]MfaApprovalInfo, bool) {
+func (o *MfaStatus) GetApprovedByOk() (*map[string]MfaApprovalInfo, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -102,12 +102,12 @@ func (o *MfaRequestStatus) GetApprovedByOk() (*map[string]MfaApprovalInfo, bool)
 }
 
 // SetApprovedBy sets the ApprovedBy field value
-func (o *MfaRequestStatus) SetApprovedBy(v map[string]MfaApprovalInfo) {
+func (o *MfaStatus) SetApprovedBy(v map[string]MfaApprovalInfo) {
 	o.ApprovedBy = v
 }
 
 // GetCount returns the Count field value
-func (o *MfaRequestStatus) GetCount() int32 {
+func (o *MfaStatus) GetCount() int32 {
 	if o == nil {
 		var ret int32
 		return ret
@@ -117,7 +117,7 @@ func (o *MfaRequestStatus) GetCount() int32 {
 
 // GetCountOk returns a tuple with the Count field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestStatus) GetCountOk() (*int32, bool) {
+func (o *MfaStatus) GetCountOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -125,12 +125,12 @@ func (o *MfaRequestStatus) GetCountOk() (*int32, bool) {
 }
 
 // SetCount sets the Count field value
-func (o *MfaRequestStatus) SetCount(v int32) {
+func (o *MfaStatus) SetCount(v int32) {
 	o.Count = v
 }
 
 // GetNumAuthFactors returns the NumAuthFactors field value
-func (o *MfaRequestStatus) GetNumAuthFactors() int32 {
+func (o *MfaStatus) GetNumAuthFactors() int32 {
 	if o == nil {
 		var ret int32
 		return ret
@@ -140,7 +140,7 @@ func (o *MfaRequestStatus) GetNumAuthFactors() int32 {
 
 // GetNumAuthFactorsOk returns a tuple with the NumAuthFactors field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestStatus) GetNumAuthFactorsOk() (*int32, bool) {
+func (o *MfaStatus) GetNumAuthFactorsOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -148,6 +148,6 @@ func (o *MfaRequestStatus) GetNumAuthFactorsOk() (*int32, bool) {
 }
 
 // SetNumAuthFactors sets the NumAuthFactors field value
-func (o *MfaRequestStatus) SetNumAuthFactors(v int32) {
+func (o *MfaStatus) SetNumAuthFactors(v int32) {
 	o.NumAuthFactors = v
 }

@@ -7,18 +7,18 @@ type MfaRequestInfo struct {
 	// Approval request ID.
 	Id string `json:"id"`
 	// Receipt that an MFA request was approved.
-	Receipt *MfaRequestReceipt `json:"receipt,omitempty"`
+	Receipt *MfaReceipt `json:"receipt,omitempty"`
 	// Request
 	Request MfaHttpRequest `json:"request"`
 	// Status
-	Status MfaRequestStatus `json:"status"`
+	Status MfaStatus `json:"status"`
 }
 
 // NewMfaRequestInfo instantiates a new MfaRequestInfo object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMfaRequestInfo(id string, receipt *MfaRequestReceipt, request MfaHttpRequest, status MfaRequestStatus) *MfaRequestInfo {
+func NewMfaRequestInfo(id string, receipt *MfaReceipt, request MfaHttpRequest, status MfaStatus) *MfaRequestInfo {
 	this := MfaRequestInfo{}
 	this.Id = id
 	this.Receipt = receipt
@@ -84,7 +84,7 @@ func (o *MfaRequestInfo) SetId(v string) {
 }
 
 // GetReceipt returns the Receipt field value if set, zero value otherwise
-func (o *MfaRequestInfo) GetReceipt() *MfaRequestReceipt {
+func (o *MfaRequestInfo) GetReceipt() *MfaReceipt {
 	if o == nil || o.Receipt == nil {
 		return nil
 	}
@@ -93,7 +93,7 @@ func (o *MfaRequestInfo) GetReceipt() *MfaRequestReceipt {
 
 // GetReceiptOk returns a tuple with the Receipt field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *MfaRequestInfo) GetReceiptOk() (*MfaRequestReceipt, bool) {
+func (o *MfaRequestInfo) GetReceiptOk() (*MfaReceipt, bool) {
 	if o == nil || o.Receipt == nil {
 		return nil, false
 	}
@@ -101,7 +101,7 @@ func (o *MfaRequestInfo) GetReceiptOk() (*MfaRequestReceipt, bool) {
 }
 
 // SetReceipt sets the Receipt field value
-func (o *MfaRequestInfo) SetReceipt(v *MfaRequestReceipt) {
+func (o *MfaRequestInfo) SetReceipt(v *MfaReceipt) {
 	o.Receipt = v
 }
 
@@ -130,9 +130,9 @@ func (o *MfaRequestInfo) SetRequest(v MfaHttpRequest) {
 }
 
 // GetStatus returns the Status field value
-func (o *MfaRequestInfo) GetStatus() MfaRequestStatus {
+func (o *MfaRequestInfo) GetStatus() MfaStatus {
 	if o == nil {
-		var ret MfaRequestStatus
+		var ret MfaStatus
 		return ret
 	}
 
@@ -141,7 +141,7 @@ func (o *MfaRequestInfo) GetStatus() MfaRequestStatus {
 
 // GetStatusOk returns a tuple with the Status field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestInfo) GetStatusOk() (*MfaRequestStatus, bool) {
+func (o *MfaRequestInfo) GetStatusOk() (*MfaStatus, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -149,6 +149,6 @@ func (o *MfaRequestInfo) GetStatusOk() (*MfaRequestStatus, bool) {
 }
 
 // SetStatus sets the Status field value
-func (o *MfaRequestInfo) SetStatus(v MfaRequestStatus) {
+func (o *MfaRequestInfo) SetStatus(v MfaStatus) {
 	o.Status = v
 }
