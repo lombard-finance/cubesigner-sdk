@@ -3,6 +3,7 @@ package client
 import (
 	"io"
 
+	"github.com/lombard-finance/cubesigner-sdk/api"
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
 )
@@ -33,7 +34,7 @@ func decodeAcceptedResponse(response io.Reader) (string, error) {
 	}
 }
 
-func getMfaHeaders(mfaReceipt v0.MfaReceiptHeader) map[string]string {
+func getMfaHeaders(mfaReceipt api.MfaReceiptHeader) map[string]string {
 	return map[string]string{
 		"x-cubist-mfa-id":           mfaReceipt.Id,
 		"x-cubist-mfa-org-id":       mfaReceipt.OrganizationId,

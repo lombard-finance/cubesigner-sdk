@@ -1,4 +1,4 @@
-package v0
+package api
 
 // MfaReceiptHeader struct
 type MfaReceiptHeader struct {

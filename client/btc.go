@@ -5,11 +5,12 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/lombard-finance/cubesigner-sdk/api"
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignRequest, mfaReceipt *v0.MfaReceiptHeader) (*v0.TaprootSignResponse, string, error) {
+func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignRequest, mfaReceipt *api.MfaReceiptHeader) (*v0.TaprootSignResponse, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign taproot",
 		Scopes:  []string{"sign:btc:taproot"},
@@ -58,7 +59,7 @@ func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignReq
 	return &decoded, "", nil
 }
 
-func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest, mfaReceipt *v0.MfaReceiptHeader) (*v0.BtcSign200Response, string, error) {
+func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest, mfaReceipt *api.MfaReceiptHeader) (*v0.BtcSign200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign segwit",
 		Scopes:  []string{"sign:btc:segwit"},
