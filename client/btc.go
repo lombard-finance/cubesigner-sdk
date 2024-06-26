@@ -25,7 +25,7 @@ func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignReq
 
 	// add mfa headers
 	if mfaReceipt != nil {
-		mfaHeaders := getMfaHeaders(*mfaReceipt)
+		mfaHeaders := getMfaHeaders(*mfaReceipt, cli.orgID)
 		for k, v := range mfaHeaders {
 			headers[k] = v
 		}
@@ -74,7 +74,7 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 
 	// add mfa headers
 	if mfaReceipt != nil {
-		mfaHeaders := getMfaHeaders(*mfaReceipt)
+		mfaHeaders := getMfaHeaders(*mfaReceipt, cli.orgID)
 		for k, v := range mfaHeaders {
 			headers[k] = v
 		}

@@ -34,10 +34,10 @@ func decodeAcceptedResponse(response io.Reader) (string, error) {
 	}
 }
 
-func getMfaHeaders(mfaReceipt api.MfaReceiptHeader) map[string]string {
+func getMfaHeaders(mfaReceipt api.MfaReceiptHeader, orgId string) map[string]string {
 	return map[string]string{
 		"x-cubist-mfa-id":           mfaReceipt.Id,
-		"x-cubist-mfa-org-id":       mfaReceipt.OrganizationId,
+		"x-cubist-mfa-org-id":       orgId,
 		"x-cubist-mfa-confirmation": mfaReceipt.Confirmation,
 	}
 }

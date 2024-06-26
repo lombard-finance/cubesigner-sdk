@@ -6,19 +6,16 @@ type MfaReceiptHeader struct {
 	Id string `json:"id"`
 	// Confirmation code the user needs to present when resuming the original request.
 	Confirmation string `json:"confirmation"`
-	// Organization ID.
-	OrganizationId string `json:"organization"`
 }
 
 // NewMfaReceiptHeader instantiates a new MfaReceiptHeader object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMfaReceiptHeader(id string, confirmation string, organization string) *MfaReceiptHeader {
+func NewMfaReceiptHeader(id string, confirmation string) *MfaReceiptHeader {
 	this := MfaReceiptHeader{}
 	this.Id = id
 	this.Confirmation = confirmation
-	this.OrganizationId = organization
 	return &this
 }
 
@@ -75,28 +72,4 @@ func (o *MfaReceiptHeader) GetIdOk() (*string, bool) {
 // SetId sets the Id field value
 func (o *MfaReceiptHeader) SetId(v string) {
 	o.Id = v
-}
-
-// GetOrganizationId returns the OrganizationId field value
-func (o *MfaReceiptHeader) GetOrganizationId() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.OrganizationId
-}
-
-// GetOrganizationIdOk returns a tuple with the OrganizationId field value
-// and a boolean to check if the value has been set.
-func (o *MfaReceiptHeader) GetOrganizationIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.OrganizationId, true
-}
-
-// SetId sets the OrganizationId field value
-func (o *MfaReceiptHeader) SetOrganizationId(v string) {
-	o.OrganizationId = v
 }
