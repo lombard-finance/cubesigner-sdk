@@ -94,8 +94,9 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (client) Refactor logging for requests with body
 
-## [v0.0.6] - 2024-06-18
+## [v0.0.6] - 2024-06-26
 
 ### Features
 
 * (btc) Return MFA accepted response
+* (keys) Implement `/v0/org/:org_id/keys/:key` with role session
