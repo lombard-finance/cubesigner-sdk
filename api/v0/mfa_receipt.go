@@ -3,20 +3,20 @@ package v0
 // MfaReceipt struct
 type MfaReceipt struct {
 	// Confirmation code the user needs to present when resuming the original request.
-	Confirmation string `json:"confirmation,omitempty"`
+	Confirmation string `json:"confirmation"`
 	// The ID of the logged-in user whose action created this approval.
-	FinalApprover string `json:"final_approver,omitempty"`
+	FinalApprover string `json:"final_approver"`
 	// DateTime measured in seconds since unix epoch. A wrapper type for serialization
 	// that encodes a `SystemTime` as a `u64` representing the number of seconds since
 	// `SystemTime::UNIX_EPOCH`.
-	Timestamp *int64 `json:"timestamp,omitempty"`
+	Timestamp int64 `json:"timestamp"`
 }
 
 // NewMfaReceipt instantiates a new MfaReceipt object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMfaReceipt(confirmation string, finalApprover string, timestamp *int64) *MfaReceipt {
+func NewMfaReceipt(confirmation string, finalApprover string, timestamp int64) *MfaReceipt {
 	this := MfaReceipt{}
 	this.Confirmation = confirmation
 	this.FinalApprover = finalApprover
@@ -80,23 +80,23 @@ func (o *MfaReceipt) SetFinalApprover(v string) {
 
 // GetTimestamp returns the Timestamp field value if set, zero value otherwise
 func (o *MfaReceipt) GetTimestamp() int64 {
-	if o == nil || o.Timestamp == nil {
+	if o == nil {
 		var ret int64
 		return ret
 	}
-	return *o.Timestamp
+	return o.Timestamp
 }
 
 // GetTimestampOk returns a tuple with the Timestamp field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *MfaReceipt) GetTimestampOk() (*int64, bool) {
-	if o == nil || o.Timestamp == nil {
-		return nil, false
+func (o *MfaReceipt) GetTimestampOk() (int64, bool) {
+	if o == nil {
+		return 0, false
 	}
 	return o.Timestamp, true
 }
 
 // SetTimestamp sets the Timestamp field value
 func (o *MfaReceipt) SetTimestamp(v int64) {
-	o.Timestamp = &v
+	o.Timestamp = v
 }
