@@ -15,7 +15,11 @@ func decodeAcceptedResponse(response io.Reader) (string, error) {
 
 	errorCode, ok := decoded.GetErrorCodeOk()
 	if ok {
-		return "", errors.Errorf("accepted response with error (%v): %s", errorCode.GetActualInstance(), decoded.GetMessage())
+
+		errCode := errorCode.GetActualInstance()
+		if errCode == errorCode.AcceptedValueCode {
+			return "", errors.Errorf("accepted response with error (%v): %s", &errCode, decoded.GetMessage())
+		}
 	}
 
 	if accepted, ok := decoded.GetAcceptedOk(); ok {
