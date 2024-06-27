@@ -6,7 +6,7 @@ type MfaHttpRequest struct {
 	// request body) about requests that require MFA. We use this to verify that when
 	// a request is resumed (after obtaining necessary MFA approvals) it is exactly
 	// the same as it originally was.
-	Body map[string]any `json:"body,omitempty"`
+	Body map[string]interface{} `json:"body,omitempty"`
 	// HTTP method of the request
 	Method string `json:"method"`
 	// HTTP path of the request
@@ -17,7 +17,7 @@ type MfaHttpRequest struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewMfaHttpRequest(body map[string]any, method string, path string) *MfaHttpRequest {
+func NewMfaHttpRequest(body map[string]interface{}, method string, path string) *MfaHttpRequest {
 	this := MfaHttpRequest{}
 	this.Body = body
 	this.Method = method
@@ -34,9 +34,9 @@ func NewMfaHttpRequestWithDefaults() *MfaHttpRequest {
 }
 
 // GetBody returns the Body field value
-func (o *MfaHttpRequest) GetBody() map[string]any {
+func (o *MfaHttpRequest) GetBody() map[string]interface{} {
 	if o == nil {
-		var ret map[string]any
+		var ret map[string]interface{}
 		return ret
 	}
 
@@ -45,7 +45,7 @@ func (o *MfaHttpRequest) GetBody() map[string]any {
 
 // GetBodyOk returns a tuple with the Body field value
 // and a boolean to check if the value has been set.
-func (o *MfaHttpRequest) GetBodyOk() (*map[string]any, bool) {
+func (o *MfaHttpRequest) GetBodyOk() (*map[string]interface{}, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -53,7 +53,7 @@ func (o *MfaHttpRequest) GetBodyOk() (*map[string]any, bool) {
 }
 
 // SetBody sets the Body field value
-func (o *MfaHttpRequest) SetBody(v map[string]any) {
+func (o *MfaHttpRequest) SetBody(v map[string]interface{}) {
 	o.Body = v
 }
 
