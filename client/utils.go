@@ -17,8 +17,9 @@ func decodeAcceptedResponse(response io.Reader) (string, error) {
 	if ok {
 
 		errCode := errorCode.GetActualInstance()
-		if errCode == errorCode.AcceptedValueCode {
-			return "", errors.Errorf("accepted response with error (%v): %s", &errCode, decoded.GetMessage())
+		if errCode != errorCode.AcceptedValueCode {
+			// TODO: errCode is pointer, need to parse to string somehow
+			return "", errors.Errorf("accepted response with error (%v): %s", errCode, decoded.GetMessage())
 		}
 	}
 
