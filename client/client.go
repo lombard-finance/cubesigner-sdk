@@ -240,9 +240,8 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 		} else {
 			log.Tracef("request: %s", string(requestData))
 		}
-		log.Tracef("response: %s", string(responseData))
 
-		return nil, 0, errors.Errorf("%s request with status code: %d", method, resp.StatusCode)
+		return nil, 0, errors.Errorf("%s request with status code: %d, message: %s", method, resp.StatusCode, string(responseData))
 	}
 	return bytes.NewReader(responseData), resp.StatusCode, nil
 }

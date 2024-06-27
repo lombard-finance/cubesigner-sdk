@@ -39,7 +39,7 @@ func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
 func (cli *Client) GetKeyInOrgForRole(key, role string) (*v0.GetKeyInOrg200Response, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "get key",
-		Scopes:  []string{"manage:key:get"},
+		Scopes:  []string{"sign:btc:*"}, // NOTE: cubesigner requires at least one scope to pass, but it anyway allows to get key
 	}, role)
 	if err != nil {
 		return nil, errors.Wrap(err, "create role token")
