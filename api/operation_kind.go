@@ -10,24 +10,27 @@ type OperationKind string
 
 // List of OperationKind
 const (
-	AVA_SIGN     OperationKind = "AvaSign"
-	BLOB_SIGN    OperationKind = "BlobSign"
-	BTC_SIGN     OperationKind = "BtcSign"
-	TAPROOT_SIGN OperationKind = "TaprootSign"
-	EIP191_SIGN  OperationKind = "Eip191Sign"
-	EIP712_SIGN  OperationKind = "Eip712Sign"
-	EOTS_NONCES  OperationKind = "EotsNonces"
-	EOTS_SIGN    OperationKind = "EotsSign"
-	ETH1_SIGN    OperationKind = "Eth1Sign"
-	ETH2_SIGN    OperationKind = "Eth2Sign"
-	ETH2_STAKE   OperationKind = "Eth2Stake"
-	ETH2_UNSTAKE OperationKind = "Eth2Unstake"
-	SOLANA_SIGN  OperationKind = "SolanaSign"
+	AVA_SIGN          OperationKind = "AvaSign"
+	AVA_CHAIN_TX_SIGN OperationKind = "AvaChainTxSign"
+	BLOB_SIGN         OperationKind = "BlobSign"
+	BTC_SIGN          OperationKind = "BtcSign"
+	TAPROOT_SIGN      OperationKind = "TaprootSign"
+	EIP191_SIGN       OperationKind = "Eip191Sign"
+	EIP712_SIGN       OperationKind = "Eip712Sign"
+	EOTS_NONCES       OperationKind = "EotsNonces"
+	EOTS_SIGN         OperationKind = "EotsSign"
+	ETH1_SIGN         OperationKind = "Eth1Sign"
+	ETH2_SIGN         OperationKind = "Eth2Sign"
+	ETH2_STAKE        OperationKind = "Eth2Stake"
+	ETH2_UNSTAKE      OperationKind = "Eth2Unstake"
+	SOLANA_SIGN       OperationKind = "SolanaSign"
+	ROLE_UPDATE       OperationKind = "RoleUpdate"
 )
 
 // All allowed values of OperationKind enum
 var AllowedOperationKindEnumValues = []OperationKind{
 	"AvaSign",
+	"AvaChainTxSign",
 	"BlobSign",
 	"BtcSign",
 	"TaprootSign",
@@ -40,6 +43,7 @@ var AllowedOperationKindEnumValues = []OperationKind{
 	"Eth2Stake",
 	"Eth2Unstake",
 	"SolanaSign",
+	"RoleUpdate",
 }
 
 func (v *OperationKind) UnmarshalJSON(src []byte) error {
@@ -85,39 +89,38 @@ func (v OperationKind) Ptr() *OperationKind {
 	return &v
 }
 
-//
-//type NullableOperationKind struct {
-//	value *OperationKind
-//	isSet bool
-//}
-//
-//func (v NullableOperationKind) Get() *OperationKind {
-//	return v.value
-//}
-//
-//func (v *NullableOperationKind) Set(val *OperationKind) {
-//	v.value = val
-//	v.isSet = true
-//}
-//
-//func (v NullableOperationKind) IsSet() bool {
-//	return v.isSet
-//}
-//
-//func (v *NullableOperationKind) Unset() {
-//	v.value = nil
-//	v.isSet = false
-//}
-//
-//func NewNullableOperationKind(val *OperationKind) *NullableOperationKind {
-//	return &NullableOperationKind{value: val, isSet: true}
-//}
-//
-//func (v NullableOperationKind) MarshalJSON() ([]byte, error) {
-//	return json.Marshal(v.value)
-//}
-//
-//func (v *NullableOperationKind) UnmarshalJSON(src []byte) error {
-//	v.isSet = true
-//	return json.Unmarshal(src, &v.value)
-//}
+type NullableOperationKind struct {
+	value *OperationKind
+	isSet bool
+}
+
+func (v NullableOperationKind) Get() *OperationKind {
+	return v.value
+}
+
+func (v *NullableOperationKind) Set(val *OperationKind) {
+	v.value = val
+	v.isSet = true
+}
+
+func (v NullableOperationKind) IsSet() bool {
+	return v.isSet
+}
+
+func (v *NullableOperationKind) Unset() {
+	v.value = nil
+	v.isSet = false
+}
+
+func NewNullableOperationKind(val *OperationKind) *NullableOperationKind {
+	return &NullableOperationKind{value: val, isSet: true}
+}
+
+func (v NullableOperationKind) MarshalJSON() ([]byte, error) {
+	return json.Marshal(v.value)
+}
+
+func (v *NullableOperationKind) UnmarshalJSON(src []byte) error {
+	v.isSet = true
+	return json.Unmarshal(src, &v.value)
+}

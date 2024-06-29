@@ -2,6 +2,7 @@ package v0
 
 import (
 	"encoding/json"
+	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
 // CreateTokenRequest struct for CreateTokenRequest
@@ -13,7 +14,7 @@ type CreateTokenRequest struct {
 	// A human readable description of the purpose of the key
 	Purpose string `json:"purpose"`
 	// Controls what capabilities this session will have. By default, it has all signing capabilities, i.e., just the 'sign:*' scope.
-	Scopes []string `json:"scopes,omitempty"`
+	Scopes []api.Scope `json:"scopes,omitempty"`
 }
 
 // NewCreateTokenRequest instantiates a new CreateTokenRequest object
@@ -187,9 +188,9 @@ func (o *CreateTokenRequest) SetPurpose(v string) {
 }
 
 // GetScopes returns the Scopes field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateTokenRequest) GetScopes() []string {
+func (o *CreateTokenRequest) GetScopes() []api.Scope {
 	if o == nil {
-		var ret []string
+		var ret []api.Scope
 		return ret
 	}
 	return o.Scopes
@@ -198,7 +199,7 @@ func (o *CreateTokenRequest) GetScopes() []string {
 // GetScopesOk returns a tuple with the Scopes field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateTokenRequest) GetScopesOk() ([]string, bool) {
+func (o *CreateTokenRequest) GetScopesOk() ([]api.Scope, bool) {
 	if o == nil || o.Scopes == nil {
 		return nil, false
 	}
@@ -215,7 +216,7 @@ func (o *CreateTokenRequest) HasScopes() bool {
 }
 
 // SetScopes gets a reference to the given []string and assigns it to the Scopes field.
-func (o *CreateTokenRequest) SetScopes(v []string) {
+func (o *CreateTokenRequest) SetScopes(v []api.Scope) {
 	o.Scopes = v
 }
 

@@ -100,3 +100,8 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (btc) Return MFA accepted response
 * (keys) Implement `/v0/org/:org_id/keys/:key` with role session
+* (blob) Implement `/v1/org/:org_id/blob/sign/:key_id`
+* 
+### Improvements
+
+* Use scope type
