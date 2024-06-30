@@ -5,23 +5,23 @@ type BabylonScriptData struct {
 	// Optional explicit parameters.
 	ExplicitParams *BabylonStakingParams `json:"explicit_params,omitempty"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
-	FinalityProviderPK string `json:"finality_provider_pk"`
+	FinalityProviderPk string `json:"finality_provider_pk"`
 	// The lock time used for the withdrawal output in the staking deposit transaction.
 	LockTime int32 `json:"lock_time"`
 	// The network ID for Babylon.
 	Network BabylonNetworkId `json:"network"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the staker. This is the key that signs the slashing, withdrawal, and unbonding scripts.
-	StakerPK string `json:"staker_pk"`
+	StakerPk string `json:"staker_pk"`
 	// The parameter version to use. If `None`, uses the latest version.
 	Version *int32 `json:"version,omitempty"`
 }
 
-func NewBabylonScriptData(finalityProviderPK string, lockTime int32, network BabylonNetworkId, stakerPK string) *BabylonScriptData {
+func NewBabylonScriptData(finalityProviderPk string, lockTime int32, network BabylonNetworkId, stakerPk string) *BabylonScriptData {
 	this := BabylonScriptData{}
-	this.FinalityProviderPK = finalityProviderPK
+	this.FinalityProviderPk = finalityProviderPk
 	this.LockTime = lockTime
 	this.Network = network
-	this.StakerPK = stakerPK
+	this.StakerPk = stakerPk
 	return &this
 }
 
@@ -48,22 +48,22 @@ func (o *BabylonScriptData) SetExplicitParams(v *BabylonStakingParams) {
 	o.ExplicitParams = v
 }
 
-func (o *BabylonScriptData) GetFinalityProviderPK() string {
+func (o *BabylonScriptData) GetFinalityProviderPk() string {
 	if o == nil {
 		return ""
 	}
-	return o.FinalityProviderPK
+	return o.FinalityProviderPk
 }
 
-func (o *BabylonScriptData) GetFinalityProviderPKOk() (string, bool) {
+func (o *BabylonScriptData) GetFinalityProviderPkOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.FinalityProviderPK, true
+	return o.FinalityProviderPk, true
 }
 
-func (o *BabylonScriptData) SetFinalityProviderPK(v string) {
-	o.FinalityProviderPK = v
+func (o *BabylonScriptData) SetFinalityProviderPk(v string) {
+	o.FinalityProviderPk = v
 }
 
 func (o *BabylonScriptData) GetLockTime() int32 {
@@ -106,18 +106,18 @@ func (o *BabylonScriptData) GetStakerPK() string {
 	if o == nil {
 		return ""
 	}
-	return o.StakerPK
+	return o.StakerPk
 }
 
 func (o *BabylonScriptData) GetStakerPKOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.StakerPK, true
+	return o.StakerPk, true
 }
 
 func (o *BabylonScriptData) SetStakerPK(v string) {
-	o.StakerPK = v
+	o.StakerPk = v
 }
 
 func (o *BabylonScriptData) GetVersion() *int32 {

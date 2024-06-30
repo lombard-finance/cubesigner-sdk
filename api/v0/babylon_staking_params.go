@@ -9,7 +9,7 @@ type BabylonStakingParams struct {
 	// The number of confirmations before a staking txn is considered finalized by the covenant committee.
 	ConfirmationDepth int32 `json:"confirmation_depth"`
 	// The public keys of the covenant signers.
-	CovenantPKs []string `json:"covenant_pks"`
+	CovenantPks []string `json:"covenant_pks"`
 	// The quorum for covenant signer.
 	CovenantQuorum int `json:"covenant_quorum"`
 	// The max amount that can be staked in a single txn.
@@ -32,11 +32,11 @@ type BabylonStakingParams struct {
 	Version int32 `json:"version"`
 }
 
-func NewBabylonStakingParams(activationHeight int64, confirmationDepth int32, covenantPKs []string, covenantQuorum int, maxStakingAmount int64, maxStakingTime int32, minStakingAmount int64, minStakingTime int32, tag string, unbondingFee int64, unbondingTime int32, version int32) *BabylonStakingParams {
+func NewBabylonStakingParams(activationHeight int64, confirmationDepth int32, covenantPks []string, covenantQuorum int, maxStakingAmount int64, maxStakingTime int32, minStakingAmount int64, minStakingTime int32, tag string, unbondingFee int64, unbondingTime int32, version int32) *BabylonStakingParams {
 	this := BabylonStakingParams{}
 	this.ActivationHeight = activationHeight
 	this.ConfirmationDepth = confirmationDepth
-	this.CovenantPKs = covenantPKs
+	this.CovenantPks = covenantPks
 	this.CovenantQuorum = covenantQuorum
 	this.MaxStakingAmount = maxStakingAmount
 	this.MaxStakingTime = maxStakingTime
@@ -108,22 +108,22 @@ func (o *BabylonStakingParams) SetConfirmationDepth(v int32) {
 	o.ConfirmationDepth = v
 }
 
-func (o *BabylonStakingParams) GetCovenantPKs() []string {
+func (o *BabylonStakingParams) GetCovenantPks() []string {
 	if o == nil {
 		return nil
 	}
-	return o.CovenantPKs
+	return o.CovenantPks
 }
 
-func (o *BabylonStakingParams) GetCovenantPKsOk() ([]string, bool) {
+func (o *BabylonStakingParams) GetCovenantPksOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CovenantPKs, true
+	return o.CovenantPks, true
 }
 
-func (o *BabylonStakingParams) SetCovenantPKs(v []string) {
-	o.CovenantPKs = v
+func (o *BabylonStakingParams) SetCovenantPks(v []string) {
+	o.CovenantPks = v
 }
 
 func (o *BabylonStakingParams) GetCovenantQuorum() int {
