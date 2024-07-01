@@ -13,10 +13,10 @@ type BabylonStakingEarlyUnbond struct {
 	Vout int32 `json:"vout"`
 }
 
-func NewBabylonStakingEarlyUnbond(scriptData BabylonScriptData, txID string, value int64, vout int32) *BabylonStakingEarlyUnbond {
+func NewBabylonStakingEarlyUnbond(scriptData BabylonScriptData, txId string, value int64, vout int32) *BabylonStakingEarlyUnbond {
 	this := BabylonStakingEarlyUnbond{}
 	this.BabylonScriptData = scriptData
-	this.TxId = txID
+	this.TxId = txId
 	this.Value = value
 	this.Vout = vout
 	return &this

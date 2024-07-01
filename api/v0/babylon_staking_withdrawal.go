@@ -10,7 +10,7 @@ type BabylonStakingWithdrawal struct {
 	// The withdrawal recipient, specified as a Bitcoin spend script.
 	Recipient string `json:"recipient"`
 	// The transaction-id of the staking transaction to withdraw from.
-	TxID string `json:"txid"`
+	TxId string `json:"txid"`
 	// An optional lock height (in blocks) for this transaction. The resulting transaction cannot be mined before the specified block height.
 	TxnLockHeight *int32 `json:"txn_lock_height,omitempty"`
 	// The value in sats that is staked in the transaction being withdrawn.
@@ -19,13 +19,13 @@ type BabylonStakingWithdrawal struct {
 	Vout int32 `json:"vout"`
 }
 
-func NewBabylonStakingWithdrawal(scriptData BabylonScriptData, fee int64, feeType FeeType, recipient string, txID string, value int64, vout int32) *BabylonStakingWithdrawal {
+func NewBabylonStakingWithdrawal(scriptData BabylonScriptData, fee int64, feeType FeeType, recipient string, txId string, value int64, vout int32) *BabylonStakingWithdrawal {
 	this := BabylonStakingWithdrawal{}
 	this.BabylonScriptData = scriptData
 	this.Fee = fee
 	this.FeeType = feeType
 	this.Recipient = recipient
-	this.TxID = txID
+	this.TxId = txId
 	this.Value = value
 	this.Vout = vout
 	return &this
@@ -90,22 +90,22 @@ func (o *BabylonStakingWithdrawal) SetRecipient(v string) {
 	o.Recipient = v
 }
 
-func (o *BabylonStakingWithdrawal) GetTxID() string {
+func (o *BabylonStakingWithdrawal) GetTxId() string {
 	if o == nil {
 		return ""
 	}
-	return o.TxID
+	return o.TxId
 }
 
-func (o *BabylonStakingWithdrawal) GetTxIDOk() (string, bool) {
+func (o *BabylonStakingWithdrawal) GetTxIdOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.TxID, true
+	return o.TxId, true
 }
 
-func (o *BabylonStakingWithdrawal) SetTxID(v string) {
-	o.TxID = v
+func (o *BabylonStakingWithdrawal) SetTxId(v string) {
+	o.TxId = v
 }
 
 func (o *BabylonStakingWithdrawal) GetTxnLockHeight() *int32 {
