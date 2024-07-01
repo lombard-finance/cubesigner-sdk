@@ -4,7 +4,7 @@ package v0
 type BabylonStakingEarlyUnbond struct {
 	BabylonScriptData
 	// The transaction-id of the staking transaction to unbond.
-	TxID string `json:"txid"`
+	TxId string `json:"txid"`
 	// An optional lock height (in blocks) for this transaction. The resulting transaction cannot be mined before the specified block height.
 	TxnLockHeight *int32 `json:"txn_lock_height,omitempty"`
 	// The value in sats that was staked in the deposit transaction.
@@ -16,7 +16,7 @@ type BabylonStakingEarlyUnbond struct {
 func NewBabylonStakingEarlyUnbond(scriptData BabylonScriptData, txID string, value int64, vout int32) *BabylonStakingEarlyUnbond {
 	this := BabylonStakingEarlyUnbond{}
 	this.BabylonScriptData = scriptData
-	this.TxID = txID
+	this.TxId = txID
 	this.Value = value
 	this.Vout = vout
 	return &this
@@ -27,22 +27,22 @@ func NewBabylonStakingEarlyUnbondWithDefaults() *BabylonStakingEarlyUnbond {
 	return &this
 }
 
-func (o *BabylonStakingEarlyUnbond) GetTxID() string {
+func (o *BabylonStakingEarlyUnbond) GetTxId() string {
 	if o == nil {
 		return ""
 	}
-	return o.TxID
+	return o.TxId
 }
 
-func (o *BabylonStakingEarlyUnbond) GetTxIDOk() (string, bool) {
+func (o *BabylonStakingEarlyUnbond) GetTxIdOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.TxID, true
+	return o.TxId, true
 }
 
-func (o *BabylonStakingEarlyUnbond) SetTxID(v string) {
-	o.TxID = v
+func (o *BabylonStakingEarlyUnbond) SetTxId(v string) {
+	o.TxId = v
 }
 
 func (o *BabylonStakingEarlyUnbond) GetTxnLockHeight() *int32 {

@@ -4,14 +4,14 @@ package v0
 type BabylonStakingResponse struct {
 	// The transaction fee in sats.
 	Fee int64 `json:"fee"`
-	// The PSBT in standard hex serialization, without leading "0x".
-	PSBT string `json:"psbt"`
+	// The Psbt in standard hex serialization, without leading "0x".
+	Psbt string `json:"psbt"`
 }
 
 func NewBabylonStakingResponse(fee int64, psbt string) *BabylonStakingResponse {
 	this := BabylonStakingResponse{}
 	this.Fee = fee
-	this.PSBT = psbt
+	this.Psbt = psbt
 	return &this
 }
 
@@ -39,20 +39,20 @@ func (o *BabylonStakingResponse) SetFee(v int64) {
 	o.Fee = v
 }
 
-func (o *BabylonStakingResponse) GetPSBT() string {
+func (o *BabylonStakingResponse) GetPsbt() string {
 	if o == nil {
 		return ""
 	}
-	return o.PSBT
+	return o.Psbt
 }
 
-func (o *BabylonStakingResponse) GetPSBTOk() (string, bool) {
+func (o *BabylonStakingResponse) GetPsbtOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.PSBT, true
+	return o.Psbt, true
 }
 
-func (o *BabylonStakingResponse) SetPSBT(v string) {
-	o.PSBT = v
+func (o *BabylonStakingResponse) SetPsbt(v string) {
+	o.Psbt = v
 }

@@ -9,10 +9,10 @@ type BabylonStakingDeposit struct {
 	Fee int64 `json:"fee"`
 	// Determines whether the fee is a fixed fee in sats or a rate in sats per (estimated) virtual byte of transaction weight (i.e., sats per vb).
 	FeeType FeeType `json:"fee_type"`
-	// When set, indicates that existing outputs in the PSBT will be ignored (i.e., deleted from the PSBT) when creating the deposit transaction.
-	IgnorePSBTOutputs *bool `json:"ignore_psbt_outputs,omitempty"`
-	// A hex-serialized PSBT (version 0) containing the transaction inputs and all necessary information for signing (e.g., taproot path and leaf information). This PSBT must not have any transaction outputs; they will be added to the returned PSBT.
-	PSBT string `json:"psbt"`
+	// When set, indicates that existing outputs in the Psbt will be ignored (i.e., deleted from the Psbt) when creating the deposit transaction.
+	IgnorePsbtOutputs *bool `json:"ignore_psbt_outputs,omitempty"`
+	// A hex-serialized Psbt (version 0) containing the transaction inputs and all necessary information for signing (e.g., taproot path and leaf information). This Psbt must not have any transaction outputs; they will be added to the returned Psbt.
+	Psbt string `json:"psbt"`
 	// An optional lock height (in blocks) for this transaction. The resulting transaction cannot be mined before the specified block height.
 	TxnLockHeight *int32 `json:"txn_lock_height,omitempty"`
 	// The value to be staked in sats.
@@ -25,7 +25,7 @@ func NewBabylonStakingDeposit(scriptData BabylonScriptData, change string, fee i
 	this.Change = change
 	this.Fee = fee
 	this.FeeType = feeType
-	this.PSBT = psbt
+	this.Psbt = psbt
 	this.Value = value
 	return &this
 }
@@ -89,40 +89,40 @@ func (o *BabylonStakingDeposit) SetFeeType(v FeeType) {
 	o.FeeType = v
 }
 
-func (o *BabylonStakingDeposit) GetIgnorePSBTOutputs() *bool {
+func (o *BabylonStakingDeposit) GetIgnorePsbtOutputs() *bool {
 	if o == nil {
 		return nil
 	}
-	return o.IgnorePSBTOutputs
+	return o.IgnorePsbtOutputs
 }
 
-func (o *BabylonStakingDeposit) GetIgnorePSBTOutputsOk() (*bool, bool) {
+func (o *BabylonStakingDeposit) GetIgnorePsbtOutputsOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.IgnorePSBTOutputs, true
+	return o.IgnorePsbtOutputs, true
 }
 
-func (o *BabylonStakingDeposit) SetIgnorePSBTOutputs(v *bool) {
-	o.IgnorePSBTOutputs = v
+func (o *BabylonStakingDeposit) SetIgnorePsbtOutputs(v *bool) {
+	o.IgnorePsbtOutputs = v
 }
 
-func (o *BabylonStakingDeposit) GetPSBT() string {
+func (o *BabylonStakingDeposit) GetPsbt() string {
 	if o == nil {
 		return ""
 	}
-	return o.PSBT
+	return o.Psbt
 }
 
-func (o *BabylonStakingDeposit) GetPSBTOk() (string, bool) {
+func (o *BabylonStakingDeposit) GetPsbtOk() (string, bool) {
 	if o == nil {
 		return "", false
 	}
-	return o.PSBT, true
+	return o.Psbt, true
 }
 
-func (o *BabylonStakingDeposit) SetPSBT(v string) {
-	o.PSBT = v
+func (o *BabylonStakingDeposit) SetPsbt(v string) {
+	o.Psbt = v
 }
 
 func (o *BabylonStakingDeposit) GetTxnLockHeight() *int32 {
