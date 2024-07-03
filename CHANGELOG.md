@@ -94,11 +94,11 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (client) Refactor logging for requests with body
 
-## [v0.0.6] - 2024-07-03
+## [v0.1.0] - 2024-07-03
 
 ### Features
 
-* (btc) Return MFA accepted response
+
 * (client) Implemented API methods:
   * `GET /v0/org/:org_id/mfa/:mfa_id`
   * `GET /v0/org/:org_id/mfa`
@@ -112,3 +112,6 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * Use scope type
 * (client) Check body for nil
 * Refactor
+
+### API Breaking
+* (btc) Return MFA accepted response
