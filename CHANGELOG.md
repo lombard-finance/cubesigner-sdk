@@ -94,17 +94,21 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 * (client) Refactor logging for requests with body
 
-## [v0.0.6] - 2024-06-26
+## [v0.0.6] - 2024-07-03
 
 ### Features
 
 * (btc) Return MFA accepted response
+* (client) Implemented API methods:
+  * `GET /v0/org/:org_id/mfa/:mfa_id`
+  * `GET /v0/org/:org_id/mfa`
+  * `PATCH /v0/org/:org_id/mfa/:mfa_id?mfa_vote=:mfa_votes`
+  * `POST /v1/org/:org_id/blob/sign/:key_id `
+  * `POST /v0/org/:org_id/babylon/staking/:pubkey`
 * (keys) Implement `/v0/org/:org_id/keys/:key` with role session
-* (blob) Implement `/v1/org/:org_id/blob/sign/:key_id`
-* (client) Support of babylon staking endpoints
-* (babylon) Implement `/v0/org/:org_id/babylon/staking/:pubkey`
 
 ### Improvements
 
 * Use scope type
 * (client) Check body for nil
+* Refactor
