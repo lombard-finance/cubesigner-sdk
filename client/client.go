@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
-	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	"io"
 	"math/rand"
 	"net"
@@ -15,6 +12,10 @@ import (
 	"reflect"
 	"strings"
 	"time"
+
+	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 type Client struct {
@@ -174,9 +175,12 @@ func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[st
 }
 
 func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
-	// copy body
+	// copy body if not nil
 	var buf bytes.Buffer
-	tee := io.TeeReader(body, &buf)
+	var tee io.Reader
+	if body != nil {
+		tee = io.TeeReader(body, &buf)
+	}
 
 	// replace path variables
 	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
