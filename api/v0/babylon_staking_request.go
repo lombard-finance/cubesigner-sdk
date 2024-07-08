@@ -3,7 +3,7 @@ package v0
 // BabylonStakingRequest struct for BabylonStakingRequest
 type BabylonStakingRequest struct {
 	// The action type.
-	Action string `json:"action"`
+	Action BabylonStakingAction `json:"action"`
 	// The deposit data.
 	Deposit *BabylonStakingDeposit `json:"deposit,omitempty"`
 	// The early unbond data.
@@ -14,28 +14,28 @@ type BabylonStakingRequest struct {
 
 func NewBabylonStakingDepositRequest(deposit *BabylonStakingDeposit) *BabylonStakingRequest {
 	this := BabylonStakingRequest{}
-	this.Action = "deposit"
+	this.Action = DepositAction
 	this.Deposit = deposit
 	return &this
 }
 
 func NewBabylonStakingEarlyUnbondRequest(earlyUnbond *BabylonStakingEarlyUnbond) *BabylonStakingRequest {
 	this := BabylonStakingRequest{}
-	this.Action = "early_unbond"
+	this.Action = EarlyUnbondAction
 	this.EarlyUnbond = earlyUnbond
 	return &this
 }
 
 func NewBabylonStakingWithdrawalTimelockRequest(withdrawal *BabylonStakingWithdrawal) *BabylonStakingRequest {
 	this := BabylonStakingRequest{}
-	this.Action = "withdraw_timelock"
+	this.Action = WithdrawTimelockAction
 	this.Withdrawal = withdrawal
 	return &this
 }
 
 func NewBabylonStakingWithdrawalEarlyUnbondRequest(withdrawal *BabylonStakingWithdrawal) *BabylonStakingRequest {
 	this := BabylonStakingRequest{}
-	this.Action = "withdraw_early_unbond"
+	this.Action = WithdrawEarlyUnbondAction
 	this.Withdrawal = withdrawal
 	return &this
 }
@@ -45,21 +45,21 @@ func NewBabylonStakingRequestWithDefaults() *BabylonStakingRequest {
 	return &this
 }
 
-func (o *BabylonStakingRequest) GetAction() string {
+func (o *BabylonStakingRequest) GetAction() BabylonStakingAction {
 	if o == nil {
 		return ""
 	}
 	return o.Action
 }
 
-func (o *BabylonStakingRequest) GetActionOk() (string, bool) {
+func (o *BabylonStakingRequest) GetActionOk() (BabylonStakingAction, bool) {
 	if o == nil {
 		return "", false
 	}
 	return o.Action, true
 }
 
-func (o *BabylonStakingRequest) SetAction(v string) {
+func (o *BabylonStakingRequest) SetAction(v BabylonStakingAction) {
 	o.Action = v
 }
 
