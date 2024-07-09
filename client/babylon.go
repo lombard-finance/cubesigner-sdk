@@ -1,8 +1,6 @@
 package client
 
 import (
-	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -49,11 +47,7 @@ func (cli *Client) signBabylonStakingRequest(
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
-		bodyBytes, err := io.ReadAll(encoded)
-		if err != nil {
-			return nil, "", err
-		}
-		return nil, "", errors.Wrap(err, fmt.Sprintf("request SignBabylonStaking: %s", string(bodyBytes)))
+		return nil, "", errors.Wrap(err, "request SignBabylonStaking")
 	}
 
 	if statusCode == http.StatusAccepted {
