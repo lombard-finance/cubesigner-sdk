@@ -10,27 +10,29 @@ type OperationKind string
 
 // List of OperationKind
 const (
-	AVA_SIGN          OperationKind = "AvaSign"
+	AVA_SIGN OperationKind = "AvaSign"
 	AVA_CHAIN_TX_SIGN OperationKind = "AvaChainTxSign"
-	BLOB_SIGN         OperationKind = "BlobSign"
-	BTC_SIGN          OperationKind = "BtcSign"
-	TAPROOT_SIGN      OperationKind = "TaprootSign"
-	EIP191_SIGN       OperationKind = "Eip191Sign"
-	EIP712_SIGN       OperationKind = "Eip712Sign"
-	EOTS_NONCES       OperationKind = "EotsNonces"
-	EOTS_SIGN         OperationKind = "EotsSign"
-	ETH1_SIGN         OperationKind = "Eth1Sign"
-	ETH2_SIGN         OperationKind = "Eth2Sign"
-	ETH2_STAKE        OperationKind = "Eth2Stake"
-	ETH2_UNSTAKE      OperationKind = "Eth2Unstake"
-	SOLANA_SIGN       OperationKind = "SolanaSign"
-	ROLE_UPDATE       OperationKind = "RoleUpdate"
+	BABYLON_STAKING OperationKind = "BabylonStaking"
+	BLOB_SIGN OperationKind = "BlobSign"
+	BTC_SIGN OperationKind = "BtcSign"
+	TAPROOT_SIGN OperationKind = "TaprootSign"
+	EIP191_SIGN OperationKind = "Eip191Sign"
+	EIP712_SIGN OperationKind = "Eip712Sign"
+	EOTS_NONCES OperationKind = "EotsNonces"
+	EOTS_SIGN OperationKind = "EotsSign"
+	ETH1_SIGN OperationKind = "Eth1Sign"
+	ETH2_SIGN OperationKind = "Eth2Sign"
+	ETH2_STAKE OperationKind = "Eth2Stake"
+	ETH2_UNSTAKE OperationKind = "Eth2Unstake"
+	SOLANA_SIGN OperationKind = "SolanaSign"
+	ROLE_UPDATE OperationKind = "RoleUpdate"
 )
 
 // All allowed values of OperationKind enum
 var AllowedOperationKindEnumValues = []OperationKind{
 	"AvaSign",
 	"AvaChainTxSign",
+	"BabylonStaking",
 	"BlobSign",
 	"BtcSign",
 	"TaprootSign",
@@ -124,3 +126,4 @@ func (v *NullableOperationKind) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
+

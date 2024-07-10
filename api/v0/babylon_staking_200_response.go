@@ -4,35 +4,35 @@ import (
 	"encoding/json"
 )
 
-// BabylonStakingResponse struct for BabylonStakingResponse
-type BabylonStakingResponse struct {
+// BabylonStaking200Response struct for BabylonStaking200Response
+type BabylonStaking200Response struct {
 	// The transaction fee in sats
 	Fee int64 `json:"fee"`
 	// The PSBT in standard hex serialization, without leading \"0x\".
 	Psbt string `json:"psbt"`
 }
 
-// NewBabylonStakingResponse instantiates a new BabylonStakingResponse object
+// NewBabylonStaking200Response instantiates a new BabylonStaking200Response object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBabylonStakingResponse(fee int64, psbt string) *BabylonStakingResponse {
-	this := BabylonStakingResponse{}
+func NewBabylonStaking200Response(fee int64, psbt string) *BabylonStaking200Response {
+	this := BabylonStaking200Response{}
 	this.Fee = fee
 	this.Psbt = psbt
 	return &this
 }
 
-// NewBabylonStakingResponseWithDefaults instantiates a new BabylonStakingResponse object
+// NewBabylonStaking200ResponseWithDefaults instantiates a new BabylonStaking200Response object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewBabylonStakingResponseWithDefaults() *BabylonStakingResponse {
-	this := BabylonStakingResponse{}
+func NewBabylonStaking200ResponseWithDefaults() *BabylonStaking200Response {
+	this := BabylonStaking200Response{}
 	return &this
 }
 
 // GetFee returns the Fee field value
-func (o *BabylonStakingResponse) GetFee() int64 {
+func (o *BabylonStaking200Response) GetFee() int64 {
 	if o == nil {
 		var ret int64
 		return ret
@@ -43,7 +43,7 @@ func (o *BabylonStakingResponse) GetFee() int64 {
 
 // GetFeeOk returns a tuple with the Fee field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingResponse) GetFeeOk() (*int64, bool) {
+func (o *BabylonStaking200Response) GetFeeOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -51,12 +51,12 @@ func (o *BabylonStakingResponse) GetFeeOk() (*int64, bool) {
 }
 
 // SetFee sets field value
-func (o *BabylonStakingResponse) SetFee(v int64) {
+func (o *BabylonStaking200Response) SetFee(v int64) {
 	o.Fee = v
 }
 
 // GetPsbt returns the Psbt field value
-func (o *BabylonStakingResponse) GetPsbt() string {
+func (o *BabylonStaking200Response) GetPsbt() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -67,7 +67,7 @@ func (o *BabylonStakingResponse) GetPsbt() string {
 
 // GetPsbtOk returns a tuple with the Psbt field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingResponse) GetPsbtOk() (*string, bool) {
+func (o *BabylonStaking200Response) GetPsbtOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -75,11 +75,11 @@ func (o *BabylonStakingResponse) GetPsbtOk() (*string, bool) {
 }
 
 // SetPsbt sets field value
-func (o *BabylonStakingResponse) SetPsbt(v string) {
+func (o *BabylonStaking200Response) SetPsbt(v string) {
 	o.Psbt = v
 }
 
-func (o BabylonStakingResponse) MarshalJSON() ([]byte, error) {
+func (o BabylonStaking200Response) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 	if true {
 		toSerialize["fee"] = o.Fee
@@ -90,38 +90,38 @@ func (o BabylonStakingResponse) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-type NullableBabylonStakingResponse struct {
-	value *BabylonStakingResponse
+type NullableBabylonStaking200Response struct {
+	value *BabylonStaking200Response
 	isSet bool
 }
 
-func (v NullableBabylonStakingResponse) Get() *BabylonStakingResponse {
+func (v NullableBabylonStaking200Response) Get() *BabylonStaking200Response {
 	return v.value
 }
 
-func (v *NullableBabylonStakingResponse) Set(val *BabylonStakingResponse) {
+func (v *NullableBabylonStaking200Response) Set(val *BabylonStaking200Response) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableBabylonStakingResponse) IsSet() bool {
+func (v NullableBabylonStaking200Response) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableBabylonStakingResponse) Unset() {
+func (v *NullableBabylonStaking200Response) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableBabylonStakingResponse(val *BabylonStakingResponse) *NullableBabylonStakingResponse {
-	return &NullableBabylonStakingResponse{value: val, isSet: true}
+func NewNullableBabylonStaking200Response(val *BabylonStaking200Response) *NullableBabylonStaking200Response {
+	return &NullableBabylonStaking200Response{value: val, isSet: true}
 }
 
-func (v NullableBabylonStakingResponse) MarshalJSON() ([]byte, error) {
+func (v NullableBabylonStaking200Response) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableBabylonStakingResponse) UnmarshalJSON(src []byte) error {
+func (v *NullableBabylonStaking200Response) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

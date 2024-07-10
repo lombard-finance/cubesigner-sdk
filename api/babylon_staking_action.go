@@ -1,4 +1,4 @@
-package v0
+package api
 
 // BabylonStakingAction represents the type of action when signing a Babylon staking transaction.
 type BabylonStakingAction string

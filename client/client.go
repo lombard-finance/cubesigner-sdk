@@ -180,6 +180,12 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	var tee io.Reader
 	if body != nil {
 		tee = io.TeeReader(body, &buf)
+		bodyBytes, err := io.ReadAll(tee)
+		if err != nil {
+			cli.logger.WithError(err).Warn("failed to read request body")
+		} else {
+			cli.logger.Tracef("request body: %s", bodyBytes)
+		}
 	}
 
 	// replace path variables
@@ -238,13 +244,6 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		requestData, err := io.ReadAll(&buf)
-		if err != nil {
-			log.WithError(err).Warn("failed to read request data")
-		} else {
-			log.Tracef("request: %s", string(requestData))
-		}
-
 		return nil, 0, errors.Errorf("%s request with status code: %d, message: %s", method, resp.StatusCode, string(responseData))
 	}
 	return bytes.NewReader(responseData), resp.StatusCode, nil

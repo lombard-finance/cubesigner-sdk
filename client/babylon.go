@@ -11,9 +11,26 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) signBabylonStakingRequest(
+func (cli *Client) StakingBabylon(
 	roleId, pubkey string,
-	request interface{},
+	request *v0.BabylonStakingRequest,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonStakingResponse, string, error) {
+	switch request.GetActualInstance().(type) {
+	case v0.BabylonStakingDeposit:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
+	case v0.BabylonStakingEarlyUnbond:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
+	case v0.BabylonStakingWithdrawal:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
+	}
+
+	return nil, "", errors.New("not implemented")
+}
+
+func (cli *Client) stakingBabylon(
+	roleId, pubkey string,
+	request *v0.BabylonStakingRequest,
 	scope api.Scope,
 	mfaId, mfaConfirmation *string,
 ) (*v0.BabylonStakingResponse, string, error) {
@@ -43,7 +60,7 @@ func (cli *Client) signBabylonStakingRequest(
 	}
 
 	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/babylon/staking/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+	endpoint := strings.Replace("/v0/org/:org_id/babylon/staking/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
@@ -63,28 +80,4 @@ func (cli *Client) signBabylonStakingRequest(
 		return nil, "", errors.Wrap(err, "decode")
 	}
 	return &decoded, "", nil
-}
-
-func (cli *Client) SignBabylonStakingDeposit(
-	roleId, pubkey string,
-	request *v0.BabylonStakingDeposit,
-	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStakingResponse, string, error) {
-	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
-}
-
-func (cli *Client) SignBabylonStakingEarlyUnbond(
-	roleId, pubkey string,
-	request *v0.BabylonStakingEarlyUnbond,
-	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStakingResponse, string, error) {
-	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
-}
-
-func (cli *Client) SignBabylonStakingWithdrawal(
-	roleId, pubkey string,
-	request *v0.BabylonStakingWithdrawal,
-	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStakingResponse, string, error) {
-	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
 }
