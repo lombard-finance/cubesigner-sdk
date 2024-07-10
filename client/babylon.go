@@ -15,7 +15,7 @@ func (cli *Client) StakingBabylon(
 	roleId, pubkey string,
 	request *v0.BabylonStakingRequest,
 	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStakingResponse, string, error) {
+) (*v0.BabylonStaking200Response, string, error) {
 	switch request.GetActualInstance().(type) {
 	case v0.BabylonStakingDeposit:
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
@@ -33,7 +33,7 @@ func (cli *Client) stakingBabylon(
 	request *v0.BabylonStakingRequest,
 	scope api.Scope,
 	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStakingResponse, string, error) {
+) (*v0.BabylonStaking200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign babylon staking",
 		Scopes:  []api.Scope{scope},
@@ -75,7 +75,7 @@ func (cli *Client) stakingBabylon(
 		return nil, mfaId, nil
 	}
 
-	decoded, err := decodeJSONResponse[v0.BabylonStakingResponse](response)
+	decoded, err := decodeJSONResponse[v0.BabylonStaking200Response](response)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "decode")
 	}
