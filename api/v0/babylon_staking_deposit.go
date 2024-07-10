@@ -17,10 +17,13 @@ type BabylonStakingDeposit struct {
 	TxnLockHeight *int32 `json:"txn_lock_height,omitempty"`
 	// The value to be staked in sats.
 	Value int64 `json:"value"`
+	// The action type.
+	Action BabylonStakingAction `json:"action"`
 }
 
-func NewBabylonStakingDeposit(scriptData BabylonScriptData, change string, fee int64, feeType FeeType, psbt string, value int64) *BabylonStakingDeposit {
+func NewBabylonStakingDeposit(scriptData BabylonScriptData, change string, fee int64, feeType FeeType, psbt string, value int64, action BabylonStakingAction) *BabylonStakingDeposit {
 	this := BabylonStakingDeposit{}
+	this.Action = action
 	this.BabylonScriptData = scriptData
 	this.Change = change
 	this.Fee = fee
@@ -33,6 +36,24 @@ func NewBabylonStakingDeposit(scriptData BabylonScriptData, change string, fee i
 func NewBabylonStakingDepositWithDefaults() *BabylonStakingDeposit {
 	this := BabylonStakingDeposit{}
 	return &this
+}
+
+func (o *BabylonStakingDeposit) GetAction() BabylonStakingAction {
+	if o == nil {
+		return ""
+	}
+	return o.Action
+}
+
+func (o *BabylonStakingDeposit) GetActionOk() (BabylonStakingAction, bool) {
+	if o == nil {
+		return "", false
+	}
+	return o.Action, true
+}
+
+func (o *BabylonStakingDeposit) SetAction(v BabylonStakingAction) {
+	o.Action = v
 }
 
 func (o *BabylonStakingDeposit) GetChange() string {

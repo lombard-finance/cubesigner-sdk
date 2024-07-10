@@ -11,10 +11,15 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) SignBabylonStaking(roleId, pubkey string, request *v0.BabylonStakingRequest, mfaId *string, mfaConfirmation *string) (*v0.BabylonStakingResponse, string, error) {
+func (cli *Client) signBabylonStakingRequest(
+	roleId, pubkey string,
+	request interface{},
+	scope api.Scope,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonStakingResponse, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign babylon staking",
-		Scopes:  []api.Scope{api.SIGNBABYLONSTAKING},
+		Scopes:  []api.Scope{scope},
 	}, roleId)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "create role token")
@@ -58,4 +63,28 @@ func (cli *Client) SignBabylonStaking(roleId, pubkey string, request *v0.Babylon
 		return nil, "", errors.Wrap(err, "decode")
 	}
 	return &decoded, "", nil
+}
+
+func (cli *Client) SignBabylonStakingDeposit(
+	roleId, pubkey string,
+	request *v0.BabylonStakingDeposit,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonStakingResponse, string, error) {
+	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
+}
+
+func (cli *Client) SignBabylonStakingEarlyUnbond(
+	roleId, pubkey string,
+	request *v0.BabylonStakingEarlyUnbond,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonStakingResponse, string, error) {
+	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
+}
+
+func (cli *Client) SignBabylonStakingWithdrawal(
+	roleId, pubkey string,
+	request *v0.BabylonStakingWithdrawal,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonStakingResponse, string, error) {
+	return cli.signBabylonStakingRequest(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
 }
