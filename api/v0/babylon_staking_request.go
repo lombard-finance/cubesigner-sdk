@@ -8,9 +8,11 @@ import (
 
 // BabylonStakingRequest - The actions possible via the Babylon Staking endpoint
 type BabylonStakingRequest struct {
-	BabylonStakingDeposit     *BabylonStakingDeposit
-	BabylonStakingEarlyUnbond *BabylonStakingEarlyUnbond
-	BabylonStakingWithdrawal  *BabylonStakingWithdrawal
+	*BabylonStakingDeposit
+	*BabylonStakingEarlyUnbond
+	*BabylonStakingWithdrawal
+
+	Action api.BabylonStakingAction `json:"action"`
 }
 
 // BabylonStakingDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingDeposit wrapped in BabylonStakingRequest
@@ -91,22 +93,22 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	}
 }
 
-// Marshal data from the first non-nil pointers in the struct to JSON
-func (src BabylonStakingRequest) MarshalJSON() ([]byte, error) {
-	if src.BabylonStakingDeposit != nil {
-		return json.Marshal(&src.BabylonStakingDeposit)
-	}
-
-	if src.BabylonStakingEarlyUnbond != nil {
-		return json.Marshal(&src.BabylonStakingEarlyUnbond)
-	}
-
-	if src.BabylonStakingWithdrawal != nil {
-		return json.Marshal(&src.BabylonStakingWithdrawal)
-	}
-
-	return nil, nil // no data in oneOf schemas
-}
+//// Marshal data from the first non-nil pointers in the struct to JSON
+//func (src BabylonStakingRequest) MarshalJSON() ([]byte, error) {
+//	if src.BabylonStakingDeposit != nil {
+//		return json.Marshal(&src.BabylonStakingDeposit)
+//	}
+//
+//	if src.BabylonStakingEarlyUnbond != nil {
+//		return json.Marshal(&src.BabylonStakingEarlyUnbond)
+//	}
+//
+//	if src.BabylonStakingWithdrawal != nil {
+//		return json.Marshal(&src.BabylonStakingWithdrawal)
+//	}
+//
+//	return nil, nil // no data in oneOf schemas
+//}
 
 // Get the actual instance
 func (obj *BabylonStakingRequest) GetActualInstance() interface{} {
@@ -127,40 +129,4 @@ func (obj *BabylonStakingRequest) GetActualInstance() interface{} {
 
 	// all schemas are nil
 	return nil
-}
-
-type NullableBabylonStakingRequest struct {
-	value *BabylonStakingRequest
-	isSet bool
-}
-
-func (v NullableBabylonStakingRequest) Get() *BabylonStakingRequest {
-	return v.value
-}
-
-func (v *NullableBabylonStakingRequest) Set(val *BabylonStakingRequest) {
-	v.value = val
-	v.isSet = true
-}
-
-func (v NullableBabylonStakingRequest) IsSet() bool {
-	return v.isSet
-}
-
-func (v *NullableBabylonStakingRequest) Unset() {
-	v.value = nil
-	v.isSet = false
-}
-
-func NewNullableBabylonStakingRequest(val *BabylonStakingRequest) *NullableBabylonStakingRequest {
-	return &NullableBabylonStakingRequest{value: val, isSet: true}
-}
-
-func (v NullableBabylonStakingRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.value)
-}
-
-func (v *NullableBabylonStakingRequest) UnmarshalJSON(src []byte) error {
-	v.isSet = true
-	return json.Unmarshal(src, &v.value)
 }

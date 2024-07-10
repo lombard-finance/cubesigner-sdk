@@ -11,7 +11,7 @@ type BabylonStakingDeposit struct {
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
 	FinalityProviderPk string `json:"finality_provider_pk"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
-	LockTime int32            `json:"lock_time"`
+	LockTime int32                `json:"lock_time"`
 	Network  api.BabylonNetworkId `json:"network"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the staker. This is the key that signs the slashing, withdrawal, and unbonding scripts.
 	StakerPk string `json:"staker_pk"`
@@ -435,49 +435,49 @@ func (o *BabylonStakingDeposit) SetValue(v int64) {
 	o.Value = v
 }
 
-func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if o.ExplicitParams.IsSet() {
-		toSerialize["explicit_params"] = o.ExplicitParams.Get()
-	}
-	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
-	if o.Version.IsSet() {
-		toSerialize["version"] = o.Version.Get()
-	}
-	if true {
-		toSerialize["change"] = o.Change
-	}
-	if true {
-		toSerialize["fee"] = o.Fee
-	}
-	if true {
-		toSerialize["fee_type"] = o.FeeType
-	}
-	if o.IgnorePsbtOutputs != nil {
-		toSerialize["ignore_psbt_outputs"] = o.IgnorePsbtOutputs
-	}
-	if true {
-		toSerialize["psbt"] = o.Psbt
-	}
-	if o.TxnLockHeight.IsSet() {
-		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
-	}
-	if true {
-		toSerialize["value"] = o.Value
-	}
-	return json.Marshal(toSerialize)
-}
+//func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
+//	toSerialize := map[string]interface{}{}
+//	if o.ExplicitParams.IsSet() {
+//		toSerialize["explicit_params"] = o.ExplicitParams.Get()
+//	}
+//	if true {
+//		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
+//	}
+//	if true {
+//		toSerialize["lock_time"] = o.LockTime
+//	}
+//	if true {
+//		toSerialize["network"] = o.Network
+//	}
+//	if true {
+//		toSerialize["staker_pk"] = o.StakerPk
+//	}
+//	if o.Version.IsSet() {
+//		toSerialize["version"] = o.Version.Get()
+//	}
+//	if true {
+//		toSerialize["change"] = o.Change
+//	}
+//	if true {
+//		toSerialize["fee"] = o.Fee
+//	}
+//	if true {
+//		toSerialize["fee_type"] = o.FeeType
+//	}
+//	if o.IgnorePsbtOutputs != nil {
+//		toSerialize["ignore_psbt_outputs"] = o.IgnorePsbtOutputs
+//	}
+//	if true {
+//		toSerialize["psbt"] = o.Psbt
+//	}
+//	if o.TxnLockHeight.IsSet() {
+//		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
+//	}
+//	if true {
+//		toSerialize["value"] = o.Value
+//	}
+//	return json.Marshal(toSerialize)
+//}
 
 type NullableBabylonStakingDeposit struct {
 	value *BabylonStakingDeposit

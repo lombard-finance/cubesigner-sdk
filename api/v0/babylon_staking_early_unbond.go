@@ -348,40 +348,40 @@ func (o *BabylonStakingEarlyUnbond) SetVout(v int32) {
 	o.Vout = v
 }
 
-func (o BabylonStakingEarlyUnbond) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
-	if o.ExplicitParams.IsSet() {
-		toSerialize["explicit_params"] = o.ExplicitParams.Get()
-	}
-	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
-	if o.Version.IsSet() {
-		toSerialize["version"] = o.Version.Get()
-	}
-	if true {
-		toSerialize["txid"] = o.Txid
-	}
-	if o.TxnLockHeight.IsSet() {
-		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
-	}
-	if true {
-		toSerialize["value"] = o.Value
-	}
-	if true {
-		toSerialize["vout"] = o.Vout
-	}
-	return json.Marshal(toSerialize)
-}
+//func (o BabylonStakingEarlyUnbond) MarshalJSON() ([]byte, error) {
+//	toSerialize := map[string]interface{}{}
+//	if o.ExplicitParams.IsSet() {
+//		toSerialize["explicit_params"] = o.ExplicitParams.Get()
+//	}
+//	if true {
+//		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
+//	}
+//	if true {
+//		toSerialize["lock_time"] = o.LockTime
+//	}
+//	if true {
+//		toSerialize["network"] = o.Network
+//	}
+//	if true {
+//		toSerialize["staker_pk"] = o.StakerPk
+//	}
+//	if o.Version.IsSet() {
+//		toSerialize["version"] = o.Version.Get()
+//	}
+//	if true {
+//		toSerialize["txid"] = o.Txid
+//	}
+//	if o.TxnLockHeight.IsSet() {
+//		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
+//	}
+//	if true {
+//		toSerialize["value"] = o.Value
+//	}
+//	if true {
+//		toSerialize["vout"] = o.Vout
+//	}
+//	return json.Marshal(toSerialize)
+//}
 
 type NullableBabylonStakingEarlyUnbond struct {
 	value *BabylonStakingEarlyUnbond
