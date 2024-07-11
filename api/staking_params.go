@@ -4,6 +4,37 @@ import (
 	"encoding/json"
 )
 
+type IBabylonStakingParams interface {
+	// GetActivationHeight returns the ActivationHeight field value
+	GetActivationHeight() int64
+	// GetCapHeight returns the CapHeight field value if set, zero value otherwise.
+	GetCapHeight() int64
+	//GetConfirmationDepth returns the ConfirmationDepth field value
+	GetConfirmationDepth() int32
+	// GetCovenantPks returns the CovenantPks field value
+	GetCovenantPks() []string
+	// GetCovenantQuorum returns the CovenantQuorum field value
+	GetCovenantQuorum() int32
+	// GetMaxStakingAmount returns the MaxStakingAmount field value
+	GetMaxStakingAmount() int64
+	// GetMaxStakingTime returns the MaxStakingTime field value
+	GetMaxStakingTime() int32
+	// GetMinStakingAmount returns the MinStakingAmount field value
+	GetMinStakingAmount() int64
+	// GetMinStakingTime returns the MinStakingTime field value
+	GetMinStakingTime() int32
+	// GetStakingCap returns the StakingCap field value if set, zero value otherwise.
+	GetStakingCap() int64
+	// GetTag returns the Tag field value
+	GetTag() string
+	// GetUnbondingFee returns the UnbondingFee field value
+	GetUnbondingFee() int64
+	// GetUnbondingTime returns the UnbondingTime field value
+	GetUnbondingTime() int32
+	// GetVersion returns the Version field value
+	GetVersion() int32
+}
+
 // BabylonStakingParams Parameter set for Babylon staking. The latest parameter sets are available from <https://github.com/babylonchain/networks>
 type BabylonStakingParams struct {
 	// Block height at which these params will enter use

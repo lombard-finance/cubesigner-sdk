@@ -134,39 +134,3 @@ func (obj *BabylonStakingRequest) GetActualInstance() interface{} {
 	// all schemas are nil
 	return nil
 }
-
-type NullableBabylonStakingRequest struct {
-	value *BabylonStakingRequest
-	isSet bool
-}
-
-func (v NullableBabylonStakingRequest) Get() *BabylonStakingRequest {
-	return v.value
-}
-
-func (v *NullableBabylonStakingRequest) Set(val *BabylonStakingRequest) {
-	v.value = val
-	v.isSet = true
-}
-
-func (v NullableBabylonStakingRequest) IsSet() bool {
-	return v.isSet
-}
-
-func (v *NullableBabylonStakingRequest) Unset() {
-	v.value = nil
-	v.isSet = false
-}
-
-func NewNullableBabylonStakingRequest(val *BabylonStakingRequest) *NullableBabylonStakingRequest {
-	return &NullableBabylonStakingRequest{value: val, isSet: true}
-}
-
-func (v NullableBabylonStakingRequest) MarshalJSON() ([]byte, error) {
-	return json.Marshal(v.value)
-}
-
-func (v *NullableBabylonStakingRequest) UnmarshalJSON(src []byte) error {
-	v.isSet = true
-	return json.Unmarshal(src, &v.value)
-}
