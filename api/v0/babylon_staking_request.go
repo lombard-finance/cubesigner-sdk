@@ -11,6 +11,8 @@ type BabylonStakingRequest struct {
 	BabylonStakingDeposit     *BabylonStakingDeposit
 	BabylonStakingEarlyUnbond *BabylonStakingEarlyUnbond
 	BabylonStakingWithdrawal  *BabylonStakingWithdrawal
+
+	Action api.BabylonStakingAction `json:"action"`
 }
 
 // BabylonStakingDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingDeposit wrapped in BabylonStakingRequest
@@ -93,19 +95,23 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src BabylonStakingRequest) MarshalJSON() ([]byte, error) {
+	toSerialize := map[string]interface{}{}
+
 	if src.BabylonStakingDeposit != nil {
-		return json.Marshal(&src.BabylonStakingDeposit)
+		toSerialize = src.BabylonStakingDeposit.Serialize()
 	}
 
 	if src.BabylonStakingEarlyUnbond != nil {
-		return json.Marshal(&src.BabylonStakingEarlyUnbond)
+		toSerialize = src.BabylonStakingEarlyUnbond.Serialize()
 	}
 
 	if src.BabylonStakingWithdrawal != nil {
-		return json.Marshal(&src.BabylonStakingWithdrawal)
+		toSerialize = src.BabylonStakingWithdrawal.Serialize()
 	}
 
-	return nil, nil // no data in oneOf schemas
+	toSerialize["action"] = src.Action
+
+	return json.Marshal(toSerialize)
 }
 
 // Get the actual instance

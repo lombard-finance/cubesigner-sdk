@@ -11,7 +11,7 @@ type BabylonStakingDeposit struct {
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
 	FinalityProviderPk string `json:"finality_provider_pk"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
-	LockTime int32            `json:"lock_time"`
+	LockTime int32                `json:"lock_time"`
 	Network  api.BabylonNetworkId `json:"network"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the staker. This is the key that signs the slashing, withdrawal, and unbonding scripts.
 	StakerPk string `json:"staker_pk"`
@@ -436,7 +436,12 @@ func (o *BabylonStakingDeposit) SetValue(v int64) {
 }
 
 func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
+	return json.Marshal(o.Serialize())
+}
+
+func (o BabylonStakingDeposit) Serialize() (toSerialize map[string]interface{}) {
+	toSerialize = make(map[string]interface{})
+
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
@@ -476,7 +481,7 @@ func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["value"] = o.Value
 	}
-	return json.Marshal(toSerialize)
+	return
 }
 
 type NullableBabylonStakingDeposit struct {

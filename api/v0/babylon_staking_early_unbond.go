@@ -349,7 +349,12 @@ func (o *BabylonStakingEarlyUnbond) SetVout(v int32) {
 }
 
 func (o BabylonStakingEarlyUnbond) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
+	return json.Marshal(o.Serialize())
+}
+
+func (o BabylonStakingEarlyUnbond) Serialize() (toSerialize map[string]interface{}) {
+	toSerialize = make(map[string]interface{})
+
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
@@ -380,7 +385,7 @@ func (o BabylonStakingEarlyUnbond) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["vout"] = o.Vout
 	}
-	return json.Marshal(toSerialize)
+	return
 }
 
 type NullableBabylonStakingEarlyUnbond struct {

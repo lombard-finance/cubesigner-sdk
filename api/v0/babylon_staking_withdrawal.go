@@ -429,7 +429,12 @@ func (o *BabylonStakingWithdrawal) SetVout(v int32) {
 }
 
 func (o BabylonStakingWithdrawal) MarshalJSON() ([]byte, error) {
-	toSerialize := map[string]interface{}{}
+	return json.Marshal(o.Serialize())
+}
+
+func (o BabylonStakingWithdrawal) Serialize() (toSerialize map[string]interface{}) {
+	toSerialize = make(map[string]interface{})
+
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
@@ -469,7 +474,7 @@ func (o BabylonStakingWithdrawal) MarshalJSON() ([]byte, error) {
 	if true {
 		toSerialize["vout"] = o.Vout
 	}
-	return json.Marshal(toSerialize)
+	return
 }
 
 type NullableBabylonStakingWithdrawal struct {
