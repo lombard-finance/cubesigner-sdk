@@ -435,49 +435,54 @@ func (o *BabylonStakingDeposit) SetValue(v int64) {
 	o.Value = v
 }
 
-//func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
-//	toSerialize := map[string]interface{}{}
-//	if o.ExplicitParams.IsSet() {
-//		toSerialize["explicit_params"] = o.ExplicitParams.Get()
-//	}
-//	if true {
-//		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
-//	}
-//	if true {
-//		toSerialize["lock_time"] = o.LockTime
-//	}
-//	if true {
-//		toSerialize["network"] = o.Network
-//	}
-//	if true {
-//		toSerialize["staker_pk"] = o.StakerPk
-//	}
-//	if o.Version.IsSet() {
-//		toSerialize["version"] = o.Version.Get()
-//	}
-//	if true {
-//		toSerialize["change"] = o.Change
-//	}
-//	if true {
-//		toSerialize["fee"] = o.Fee
-//	}
-//	if true {
-//		toSerialize["fee_type"] = o.FeeType
-//	}
-//	if o.IgnorePsbtOutputs != nil {
-//		toSerialize["ignore_psbt_outputs"] = o.IgnorePsbtOutputs
-//	}
-//	if true {
-//		toSerialize["psbt"] = o.Psbt
-//	}
-//	if o.TxnLockHeight.IsSet() {
-//		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
-//	}
-//	if true {
-//		toSerialize["value"] = o.Value
-//	}
-//	return json.Marshal(toSerialize)
-//}
+func (o BabylonStakingDeposit) MarshalJSON() ([]byte, error) {
+	return json.Marshal(o.Serialize())
+}
+
+func (o BabylonStakingDeposit) Serialize() (toSerialize map[string]interface{}) {
+	toSerialize = make(map[string]interface{})
+
+	if o.ExplicitParams.IsSet() {
+		toSerialize["explicit_params"] = o.ExplicitParams.Get()
+	}
+	if true {
+		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
+	}
+	if true {
+		toSerialize["lock_time"] = o.LockTime
+	}
+	if true {
+		toSerialize["network"] = o.Network
+	}
+	if true {
+		toSerialize["staker_pk"] = o.StakerPk
+	}
+	if o.Version.IsSet() {
+		toSerialize["version"] = o.Version.Get()
+	}
+	if true {
+		toSerialize["change"] = o.Change
+	}
+	if true {
+		toSerialize["fee"] = o.Fee
+	}
+	if true {
+		toSerialize["fee_type"] = o.FeeType
+	}
+	if o.IgnorePsbtOutputs != nil {
+		toSerialize["ignore_psbt_outputs"] = o.IgnorePsbtOutputs
+	}
+	if true {
+		toSerialize["psbt"] = o.Psbt
+	}
+	if o.TxnLockHeight.IsSet() {
+		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
+	}
+	if true {
+		toSerialize["value"] = o.Value
+	}
+	return
+}
 
 type NullableBabylonStakingDeposit struct {
 	value *BabylonStakingDeposit
