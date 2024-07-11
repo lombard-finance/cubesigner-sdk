@@ -180,7 +180,9 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	var tee io.Reader
 	if body != nil {
 		tee = io.TeeReader(body, &buf)
-		bodyBytes, err := io.ReadAll(tee)
+		logReader := io.TeeReader(body, &buf)
+
+		bodyBytes, err := io.ReadAll(logReader)
 		if err != nil {
 			cli.logger.WithError(err).Warn("failed to read request body")
 		} else {
