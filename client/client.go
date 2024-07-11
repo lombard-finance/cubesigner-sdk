@@ -180,9 +180,8 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	var tee io.Reader
 	if body != nil {
 		tee = io.TeeReader(body, &buf)
-		logReader := io.TeeReader(body, &buf)
 
-		bodyBytes, err := io.ReadAll(logReader)
+		bodyBytes, err := io.ReadAll(tee)
 		if err != nil {
 			cli.logger.WithError(err).Warn("failed to read request body")
 		} else {
@@ -214,7 +213,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), tee)
+	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), &buf)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "create request with context")
 	}
