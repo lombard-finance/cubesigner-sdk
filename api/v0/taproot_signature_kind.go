@@ -13,8 +13,8 @@ type TaprootSignatureKind struct {
 	InputIndex            int32                                             `json:"input_index"`
 	LeafHashCodeSeparator NullableTaprootSignatureKindLeafHashCodeSeparator `json:"leaf_hash_code_separator,omitempty"`
 	// If this field is not present or null, no tweak is applied. If the field is an empty string, the key is tweaked with an unspendable script path per BIP0341. Otherwise, this field must contain a 32-byte, base-64 encoded hex string representing the Merkle root with which to tweak the key before signing.
-	MerkleRoot api.NullableString `json:"merkle_root,omitempty"`
-	Prevouts   api.PrevOutputs    `json:"prevouts"`
+	MerkleRoot string          `json:"merkle_root"`
+	Prevouts   api.PrevOutputs `json:"prevouts"`
 	// Hash type of an input's signature, encoded in the last byte of the signature. Possible values: - SIGHASH_ALL - SIGHASH_ALL|SIGHASH_ANYONECANPAY - SIGHASH_DEFAULT - SIGHASH_NONE - SIGHASH_NONE|SIGHASH_ANYONECANPAY - SIGHASH_SINGLE - SIGHASH_SINGLE|SIGHASH_ANYONECANPAY
 	SighashType string `json:"sighash_type"`
 }
@@ -151,11 +151,11 @@ func (o *TaprootSignatureKind) UnsetLeafHashCodeSeparator() {
 
 // GetMerkleRoot returns the MerkleRoot field value if set, zero value otherwise (both if not set or set to explicit null).
 func (o *TaprootSignatureKind) GetMerkleRoot() string {
-	if o == nil || o.MerkleRoot.Get() == nil {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.MerkleRoot.Get()
+	return o.MerkleRoot
 }
 
 // GetMerkleRootOk returns a tuple with the MerkleRoot field value if set, nil otherwise
@@ -165,31 +165,12 @@ func (o *TaprootSignatureKind) GetMerkleRootOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.MerkleRoot.Get(), o.MerkleRoot.IsSet()
-}
-
-// HasMerkleRoot returns a boolean if a field has been set.
-func (o *TaprootSignatureKind) HasMerkleRoot() bool {
-	if o != nil && o.MerkleRoot.IsSet() {
-		return true
-	}
-
-	return false
+	return &o.MerkleRoot, true
 }
 
 // SetMerkleRoot gets a reference to the given NullableString and assigns it to the MerkleRoot field.
 func (o *TaprootSignatureKind) SetMerkleRoot(v string) {
-	o.MerkleRoot.Set(&v)
-}
-
-// SetMerkleRootNil sets the value for MerkleRoot to be an explicit nil
-func (o *TaprootSignatureKind) SetMerkleRootNil() {
-	o.MerkleRoot.Set(nil)
-}
-
-// UnsetMerkleRoot ensures that no value is present for MerkleRoot, not even an explicit nil
-func (o *TaprootSignatureKind) UnsetMerkleRoot() {
-	o.MerkleRoot.Unset()
+	o.MerkleRoot = v
 }
 
 // GetPrevouts returns the Prevouts field value
@@ -251,8 +232,8 @@ func (o TaprootSignatureKind) MarshalJSON() ([]byte, error) {
 	if o.LeafHashCodeSeparator.IsSet() {
 		toSerialize["leaf_hash_code_separator"] = o.LeafHashCodeSeparator.Get()
 	}
-	if o.MerkleRoot.IsSet() {
-		toSerialize["merkle_root"] = o.MerkleRoot.Get()
+	if true {
+		toSerialize["merkle_root"] = o.MerkleRoot
 	}
 	if true {
 		toSerialize["prevouts"] = o.Prevouts
