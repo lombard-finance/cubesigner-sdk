@@ -6,8 +6,9 @@ import (
 
 // TaprootSignRequest struct for TaprootSignRequest
 type TaprootSignRequest struct {
-	SigKind TaprootSignatureKind   `json:"sig_kind"`
-	Tx      map[string]interface{} `json:"tx"`
+	SigKind      TaprootSignatureKind   `json:"sig_kind"`
+	Tx           map[string]interface{} `json:"tx"`
+	TaprootTweak string                 `json:"taproot_tweak"`
 }
 
 // NewTaprootSignRequest instantiates a new TaprootSignRequest object
