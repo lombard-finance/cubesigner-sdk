@@ -11,6 +11,9 @@ func (cli *Client) AboutMeLegacy() (*v0.AboutMeLegacy200Response, error) {
 		return nil, errors.Wrap(err, "request AboutMeLegacy")
 	}
 	decoded, err := decodeJSONResponse[v0.AboutMeLegacy200Response](response)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode")
+	}
 	return &decoded, nil
 }
 
@@ -20,5 +23,8 @@ func (cli *Client) AboutMe() (*v0.AboutMeLegacy200Response, error) {
 		return nil, errors.Wrap(err, "request AboutMe")
 	}
 	decoded, err := decodeJSONResponse[v0.AboutMeLegacy200Response](response)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode")
+	}
 	return &decoded, nil
 }
