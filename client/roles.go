@@ -51,5 +51,8 @@ func (cli *Client) GetKeysInRole(roleId string, page *pagination.Page) (*v0.List
 		return nil, errors.Wrap(err, "request ListRoleKeys")
 	}
 	decoded, err := decodeJSONResponse[v0.ListRoleKeys200Response](response)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode")
+	}
 	return &decoded, nil
 }

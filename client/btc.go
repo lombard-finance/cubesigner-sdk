@@ -107,3 +107,54 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 	}
 	return &decoded, "", nil
 }
+
+func (cli *Client) SignPsbt(roleId, pubkey string, request *v0.PsbtSignRequest, mfaId, mfaConfirmation *string) (*v0.PsbtSign200Response, string, error) {
+    // This follows the convention of other Sign*() functions, minting a new token per request
+    // TODO: session management improvements (here and elsewhere)
+	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
+		Purpose: "sign psbt",
+		Scopes:  []api.Scope{api.SIGNBTCPSBT},
+	}, roleId)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "create role token")
+	}
+
+	headers := map[string]string{
+		"Authorization": authResp.GetToken(),
+	}
+
+	// add mfa headers
+	if mfaConfirmation != nil && *mfaConfirmation != "" {
+		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
+		for k, v := range mfaHeaders {
+			headers[k] = v
+		}
+	}
+
+	encoded, err := encodeJSONRequest(request)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "encode")
+	}
+
+	// replace path variables
+	endpoint := strings.Replace("/v0/org/:org_id/btc/psbt/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+
+	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "request SignPsbt")
+	}
+
+	if statusCode == http.StatusAccepted {
+		mfaId, err := decodeAcceptedResponse(response)
+		if err != nil {
+			return nil, "", errors.Wrap(err, "decode accepted response")
+		}
+		return nil, mfaId, nil
+	}
+
+	decoded, err := decodeJSONResponse[v0.PsbtSign200Response](response)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "decode")
+	}
+	return &decoded, "", nil
+}

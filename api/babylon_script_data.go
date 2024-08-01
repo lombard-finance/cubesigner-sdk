@@ -10,8 +10,8 @@ type BabylonScriptData struct {
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
 	FinalityProviderPk string `json:"finality_provider_pk"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
-	LockTime int32 `json:"lock_time"`
-	Network BabylonNetworkId `json:"network"`
+	LockTime int32            `json:"lock_time"`
+	Network  BabylonNetworkId `json:"network"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the staker. This is the key that signs the slashing, withdrawal, and unbonding scripts.
 	StakerPk string `json:"staker_pk"`
 	// The parameter version to use. If `None`, uses the latest version.
@@ -71,6 +71,7 @@ func (o *BabylonScriptData) HasExplicitParams() bool {
 func (o *BabylonScriptData) SetExplicitParams(v BabylonScriptDataExplicitParams) {
 	o.ExplicitParams.Set(&v)
 }
+
 // SetExplicitParamsNil sets the value for ExplicitParams to be an explicit nil
 func (o *BabylonScriptData) SetExplicitParamsNil() {
 	o.ExplicitParams.Set(nil)
@@ -209,6 +210,7 @@ func (o *BabylonScriptData) HasVersion() bool {
 func (o *BabylonScriptData) SetVersion(v int32) {
 	o.Version.Set(&v)
 }
+
 // SetVersionNil sets the value for Version to be an explicit nil
 func (o *BabylonScriptData) SetVersionNil() {
 	o.Version.Set(nil)
@@ -277,5 +279,3 @@ func (v *NullableBabylonScriptData) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

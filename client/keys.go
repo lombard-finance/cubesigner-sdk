@@ -55,6 +55,9 @@ func (cli *Client) GetKeyInOrgForRole(key, role string) (*v0.GetKeyInOrg200Respo
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}
 	decoded, err := decodeJSONResponse[v0.GetKeyInOrg200Response](response)
+	if err != nil {
+		return nil, errors.Wrap(err, "decode")
+	}
 	return &decoded, nil
 }
 
