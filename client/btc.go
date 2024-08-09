@@ -109,8 +109,8 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 }
 
 func (cli *Client) SignPsbt(roleId, pubkey string, request *v0.PsbtSignRequest, mfaId, mfaConfirmation *string) (*v0.PsbtSign200Response, string, error) {
-    // This follows the convention of other Sign*() functions, minting a new token per request
-    // TODO: session management improvements (here and elsewhere)
+	// This follows the convention of other Sign*() functions, minting a new token per request
+	// TODO: session management improvements (here and elsewhere)
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign psbt",
 		Scopes:  []api.Scope{api.SIGNBTCPSBT},
