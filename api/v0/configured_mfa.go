@@ -3,6 +3,7 @@ package v0
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -30,30 +31,44 @@ func ConfiguredMfaOneOf1AsConfiguredMfa(v *ConfiguredMfaOneOf1) ConfiguredMfa {
 func (dst *ConfiguredMfa) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
-	// try to unmarshal data into ConfiguredMfaOneOf
-	err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
-	if err == nil {
-		jsonConfiguredMfaOneOf, _ := json.Marshal(dst.ConfiguredMfaOneOf)
-		if string(jsonConfiguredMfaOneOf) == "{}" { // empty struct
-			dst.ConfiguredMfaOneOf = nil
-		} else {
-			match++
-		}
-	} else {
-		dst.ConfiguredMfaOneOf = nil
+
+	// Define a temporary struct to check the value of the "type" field
+	var temp map[string]interface{}
+	if err = json.Unmarshal(data, &temp); err != nil {
+		return err
 	}
 
-	// try to unmarshal data into ConfiguredMfaOneOf1
-	err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf1)
-	if err == nil {
-		jsonConfiguredMfaOneOf1, _ := json.Marshal(dst.ConfiguredMfaOneOf1)
-		if string(jsonConfiguredMfaOneOf1) == "{}" { // empty struct
-			dst.ConfiguredMfaOneOf1 = nil
-		} else {
-			match++
+	// Check the value of the "type" field
+	if mfaType, ok := temp["type"].(string); ok {
+		switch mfaType {
+		case "totp", "":
+			// If type is "totp" or empty, it should match ConfiguredMfaOneOf
+			err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
+			if err == nil {
+				match++
+			} else {
+				dst.ConfiguredMfaOneOf = nil
+			}
+		case "fido":
+			// If type is "fido", it should match ConfiguredMfaOneOf1
+			err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf1)
+			if err == nil {
+				match++
+			} else {
+				dst.ConfiguredMfaOneOf1 = nil
+			}
+		default:
+			// Handle unknown types, if necessary
+			return fmt.Errorf("unknown type: %s", mfaType)
 		}
 	} else {
-		dst.ConfiguredMfaOneOf1 = nil
+		// If "type" is missing, treat it as an empty string
+		err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
+		if err == nil {
+			match++
+		} else {
+			dst.ConfiguredMfaOneOf = nil
+		}
 	}
 
 	if match > 1 { // more than 1 match
