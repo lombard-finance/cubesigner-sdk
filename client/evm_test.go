@@ -1,8 +1,8 @@
 package client
 
 import (
-    "fmt"
-    "os"
+	"fmt"
+	"os"
 
 	"github.com/lombard-finance/cubesigner-sdk/api"
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
@@ -19,44 +19,44 @@ var (
 )
 
 type ClientArgs struct {
-    address string
-    orgID string
-    token string
-    logger *logrus.Entry
-    timeout time.Duration
+	address string
+	orgID   string
+	token   string
+	logger  *logrus.Entry
+	timeout time.Duration
 }
 
-/// The message that we will sign using EIP712-style signing
+// / The message that we will sign using EIP712-style signing
 type WhaleDepositMessage struct {
-    ToAddress string
-    ChainId uint64
-    LbtcContractAddress string
-    ReferralId string
-    FinalityProviderPk string
-    Utxo string
+	ToAddress           string
+	ChainId             uint64
+	LbtcContractAddress string
+	ReferralId          string
+	FinalityProviderPk  string
+	Utxo                string
 }
 
 func TestClient_SignEip712(t *testing.T) {
 	token := os.Getenv("CUBESIGNER_TOKEN")
-    if len(token) == 0 {
-        panic("must set CUBESIGNER_TOKEN envvar, e.v.,\nexport CUBESIGNER_TOKEN=<base64_token>")
-    }
-    pubkey := os.Getenv("CUBESIGNER_EVM_ADDR")
-    if len(pubkey) == 0 {
-        panic("must set CUBESIGNER_EVM_ADDR envvar, e.g.,\nexport CUBESIGNER_EVM_ADDR=0xbd9ee03f626377e3a9d86f933aa04398ecd05e5c")
-    }
-    org_id := os.Getenv("CUBESIGNER_ORG_ID")
-    if len(org_id) == 0 {
-        panic("must set CUBESIGNER_ORG_ID envvar, e.g.,\nexport CUBESIGNER_ORG_ID=Org#9aa34a9c-3ff3-47fa-a98b-8c288812731c")
-    }
-    cubesigner_env := os.Getenv("CUBESIGNER_ENV")
-    if len(cubesigner_env) == 0 {
-        cubesigner_env = "https://gamma.signer.cubist.dev"
-    }
+	if len(token) == 0 {
+		panic("must set CUBESIGNER_TOKEN envvar, e.v.,\nexport CUBESIGNER_TOKEN=<base64_token>")
+	}
+	pubkey := os.Getenv("CUBESIGNER_EVM_ADDR")
+	if len(pubkey) == 0 {
+		panic("must set CUBESIGNER_EVM_ADDR envvar, e.g.,\nexport CUBESIGNER_EVM_ADDR=0xbd9ee03f626377e3a9d86f933aa04398ecd05e5c")
+	}
+	org_id := os.Getenv("CUBESIGNER_ORG_ID")
+	if len(org_id) == 0 {
+		panic("must set CUBESIGNER_ORG_ID envvar, e.g.,\nexport CUBESIGNER_ORG_ID=Org#9aa34a9c-3ff3-47fa-a98b-8c288812731c")
+	}
+	cubesigner_env := os.Getenv("CUBESIGNER_ENV")
+	if len(cubesigner_env) == 0 {
+		cubesigner_env = "https://gamma.signer.cubist.dev"
+	}
 
 	logger := logrus.New()
 	logger.SetLevel(logrus.TraceLevel)
-    domainChainIdString := fmt.Sprintf("%v", DomainChainId)
+	domainChainIdString := fmt.Sprintf("%v", DomainChainId)
 
 	type args struct {
 		pubkey          string
@@ -92,12 +92,12 @@ func TestClient_SignEip712(t *testing.T) {
 							Version: *api.NewNullableString(&VersionStr),
 						},
 						Message: map[string]interface{}{
-							"ToAddress":           "0x9492ab3bcdadefd42b88c3a916db1ea2ac77d231",
-							"ChainId":             17_000,
-							"LbtcContractAddress": "0xed7bfd5c1790576105af4649817f6d35a75cd818",
-							"ReferralId":          "TEST",
+							"ToAddress":           "0x17a604740a25d703f9848857beb9e88d0ab0d3f8\n",
+							"ChainId":             1,
+							"LbtcContractAddress": "0x8236a87084f8B84306f72007F36F2618A5634494",
+							"ReferralId":          "lombard",
 							"FinalityProviderPk":  "03d5a0bb72d71993e435d6c5a70e2aa4db500a62cfaae33c56050deefee64ec0",
-							"Utxo":                "f02ffdf0d59b8e39d62100ab3c2caf9e4c5c54ab9e1949719e39c3e51cea7589:0",
+							"Utxo":                "c862eae3f63015d0b9bab1c877e44c6ef89a7e56c310a83122e85403f628ef2a:0",
 						},
 						PrimaryType: "ApprovalMessage",
 						Types: map[string][]v0.TypedDataTypesValueInner{
@@ -143,10 +143,10 @@ func TestClient_SignEip712(t *testing.T) {
 			got, got1, err := cli.SignEip712(tt.args.pubkey, tt.args.request, tt.args.mfaId, tt.args.mfaConfirmation)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SignEip712() error = %v, wantErr %v", err, tt.wantErr)
-                t.Errorf("Did you set the '\"AllowEip712Signing\"' policy on Key#%v ?\n", pubkey)
+				t.Errorf("Did you set the '\"AllowEip712Signing\"' policy on Key#%v ?\n", pubkey)
 				return
 			}
-            fmt.Printf("Response: %v\nStatus: %v\n", got.Signature, got1)
+			fmt.Printf("Response: %v\nStatus: %v\n", got.Signature, got1)
 		})
 	}
 }
