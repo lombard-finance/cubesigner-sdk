@@ -3,13 +3,15 @@ package client
 import (
 	"fmt"
 	"os"
+	"strings"
+
+	"testing"
+	"time"
 
 	"github.com/lombard-finance/cubesigner-sdk/api"
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 var (
@@ -92,12 +94,12 @@ func TestClient_SignEip712(t *testing.T) {
 							Version: *api.NewNullableString(&VersionStr),
 						},
 						Message: map[string]interface{}{
-							"ToAddress":           "0x17a604740a25d703f9848857beb9e88d0ab0d3f8\n",
+							"ToAddress":           strings.ToLower("0x17a604740a25d703f9848857beb9e88d0ab0d3f8"),
 							"ChainId":             1,
-							"LbtcContractAddress": "0x8236a87084f8B84306f72007F36F2618A5634494",
+							"LbtcContractAddress": strings.ToLower("0x8236a87084f8B84306f72007F36F2618A5634494"),
 							"ReferralId":          "lombard",
-							"FinalityProviderPk":  "03d5a0bb72d71993e435d6c5a70e2aa4db500a62cfaae33c56050deefee64ec0",
-							"Utxo":                "c862eae3f63015d0b9bab1c877e44c6ef89a7e56c310a83122e85403f628ef2a:0",
+							"FinalityProviderPk":  strings.ToLower("03d5a0bb72d71993e435d6c5a70e2aa4db500a62cfaae33c56050deefee64ec0"),
+							"Utxo":                strings.ToLower("c862eae3f63015d0b9bab1c877e44c6ef89a7e56c310a83122e85403f628ef2a:0"),
 						},
 						PrimaryType: "ApprovalMessage",
 						Types: map[string][]v0.TypedDataTypesValueInner{
