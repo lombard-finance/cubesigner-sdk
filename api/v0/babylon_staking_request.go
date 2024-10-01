@@ -3,6 +3,7 @@ package v0
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -40,57 +41,62 @@ func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal
 func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
-	// try to unmarshal data into BabylonStakingDeposit
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
-	if err == nil {
-		jsonBabylonStakingDeposit, _ := json.Marshal(dst.BabylonStakingDeposit)
-		if string(jsonBabylonStakingDeposit) == "{}" { // empty struct
-			dst.BabylonStakingDeposit = nil
-		} else {
-			match++
-		}
-	} else {
-		dst.BabylonStakingDeposit = nil
+
+	// Unmarshal into a temporary map to analyze the fields
+	var tempMap map[string]interface{}
+	if err := json.Unmarshal(data, &tempMap); err != nil {
+		return fmt.Errorf("failed to unmarshal into map: %v", err)
 	}
 
-	// try to unmarshal data into BabylonStakingEarlyUnbond
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingEarlyUnbond)
-	if err == nil {
-		jsonBabylonStakingEarlyUnbond, _ := json.Marshal(dst.BabylonStakingEarlyUnbond)
-		if string(jsonBabylonStakingEarlyUnbond) == "{}" { // empty struct
-			dst.BabylonStakingEarlyUnbond = nil
-		} else {
+	// Check if the data seems to match BabylonStakingWithdrawal by looking for its unique fields
+	hasRecipient := false
+	if _, hasRecipient := tempMap["recipient"]; hasRecipient {
+		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingWithdrawal)
+		if err == nil && !isEmptyStruct(dst.BabylonStakingWithdrawal) {
 			match++
-		}
-	} else {
-		dst.BabylonStakingEarlyUnbond = nil
-	}
-
-	// try to unmarshal data into BabylonStakingWithdrawal
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingWithdrawal)
-	if err == nil {
-		jsonBabylonStakingWithdrawal, _ := json.Marshal(dst.BabylonStakingWithdrawal)
-		if string(jsonBabylonStakingWithdrawal) == "{}" { // empty struct
+		} else {
 			dst.BabylonStakingWithdrawal = nil
-		} else {
-			match++
 		}
-	} else {
-		dst.BabylonStakingWithdrawal = nil
 	}
 
-	if match > 1 { // more than 1 match
-		// reset to nil
+	// Check if the data seems to match BabylonStakingEarlyUnbond by looking for its unique fields
+	hasTxid := false
+	if _, hasTxid := tempMap["txid"]; hasTxid && !hasRecipient {
+		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingEarlyUnbond)
+		if err == nil && !isEmptyStruct(dst.BabylonStakingEarlyUnbond) {
+			match++
+		} else {
+			dst.BabylonStakingEarlyUnbond = nil
+		}
+	}
+
+	// Check if the data seems to match BabylonStakingDeposit (you can add unique checks for deposit as well)
+	if !hasTxid && !hasRecipient {
+		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
+		if err == nil && !isEmptyStruct(dst.BabylonStakingDeposit) {
+			match++
+		} else {
+			dst.BabylonStakingDeposit = nil
+		}
+	}
+
+	if match > 1 {
+		// more than one match, reset all
 		dst.BabylonStakingDeposit = nil
 		dst.BabylonStakingEarlyUnbond = nil
 		dst.BabylonStakingWithdrawal = nil
-
-		return fmt.Errorf("Data matches more than one schema in oneOf(BabylonStakingRequest)")
+		return fmt.Errorf("data matches more than one schema in oneOf(BabylonStakingRequest)")
 	} else if match == 1 {
 		return nil // exactly one match
-	} else { // no match
-		return fmt.Errorf("Data failed to match schemas in oneOf(BabylonStakingRequest)")
 	}
+
+	// No match
+	return fmt.Errorf("data failed to match schemas in oneOf(BabylonStakingRequest)")
+}
+
+func isEmptyStruct(v interface{}) bool {
+	jsonData, _ := json.Marshal(v)
+	return string(jsonData) == "{}"
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON
