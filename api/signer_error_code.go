@@ -87,117 +87,72 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	match := 0
 	// try to unmarshal data into AcceptedValueCode
 	err = NewStrictDecoder(data).Decode(&dst.AcceptedValueCode)
-	if err == nil {
-		jsonAcceptedValueCode, _ := json.Marshal(dst.AcceptedValueCode)
-		if string(jsonAcceptedValueCode) == "{}" { // empty struct
-			dst.AcceptedValueCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.AcceptedValueCode) {
+		match++
 	} else {
 		dst.AcceptedValueCode = nil
 	}
 
 	// try to unmarshal data into BadGatewayErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.BadGatewayErrorCode)
-	if err == nil {
-		jsonBadGatewayErrorCode, _ := json.Marshal(dst.BadGatewayErrorCode)
-		if string(jsonBadGatewayErrorCode) == "{}" { // empty struct
-			dst.BadGatewayErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.BadGatewayErrorCode) {
+		match++
 	} else {
 		dst.BadGatewayErrorCode = nil
 	}
 
 	// try to unmarshal data into BadRequestErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.BadRequestErrorCode)
-	if err == nil {
-		jsonBadRequestErrorCode, _ := json.Marshal(dst.BadRequestErrorCode)
-		if string(jsonBadRequestErrorCode) == "{}" { // empty struct
-			dst.BadRequestErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.BadRequestErrorCode) {
+		match++
 	} else {
 		dst.BadRequestErrorCode = nil
 	}
 
 	// try to unmarshal data into ForbiddenErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.ForbiddenErrorCode)
-	if err == nil {
-		jsonForbiddenErrorCode, _ := json.Marshal(dst.ForbiddenErrorCode)
-		if string(jsonForbiddenErrorCode) == "{}" { // empty struct
-			dst.ForbiddenErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.ForbiddenErrorCode) {
+		match++
 	} else {
 		dst.ForbiddenErrorCode = nil
 	}
 
 	// try to unmarshal data into InternalErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.InternalErrorCode)
-	if err == nil {
-		jsonInternalErrorCode, _ := json.Marshal(dst.InternalErrorCode)
-		if string(jsonInternalErrorCode) == "{}" { // empty struct
-			dst.InternalErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.InternalErrorCode) {
+		match++
 	} else {
 		dst.InternalErrorCode = nil
 	}
 
 	// try to unmarshal data into NotFoundErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.NotFoundErrorCode)
-	if err == nil {
-		jsonNotFoundErrorCode, _ := json.Marshal(dst.NotFoundErrorCode)
-		if string(jsonNotFoundErrorCode) == "{}" { // empty struct
-			dst.NotFoundErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.NotFoundErrorCode) {
+		match++
 	} else {
 		dst.NotFoundErrorCode = nil
 	}
 
 	// try to unmarshal data into PreconditionErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.PreconditionErrorCode)
-	if err == nil {
-		jsonPreconditionErrorCode, _ := json.Marshal(dst.PreconditionErrorCode)
-		if string(jsonPreconditionErrorCode) == "{}" { // empty struct
-			dst.PreconditionErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.PreconditionErrorCode) {
+		match++
 	} else {
 		dst.PreconditionErrorCode = nil
 	}
 
 	// try to unmarshal data into SignerErrorOwnCodes
 	err = NewStrictDecoder(data).Decode(&dst.SignerErrorOwnCodes)
-	if err == nil {
-		jsonSignerErrorOwnCodes, _ := json.Marshal(dst.SignerErrorOwnCodes)
-		if string(jsonSignerErrorOwnCodes) == "{}" { // empty struct
-			dst.SignerErrorOwnCodes = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.SignerErrorOwnCodes) {
+		match++
 	} else {
 		dst.SignerErrorOwnCodes = nil
 	}
 
 	// try to unmarshal data into UnauthorizedErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.UnauthorizedErrorCode)
-	if err == nil {
-		jsonUnauthorizedErrorCode, _ := json.Marshal(dst.UnauthorizedErrorCode)
-		if string(jsonUnauthorizedErrorCode) == "{}" { // empty struct
-			dst.UnauthorizedErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.UnauthorizedErrorCode) {
+		match++
 	} else {
 		dst.UnauthorizedErrorCode = nil
 	}

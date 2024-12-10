@@ -52,7 +52,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	hasRecipient := false
 	if _, hasRecipient := tempMap["recipient"]; hasRecipient {
 		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingWithdrawal)
-		if err == nil && !isEmptyStruct(dst.BabylonStakingWithdrawal) {
+		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingWithdrawal) {
 			matches = append(matches, api.WithdrawEarlyUnbondAction)
 		} else {
 			dst.BabylonStakingWithdrawal = nil
@@ -63,7 +63,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	hasTxid := false
 	if _, hasTxid := tempMap["txid"]; hasTxid && !hasRecipient {
 		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingEarlyUnbond)
-		if err == nil && !isEmptyStruct(dst.BabylonStakingEarlyUnbond) {
+		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingEarlyUnbond) {
 			matches = append(matches, api.EarlyUnbondAction)
 		} else {
 			dst.BabylonStakingEarlyUnbond = nil
@@ -73,7 +73,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	// Check if the data seems to match BabylonStakingDeposit (you can add unique checks for deposit as well)
 	if !hasTxid && !hasRecipient {
 		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
-		if err == nil && !isEmptyStruct(dst.BabylonStakingDeposit) {
+		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingDeposit) {
 			matches = append(matches, api.DepositAction)
 		} else {
 			dst.BabylonStakingDeposit = nil
@@ -93,11 +93,6 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 
 	// No match
 	return fmt.Errorf("data failed to match schemas in oneOf(BabylonStakingRequest)")
-}
-
-func isEmptyStruct(v interface{}) bool {
-	jsonData, _ := json.Marshal(v)
-	return string(jsonData) == "{}"
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON

@@ -1,9 +1,10 @@
 package v0
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+
+	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
 // TypedDataDomainSalt - A disambiguating salt for the protocol. This can be used as a domain separator of last resort. Can be either a hex-encoded string or byte array
@@ -31,7 +32,7 @@ func (dst *TypedDataDomainSalt) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into ArrayOfFloat32
-	err = newStrictDecoder(data).Decode(&dst.ArrayOfFloat32)
+	err = api.NewStrictDecoder(data).Decode(&dst.ArrayOfFloat32)
 	if err == nil {
 		jsonArrayOfFloat32, _ := json.Marshal(dst.ArrayOfFloat32)
 		if string(jsonArrayOfFloat32) == "{}" { // empty struct
@@ -44,7 +45,7 @@ func (dst *TypedDataDomainSalt) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into String
-	err = newStrictDecoder(data).Decode(&dst.String)
+	err = api.NewStrictDecoder(data).Decode(&dst.String)
 	if err == nil {
 		jsonString, _ := json.Marshal(dst.String)
 		if string(jsonString) == "{}" { // empty struct
@@ -133,11 +134,4 @@ func (v NullableTypedDataDomainSalt) MarshalJSON() ([]byte, error) {
 func (v *NullableTypedDataDomainSalt) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
-}
-
-// A wrapper for strict JSON decoding
-func newStrictDecoder(data []byte) *json.Decoder {
-	dec := json.NewDecoder(bytes.NewBuffer(data))
-	dec.DisallowUnknownFields()
-	return dec
 }

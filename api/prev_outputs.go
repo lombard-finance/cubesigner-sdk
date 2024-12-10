@@ -31,26 +31,16 @@ func (dst *PrevOutputs) UnmarshalJSON(data []byte) error {
 	match := 0
 	// try to unmarshal data into PrevOutputsOneOf
 	err = NewStrictDecoder(data).Decode(&dst.PrevOutputsOneOf)
-	if err == nil {
-		jsonPrevOutputsOneOf, _ := json.Marshal(dst.PrevOutputsOneOf)
-		if string(jsonPrevOutputsOneOf) == "{}" { // empty struct
-			dst.PrevOutputsOneOf = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.PrevOutputsOneOf) {
+		match++
 	} else {
 		dst.PrevOutputsOneOf = nil
 	}
 
 	// try to unmarshal data into PrevOutputsOneOf1
 	err = NewStrictDecoder(data).Decode(&dst.PrevOutputsOneOf1)
-	if err == nil {
-		jsonPrevOutputsOneOf1, _ := json.Marshal(dst.PrevOutputsOneOf1)
-		if string(jsonPrevOutputsOneOf1) == "{}" { // empty struct
-			dst.PrevOutputsOneOf1 = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.PrevOutputsOneOf1) {
+		match++
 	} else {
 		dst.PrevOutputsOneOf1 = nil
 	}
