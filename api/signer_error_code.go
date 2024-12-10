@@ -86,7 +86,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into AcceptedValueCode
-	err = newStrictDecoder(data).Decode(&dst.AcceptedValueCode)
+	err = NewStrictDecoder(data).Decode(&dst.AcceptedValueCode)
 	if err == nil {
 		jsonAcceptedValueCode, _ := json.Marshal(dst.AcceptedValueCode)
 		if string(jsonAcceptedValueCode) == "{}" { // empty struct
@@ -99,7 +99,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into BadGatewayErrorCode
-	err = newStrictDecoder(data).Decode(&dst.BadGatewayErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.BadGatewayErrorCode)
 	if err == nil {
 		jsonBadGatewayErrorCode, _ := json.Marshal(dst.BadGatewayErrorCode)
 		if string(jsonBadGatewayErrorCode) == "{}" { // empty struct
@@ -112,7 +112,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into BadRequestErrorCode
-	err = newStrictDecoder(data).Decode(&dst.BadRequestErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.BadRequestErrorCode)
 	if err == nil {
 		jsonBadRequestErrorCode, _ := json.Marshal(dst.BadRequestErrorCode)
 		if string(jsonBadRequestErrorCode) == "{}" { // empty struct
@@ -125,7 +125,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into ForbiddenErrorCode
-	err = newStrictDecoder(data).Decode(&dst.ForbiddenErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.ForbiddenErrorCode)
 	if err == nil {
 		jsonForbiddenErrorCode, _ := json.Marshal(dst.ForbiddenErrorCode)
 		if string(jsonForbiddenErrorCode) == "{}" { // empty struct
@@ -138,7 +138,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into InternalErrorCode
-	err = newStrictDecoder(data).Decode(&dst.InternalErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.InternalErrorCode)
 	if err == nil {
 		jsonInternalErrorCode, _ := json.Marshal(dst.InternalErrorCode)
 		if string(jsonInternalErrorCode) == "{}" { // empty struct
@@ -151,7 +151,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into NotFoundErrorCode
-	err = newStrictDecoder(data).Decode(&dst.NotFoundErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.NotFoundErrorCode)
 	if err == nil {
 		jsonNotFoundErrorCode, _ := json.Marshal(dst.NotFoundErrorCode)
 		if string(jsonNotFoundErrorCode) == "{}" { // empty struct
@@ -164,7 +164,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into PreconditionErrorCode
-	err = newStrictDecoder(data).Decode(&dst.PreconditionErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.PreconditionErrorCode)
 	if err == nil {
 		jsonPreconditionErrorCode, _ := json.Marshal(dst.PreconditionErrorCode)
 		if string(jsonPreconditionErrorCode) == "{}" { // empty struct
@@ -177,7 +177,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into SignerErrorOwnCodes
-	err = newStrictDecoder(data).Decode(&dst.SignerErrorOwnCodes)
+	err = NewStrictDecoder(data).Decode(&dst.SignerErrorOwnCodes)
 	if err == nil {
 		jsonSignerErrorOwnCodes, _ := json.Marshal(dst.SignerErrorOwnCodes)
 		if string(jsonSignerErrorOwnCodes) == "{}" { // empty struct
@@ -190,7 +190,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into UnauthorizedErrorCode
-	err = newStrictDecoder(data).Decode(&dst.UnauthorizedErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.UnauthorizedErrorCode)
 	if err == nil {
 		jsonUnauthorizedErrorCode, _ := json.Marshal(dst.UnauthorizedErrorCode)
 		if string(jsonUnauthorizedErrorCode) == "{}" { // empty struct
