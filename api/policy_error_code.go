@@ -30,7 +30,7 @@ func (dst *PolicyErrorCode) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into EvmTxDepositErrorCode
-	err = newStrictDecoder(data).Decode(&dst.EvmTxDepositErrorCode)
+	err = NewStrictDecoder(data).Decode(&dst.EvmTxDepositErrorCode)
 	if err == nil {
 		jsonEvmTxDepositErrorCode, _ := json.Marshal(dst.EvmTxDepositErrorCode)
 		if string(jsonEvmTxDepositErrorCode) == "{}" { // empty struct
@@ -43,7 +43,7 @@ func (dst *PolicyErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into PolicyErrorOwnCodes
-	err = newStrictDecoder(data).Decode(&dst.PolicyErrorOwnCodes)
+	err = NewStrictDecoder(data).Decode(&dst.PolicyErrorOwnCodes)
 	if err == nil {
 		jsonPolicyErrorOwnCodes, _ := json.Marshal(dst.PolicyErrorOwnCodes)
 		if string(jsonPolicyErrorOwnCodes) == "{}" { // empty struct

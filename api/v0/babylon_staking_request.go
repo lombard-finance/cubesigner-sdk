@@ -3,6 +3,7 @@ package v0
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -39,7 +40,8 @@ func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	var err error
-	match := 0
+	var matches []api.BabylonStakingAction
+
 	// try to unmarshal data into BabylonStakingDeposit
 	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
 	if err == nil {
@@ -47,7 +49,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 		if string(jsonBabylonStakingDeposit) == "{}" { // empty struct
 			dst.BabylonStakingDeposit = nil
 		} else {
-			match++
+			matches = append(matches, api.DepositAction)
 		}
 	} else {
 		dst.BabylonStakingDeposit = nil
@@ -60,7 +62,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 		if string(jsonBabylonStakingEarlyUnbond) == "{}" { // empty struct
 			dst.BabylonStakingEarlyUnbond = nil
 		} else {
-			match++
+			matches = append(matches, api.EarlyUnbondAction)
 		}
 	} else {
 		dst.BabylonStakingEarlyUnbond = nil
@@ -73,20 +75,21 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 		if string(jsonBabylonStakingWithdrawal) == "{}" { // empty struct
 			dst.BabylonStakingWithdrawal = nil
 		} else {
-			match++
+			matches = append(matches, api.WithdrawEarlyUnbondAction)
 		}
 	} else {
 		dst.BabylonStakingWithdrawal = nil
 	}
 
-	if match > 1 { // more than 1 match
+	if len(matches) > 1 { // more than 1 match
 		// reset to nil
 		dst.BabylonStakingDeposit = nil
 		dst.BabylonStakingEarlyUnbond = nil
 		dst.BabylonStakingWithdrawal = nil
 
 		return fmt.Errorf("Data matches more than one schema in oneOf(BabylonStakingRequest)")
-	} else if match == 1 {
+	} else if len(matches) == 1 {
+		dst.Action = matches[0]
 		return nil // exactly one match
 	} else { // no match
 		return fmt.Errorf("Data failed to match schemas in oneOf(BabylonStakingRequest)")

@@ -2,6 +2,9 @@ package v0
 
 import (
 	"encoding/json"
+	"fmt"
+
+	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
 // PsbtSignRequest A request to sign a PSBT
@@ -86,15 +89,34 @@ func (o *PsbtSignRequest) SetSignAllScripts(v bool) {
 	o.SignAllScripts = &v
 }
 
-func (o PsbtSignRequest) MarshalJSON() ([]byte, error) {
+func (src PsbtSignRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["psbt"] = o.Psbt
+
+	toSerialize["psbt"] = src.Psbt
+
+	if src.SignAllScripts != nil {
+		toSerialize["sign_all_scripts"] = src.SignAllScripts
 	}
-	if o.SignAllScripts != nil {
-		toSerialize["sign_all_scripts"] = o.SignAllScripts
-	}
+
 	return json.Marshal(toSerialize)
+}
+
+func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
+	var temp PsbtSignRequest
+	decoder := api.NewStrictDecoder(data)
+
+	if err := decoder.Decode(&temp); err != nil {
+		return err
+	}
+
+	// Check for an empty struct
+	if temp == (PsbtSignRequest{}) {
+		return fmt.Errorf("PSBT sign request cannot be empty")
+	}
+
+	// Copy the valid data to the destination
+	*dst = temp
+	return nil
 }
 
 type NullablePsbtSignRequest struct {
