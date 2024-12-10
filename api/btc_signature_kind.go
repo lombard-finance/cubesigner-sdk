@@ -23,13 +23,8 @@ func (dst *BtcSignatureKind) UnmarshalJSON(data []byte) error {
 	match := 0
 	// try to unmarshal data into BtcSignatureKindOneOf
 	err = NewStrictDecoder(data).Decode(&dst.BtcSignatureKindOneOf)
-	if err == nil {
-		jsonBtcSignatureKindOneOf, _ := json.Marshal(dst.BtcSignatureKindOneOf)
-		if string(jsonBtcSignatureKindOneOf) == "{}" { // empty struct
-			dst.BtcSignatureKindOneOf = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.BtcSignatureKindOneOf) {
+		match++
 	} else {
 		dst.BtcSignatureKindOneOf = nil
 	}

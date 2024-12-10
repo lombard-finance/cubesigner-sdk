@@ -31,26 +31,16 @@ func (dst *PreconditionErrorCode) UnmarshalJSON(data []byte) error {
 	match := 0
 	// try to unmarshal data into PolicyErrorCode
 	err = NewStrictDecoder(data).Decode(&dst.PolicyErrorCode)
-	if err == nil {
-		jsonPolicyErrorCode, _ := json.Marshal(dst.PolicyErrorCode)
-		if string(jsonPolicyErrorCode) == "{}" { // empty struct
-			dst.PolicyErrorCode = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.PolicyErrorCode) {
+		match++
 	} else {
 		dst.PolicyErrorCode = nil
 	}
 
 	// try to unmarshal data into PreconditionErrorOwnCodes
 	err = NewStrictDecoder(data).Decode(&dst.PreconditionErrorOwnCodes)
-	if err == nil {
-		jsonPreconditionErrorOwnCodes, _ := json.Marshal(dst.PreconditionErrorOwnCodes)
-		if string(jsonPreconditionErrorOwnCodes) == "{}" { // empty struct
-			dst.PreconditionErrorOwnCodes = nil
-		} else {
-			match++
-		}
+	if err == nil && !IsEmptyStruct(dst.PreconditionErrorOwnCodes) {
+		match++
 	} else {
 		dst.PreconditionErrorOwnCodes = nil
 	}

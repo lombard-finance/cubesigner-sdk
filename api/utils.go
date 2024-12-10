@@ -324,3 +324,8 @@ func NewStrictDecoder(data []byte) *json.Decoder {
 	dec.DisallowUnknownFields()
 	return dec
 }
+
+func IsEmptyStruct(v interface{}) bool {
+	jsonData, _ := json.Marshal(v)
+	return string(jsonData) == "{}"
+}

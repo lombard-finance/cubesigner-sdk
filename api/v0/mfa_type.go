@@ -3,6 +3,7 @@ package v0
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -48,52 +49,32 @@ func (dst *MfaType) UnmarshalJSON(data []byte) error {
 	match := 0
 	// try to unmarshal data into MfaTypeOneOf
 	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf)
-	if err == nil {
-		jsonMfaTypeOneOf, _ := json.Marshal(dst.MfaTypeOneOf)
-		if string(jsonMfaTypeOneOf) == "{}" { // empty struct
-			dst.MfaTypeOneOf = nil
-		} else {
-			match++
-		}
+	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf) {
+		match++
 	} else {
 		dst.MfaTypeOneOf = nil
 	}
 
 	// try to unmarshal data into MfaTypeOneOf1
 	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf1)
-	if err == nil {
-		jsonMfaTypeOneOf1, _ := json.Marshal(dst.MfaTypeOneOf1)
-		if string(jsonMfaTypeOneOf1) == "{}" { // empty struct
-			dst.MfaTypeOneOf1 = nil
-		} else {
-			match++
-		}
+	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf1) {
+		match++
 	} else {
 		dst.MfaTypeOneOf1 = nil
 	}
 
 	// try to unmarshal data into MfaTypeOneOf2
 	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf2)
-	if err == nil {
-		jsonMfaTypeOneOf2, _ := json.Marshal(dst.MfaTypeOneOf2)
-		if string(jsonMfaTypeOneOf2) == "{}" { // empty struct
-			dst.MfaTypeOneOf2 = nil
-		} else {
-			match++
-		}
+	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf2) {
+		match++
 	} else {
 		dst.MfaTypeOneOf2 = nil
 	}
 
 	// try to unmarshal data into MfaTypeOneOf3
 	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf3)
-	if err == nil {
-		jsonMfaTypeOneOf3, _ := json.Marshal(dst.MfaTypeOneOf3)
-		if string(jsonMfaTypeOneOf3) == "{}" { // empty struct
-			dst.MfaTypeOneOf3 = nil
-		} else {
-			match++
-		}
+	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf3) {
+		match++
 	} else {
 		dst.MfaTypeOneOf3 = nil
 	}
