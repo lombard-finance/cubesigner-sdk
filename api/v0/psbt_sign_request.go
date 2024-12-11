@@ -102,9 +102,13 @@ func (src PsbtSignRequest) MarshalJSON() ([]byte, error) {
 }
 
 func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
-	var temp PsbtSignRequest
-	decoder := api.NewStrictDecoder(data)
+	// Use an anonymous struct to avoid recursive UnmarshalJSON calls
+	var temp struct {
+		Psbt           string `json:"psbt"`
+		SignAllScripts *bool  `json:"sign_all_scripts,omitempty"`
+	}
 
+	decoder := api.NewStrictDecoder(data)
 	if err := decoder.Decode(&temp); err != nil {
 		return err
 	}
@@ -114,8 +118,9 @@ func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("PSBT sign request cannot be empty")
 	}
 
-	// Copy the valid data to the destination
-	*dst = temp
+	// Populate the destination struct with the decoded values
+	dst.Psbt = temp.Psbt
+	dst.SignAllScripts = temp.SignAllScripts
 	return nil
 }
 
