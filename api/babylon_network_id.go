@@ -10,6 +10,7 @@ type BabylonNetworkId string
 
 // List of BabylonNetworkId
 const (
+	BBB4 BabylonNetworkId = "bbb4"
 	BBT4 BabylonNetworkId = "bbt4"
 	BBN1 BabylonNetworkId = "bbn1"
 )
