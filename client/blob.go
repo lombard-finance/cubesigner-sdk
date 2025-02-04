@@ -1,11 +1,12 @@
 package client
 
 import (
-	"github.com/lombard-finance/cubesigner-sdk/api"
-	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/lombard-finance/cubesigner-sdk/api"
+	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
