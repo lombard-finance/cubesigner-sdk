@@ -23,6 +23,10 @@ func (cli *Client) StakingBabylon(
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
 	case *v0.BabylonStakingWithdrawal:
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
+	case *v0.BabylonStakingSlashDeposit:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKING, mfaId, mfaConfirmation)
+	case *v0.BabylonStakingSlashEarlyUnbond:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKING, mfaId, mfaConfirmation)
 	default:
 		return nil, "", errors.New("not implemented")
 	}
