@@ -9,9 +9,11 @@ import (
 
 // BabylonStakingRequest - The actions possible via the Babylon Staking endpoint
 type BabylonStakingRequest struct {
-	BabylonStakingDeposit     *BabylonStakingDeposit
-	BabylonStakingEarlyUnbond *BabylonStakingEarlyUnbond
-	BabylonStakingWithdrawal  *BabylonStakingWithdrawal
+	BabylonStakingDeposit          *BabylonStakingDeposit
+	BabylonStakingEarlyUnbond      *BabylonStakingEarlyUnbond
+	BabylonStakingWithdrawal       *BabylonStakingWithdrawal
+	BabylonStakingSlashDeposit     *BabylonStakingSlashDeposit
+	BabylonStakingSlashEarlyUnbond *BabylonStakingSlashEarlyUnbond
 
 	Action api.BabylonStakingAction `json:"action"`
 }
@@ -39,60 +41,61 @@ func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal
 
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
-	var err error
-	var matches []api.BabylonStakingAction
-
-	// Unmarshal into a temporary map to analyze the fields
-	var tempMap map[string]interface{}
-	if err := json.Unmarshal(data, &tempMap); err != nil {
-		return fmt.Errorf("failed to unmarshal into map: %v", err)
+	// Create a temporary struct to parse the action field
+	type ActionOnly struct {
+		Action api.BabylonStakingAction `json:"action"`
 	}
 
-	// Check if the data seems to match BabylonStakingWithdrawal by looking for its unique fields
-	hasRecipient := false
-	if _, hasRecipient := tempMap["recipient"]; hasRecipient {
-		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingWithdrawal)
-		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingWithdrawal) {
-			matches = append(matches, api.WithdrawEarlyUnbondAction)
-		} else {
-			dst.BabylonStakingWithdrawal = nil
+	var actionObj ActionOnly
+	if err := json.Unmarshal(data, &actionObj); err != nil {
+		return fmt.Errorf("failed to unmarshal BabylonStakingRequest action: %w", err)
+	}
+
+	// Set the action field in the destination
+	dst.Action = actionObj.Action
+
+	// Based on the action type, unmarshal into the appropriate struct
+	switch actionObj.Action {
+	case api.DepositAction:
+		var deposit BabylonStakingDeposit
+		if err := json.Unmarshal(data, &deposit); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingDeposit: %w", err)
 		}
-	}
+		dst.BabylonStakingDeposit = &deposit
 
-	// Check if the data seems to match BabylonStakingEarlyUnbond by looking for its unique fields
-	hasTxid := false
-	if _, hasTxid := tempMap["txid"]; hasTxid && !hasRecipient {
-		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingEarlyUnbond)
-		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingEarlyUnbond) {
-			matches = append(matches, api.EarlyUnbondAction)
-		} else {
-			dst.BabylonStakingEarlyUnbond = nil
+	case api.EarlyUnbondAction:
+		var earlyUnbond BabylonStakingEarlyUnbond
+		if err := json.Unmarshal(data, &earlyUnbond); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingEarlyUnbond: %w", err)
 		}
-	}
+		dst.BabylonStakingEarlyUnbond = &earlyUnbond
 
-	// Check if the data seems to match BabylonStakingDeposit (you can add unique checks for deposit as well)
-	if !hasTxid && !hasRecipient {
-		err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
-		if err == nil && !api.IsEmptyStruct(dst.BabylonStakingDeposit) {
-			matches = append(matches, api.DepositAction)
-		} else {
-			dst.BabylonStakingDeposit = nil
+	case api.WithdrawTimelockAction, api.WithdrawEarlyUnbondAction:
+		var withdrawal BabylonStakingWithdrawal
+		if err := json.Unmarshal(data, &withdrawal); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingWithdrawal: %w", err)
 		}
+		dst.BabylonStakingWithdrawal = &withdrawal
+
+	case api.SlashDepositAction:
+		var slashDeposit BabylonStakingSlashDeposit
+		if err := json.Unmarshal(data, &slashDeposit); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingSlashDeposit: %w", err)
+		}
+		dst.BabylonStakingSlashDeposit = &slashDeposit
+
+	case api.SlashEarlyUnbondAction:
+		var slashEarlyUnbond BabylonStakingSlashEarlyUnbond
+		if err := json.Unmarshal(data, &slashEarlyUnbond); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingSlashEarlyUnbond: %w", err)
+		}
+		dst.BabylonStakingSlashEarlyUnbond = &slashEarlyUnbond
+
+	default:
+		return fmt.Errorf("unknown BabylonStakingAction: %s", actionObj.Action)
 	}
 
-	if len(matches) > 1 {
-		// more than one match, reset all
-		dst.BabylonStakingDeposit = nil
-		dst.BabylonStakingEarlyUnbond = nil
-		dst.BabylonStakingWithdrawal = nil
-		return fmt.Errorf("data matches more than one schema in oneOf(BabylonStakingRequest)")
-	} else if len(matches) == 1 {
-		dst.Action = matches[0]
-		return nil // exactly one match
-	}
-
-	// No match
-	return fmt.Errorf("data failed to match schemas in oneOf(BabylonStakingRequest)")
+	return nil
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON

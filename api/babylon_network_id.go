@@ -10,14 +10,16 @@ type BabylonNetworkId string
 
 // List of BabylonNetworkId
 const (
+	BBT5 BabylonNetworkId = "bbt5"
 	BBT4 BabylonNetworkId = "bbt4"
 	BBN1 BabylonNetworkId = "bbn1"
 )
 
 // All allowed values of BabylonNetworkId enum
 var AllowedBabylonNetworkIdEnumValues = []BabylonNetworkId{
-	"bbt4",
-	"bbn1",
+	BBT5,
+	BBT4,
+	BBN1,
 }
 
 func (v *BabylonNetworkId) UnmarshalJSON(src []byte) error {
