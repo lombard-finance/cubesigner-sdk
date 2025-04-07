@@ -3,7 +3,7 @@ package v0
 // MfaRequestInfo struct returned for GetMfaRequest and ApproveMfaRequest
 type MfaRequestInfo struct {
 	// DateTime measured in seconds since unix epoch. A wrapper type for serialization that encodes a `SystemTime` as a `u64` representing the number of seconds since `SystemTime::UNIX_EPOCH`.
-	ExpiresAt int64 `json:"expires_at"`
+	ExpiresAt uint64 `json:"expires_at"`
 	// Approval request ID.
 	Id string `json:"id"`
 	// Receipt that an MFA request was approved.
