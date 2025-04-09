@@ -39,6 +39,20 @@ func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal
 	}
 }
 
+// BabylonStakingSlashDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashDeposit wrapped in BabylonStakingRequest
+func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingSlashDeposit) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingSlashDeposit: v,
+	}
+}
+
+// BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashEarlyUnbond wrapped in BabylonStakingRequest
+func BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingSlashEarlyUnbond) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingSlashEarlyUnbond: v,
+	}
+}
+
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	// Create a temporary struct to parse the action field
@@ -114,6 +128,14 @@ func (src BabylonStakingRequest) MarshalJSON() ([]byte, error) {
 		toSerialize = src.BabylonStakingWithdrawal.Serialize()
 	}
 
+	if src.BabylonStakingSlashDeposit != nil {
+		toSerialize = src.BabylonStakingSlashDeposit.Serialize()
+	}
+
+	if src.BabylonStakingSlashEarlyUnbond != nil {
+		toSerialize = src.BabylonStakingSlashEarlyUnbond.Serialize()
+	}
+
 	toSerialize["action"] = src.Action
 
 	return json.Marshal(toSerialize)
@@ -136,6 +158,13 @@ func (obj *BabylonStakingRequest) GetActualInstance() interface{} {
 		return obj.BabylonStakingWithdrawal
 	}
 
+	if obj.BabylonStakingSlashDeposit != nil {
+		return obj.BabylonStakingSlashDeposit
+	}
+
+	if obj.BabylonStakingSlashEarlyUnbond != nil {
+		return obj.BabylonStakingSlashEarlyUnbond
+	}
 	// all schemas are nil
 	return nil
 }
