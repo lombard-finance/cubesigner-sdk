@@ -49,6 +49,9 @@ type IBabylonStakingParams interface {
 
 	// GetBTCActivationHeight returns the BTC activation height
 	GetBTCActivationHeight() int64
+
+	// GetVersion returns the Version field value
+	GetVersion() int32
 }
 
 // BabylonStakingParams Parameter set for Babylon staking. The latest parameter sets are available from <https://github.com/babylonchain/networks>
@@ -68,6 +71,7 @@ type BabylonStakingParams struct {
 	DelegationCreationBaseGasFee int64    `json:"delegation_creation_base_gas_fee"`
 	AllowListExpirationHeight    int64    `json:"allow_list_expiration_height"`
 	BTCActivationHeight          int64    `json:"btc_activation_height"`
+	Version                      int32    `json:"version"`
 }
 
 // NewBabylonStakingParams instantiates a new BabylonStakingParams object
@@ -87,6 +91,7 @@ func NewBabylonStakingParams(
 	delegationCreationBaseGasFee int64,
 	allowListExpirationHeight int64,
 	btcActivationHeight int64,
+	version int32,
 ) *BabylonStakingParams {
 	this := BabylonStakingParams{}
 	this.CovenantPKs = covenantPKs
@@ -104,6 +109,7 @@ func NewBabylonStakingParams(
 	this.DelegationCreationBaseGasFee = delegationCreationBaseGasFee
 	this.AllowListExpirationHeight = allowListExpirationHeight
 	this.BTCActivationHeight = btcActivationHeight
+	this.Version = version
 	return &this
 }
 
@@ -458,6 +464,30 @@ func (o *BabylonStakingParams) SetBTCActivationHeight(v int64) {
 	o.BTCActivationHeight = v
 }
 
+// GetVersion returns the Version field value
+func (o *BabylonStakingParams) GetVersion() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.Version
+}
+
+// GetVersionOk returns a tuple with the Version field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetVersionOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Version, true
+}
+
+// SetVersion sets field value
+func (o *BabylonStakingParams) SetVersion(v int32) {
+	o.Version = v
+}
+
 // MarshalJSON marshals the BabylonStakingParams to JSON
 func (o BabylonStakingParams) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
@@ -477,6 +507,7 @@ func (o BabylonStakingParams) MarshalJSON() ([]byte, error) {
 	toSerialize["delegation_creation_base_gas_fee"] = o.DelegationCreationBaseGasFee
 	toSerialize["allow_list_expiration_height"] = o.AllowListExpirationHeight
 	toSerialize["btc_activation_height"] = o.BTCActivationHeight
+	toSerialize["version"] = o.Version
 
 	return json.Marshal(toSerialize)
 }
@@ -549,6 +580,10 @@ func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
 
 	if btcActivationHeight, ok := temp["btc_activation_height"].(float64); ok {
 		o.BTCActivationHeight = int64(btcActivationHeight)
+	}
+
+	if version, ok := temp["version"].(int32); ok {
+		o.Version = int32(version)
 	}
 
 	return nil
