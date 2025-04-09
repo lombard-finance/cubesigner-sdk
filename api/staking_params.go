@@ -5,214 +5,149 @@ import (
 )
 
 type IBabylonStakingParams interface {
-	// GetActivationHeight returns the ActivationHeight field value
-	GetActivationHeight() int64
-	// GetCapHeight returns the CapHeight field value if set, zero value otherwise.
-	GetCapHeight() int64
-	//GetConfirmationDepth returns the ConfirmationDepth field value
-	GetConfirmationDepth() int32
-	// GetCovenantPks returns the CovenantPks field value
-	GetCovenantPks() []string
-	// GetCovenantQuorum returns the CovenantQuorum field value
-	GetCovenantQuorum() int32
-	// GetMaxStakingAmount returns the MaxStakingAmount field value
-	GetMaxStakingAmount() int64
-	// GetMaxStakingTime returns the MaxStakingTime field value
-	GetMaxStakingTime() int32
-	// GetMinStakingAmount returns the MinStakingAmount field value
-	GetMinStakingAmount() int64
-	// GetMinStakingTime returns the MinStakingTime field value
-	GetMinStakingTime() int32
-	// GetStakingCap returns the StakingCap field value if set, zero value otherwise.
-	GetStakingCap() int64
-	// GetTag returns the Tag field value
-	GetTag() string
-	// GetUnbondingFee returns the UnbondingFee field value
-	GetUnbondingFee() int64
-	// GetUnbondingTime returns the UnbondingTime field value
-	GetUnbondingTime() int32
-	// GetVersion returns the Version field value
-	GetVersion() int32
+	// GetCovenantPKs returns the covenant public keys
+	GetCovenantPKs() []string
+
+	// GetCovenantQuorum returns the covenant quorum threshold
+	GetCovenantQuorum() int
+
+	// GetMinStakingValueSat returns the minimum staking value in satoshis
+	GetMinStakingValueSat() int64
+
+	// GetMaxStakingValueSat returns the maximum staking value in satoshis
+	GetMaxStakingValueSat() int64
+
+	// GetMinStakingTimeBlocks returns the minimum staking time in blocks
+	GetMinStakingTimeBlocks() int64
+
+	// GetMaxStakingTimeBlocks returns the maximum staking time in blocks
+	GetMaxStakingTimeBlocks() int64
+
+	// GetSlashingPKScript returns the slashing PK script
+	GetSlashingPKScript() string
+
+	// GetMinSlashingTxFeeSat returns the minimum slashing transaction fee in satoshis
+	GetMinSlashingTxFeeSat() int64
+
+	// GetSlashingRate returns the slashing rate as a string
+	GetSlashingRate() string
+
+	// GetUnbondingTimeBlocks returns the unbonding time in blocks
+	GetUnbondingTimeBlocks() int64
+
+	// GetUnbondingFeeSat returns the unbonding fee in satoshis
+	GetUnbondingFeeSat() int64
+
+	// GetMinCommissionRate returns the minimum commission rate as a string
+	GetMinCommissionRate() string
+
+	// GetDelegationCreationBaseGasFee returns the delegation creation base gas fee
+	GetDelegationCreationBaseGasFee() int64
+
+	// GetAllowListExpirationHeight returns the allow list expiration height
+	GetAllowListExpirationHeight() int64
+
+	// GetBTCActivationHeight returns the BTC activation height
+	GetBTCActivationHeight() int64
 }
 
 // BabylonStakingParams Parameter set for Babylon staking. The latest parameter sets are available from <https://github.com/babylonchain/networks>
 type BabylonStakingParams struct {
-	// Block height at which these params will enter use
-	ActivationHeight int64 `json:"activation_height"`
-	// Block height above which staking is disabled
-	CapHeight *int64 `json:"cap_height,omitempty"`
-	// Number of confirmations before a staking txn is considered finalized by the covenant committee
-	ConfirmationDepth int32 `json:"confirmation_depth"`
-	// Public keys of the covenant signers
-	CovenantPks []string `json:"covenant_pks"`
-	// Quorum for covenant signer
-	CovenantQuorum int32 `json:"covenant_quorum"`
-	// Max amount that can be staked in a single txn
-	MaxStakingAmount int64 `json:"max_staking_amount"`
-	// Max timelock for staking
-	MaxStakingTime int32 `json:"max_staking_time"`
-	// Min amount that must be staked
-	MinStakingAmount int64 `json:"min_staking_amount"`
-	// Min timelock for staking
-	MinStakingTime int32 `json:"min_staking_time"`
-	// Max total amount staked
-	StakingCap *int64 `json:"staking_cap,omitempty"`
-	// \"Magic bytes\" tag for staking metadata
-	Tag string `json:"tag"`
-	// Fee that must be spent as part of the unbonding txn
-	UnbondingFee int64 `json:"unbonding_fee"`
-	// Min timelock for an unbonding script
-	UnbondingTime int32 `json:"unbonding_time"`
-	// Parameter version
-	Version int32 `json:"version"`
+	CovenantPKs                  []string `json:"covenant_pks"`
+	CovenantQuorum               int      `json:"covenant_quorum"`
+	MinStakingValueSat           int64    `json:"min_staking_value_sat"`
+	MaxStakingValueSat           int64    `json:"max_staking_value_sat"`
+	MinStakingTimeBlocks         int64    `json:"min_staking_time_blocks"`
+	MaxStakingTimeBlocks         int64    `json:"max_staking_time_blocks"`
+	SlashingPKScript             string   `json:"slashing_pk_script"`
+	MinSlashingTxFeeSat          int64    `json:"min_slashing_tx_fee_sat"`
+	SlashingRate                 string   `json:"slashing_rate"`
+	UnbondingTimeBlocks          int64    `json:"unbonding_time_blocks"`
+	UnbondingFeeSat              int64    `json:"unbonding_fee_sat"`
+	MinCommissionRate            string   `json:"min_commission_rate"`
+	DelegationCreationBaseGasFee int64    `json:"delegation_creation_base_gas_fee"`
+	AllowListExpirationHeight    int64    `json:"allow_list_expiration_height"`
+	BTCActivationHeight          int64    `json:"btc_activation_height"`
 }
 
 // NewBabylonStakingParams instantiates a new BabylonStakingParams object
-// This constructor will assign default values to properties that have it defined,
-// and makes sure properties required by API are set, but the set of arguments
-// will change when the set of required properties is changed
-func NewBabylonStakingParams(activationHeight int64, confirmationDepth int32, covenantPks []string, covenantQuorum int32, maxStakingAmount int64, maxStakingTime int32, minStakingAmount int64, minStakingTime int32, tag string, unbondingFee int64, unbondingTime int32, version int32) *BabylonStakingParams {
+func NewBabylonStakingParams(
+	covenantPKs []string,
+	covenantQuorum int,
+	minStakingValueSat int64,
+	maxStakingValueSat int64,
+	minStakingTimeBlocks int64,
+	maxStakingTimeBlocks int64,
+	slashingPKScript string,
+	minSlashingTxFeeSat int64,
+	slashingRate string,
+	unbondingTimeBlocks int64,
+	unbondingFeeSat int64,
+	minCommissionRate string,
+	delegationCreationBaseGasFee int64,
+	allowListExpirationHeight int64,
+	btcActivationHeight int64,
+) *BabylonStakingParams {
 	this := BabylonStakingParams{}
-	this.ActivationHeight = activationHeight
-	this.ConfirmationDepth = confirmationDepth
-	this.CovenantPks = covenantPks
+	this.CovenantPKs = covenantPKs
 	this.CovenantQuorum = covenantQuorum
-	this.MaxStakingAmount = maxStakingAmount
-	this.MaxStakingTime = maxStakingTime
-	this.MinStakingAmount = minStakingAmount
-	this.MinStakingTime = minStakingTime
-	this.Tag = tag
-	this.UnbondingFee = unbondingFee
-	this.UnbondingTime = unbondingTime
-	this.Version = version
+	this.MinStakingValueSat = minStakingValueSat
+	this.MaxStakingValueSat = maxStakingValueSat
+	this.MinStakingTimeBlocks = minStakingTimeBlocks
+	this.MaxStakingTimeBlocks = maxStakingTimeBlocks
+	this.SlashingPKScript = slashingPKScript
+	this.MinSlashingTxFeeSat = minSlashingTxFeeSat
+	this.SlashingRate = slashingRate
+	this.UnbondingTimeBlocks = unbondingTimeBlocks
+	this.UnbondingFeeSat = unbondingFeeSat
+	this.MinCommissionRate = minCommissionRate
+	this.DelegationCreationBaseGasFee = delegationCreationBaseGasFee
+	this.AllowListExpirationHeight = allowListExpirationHeight
+	this.BTCActivationHeight = btcActivationHeight
 	return &this
 }
 
-// NewBabylonStakingParamsWithDefaults instantiates a new BabylonStakingParams object
-// This constructor will only assign default values to properties that have it defined,
-// but it doesn't guarantee that properties required by API are set
+// NewBabylonStakingParamsWithDefaults instantiates a new BabylonStakingParams object with default values
 func NewBabylonStakingParamsWithDefaults() *BabylonStakingParams {
 	this := BabylonStakingParams{}
 	return &this
 }
 
-// GetActivationHeight returns the ActivationHeight field value
-func (o *BabylonStakingParams) GetActivationHeight() int64 {
-	if o == nil {
-		var ret int64
-		return ret
-	}
-
-	return o.ActivationHeight
-}
-
-// GetActivationHeightOk returns a tuple with the ActivationHeight field value
-// and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetActivationHeightOk() (*int64, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.ActivationHeight, true
-}
-
-// SetActivationHeight sets field value
-func (o *BabylonStakingParams) SetActivationHeight(v int64) {
-	o.ActivationHeight = v
-}
-
-// GetCapHeight returns the CapHeight field value if set, zero value otherwise.
-func (o *BabylonStakingParams) GetCapHeight() int64 {
-	if o == nil || o.CapHeight == nil {
-		var ret int64
-		return ret
-	}
-	return *o.CapHeight
-}
-
-// GetCapHeightOk returns a tuple with the CapHeight field value if set, nil otherwise
-// and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetCapHeightOk() (*int64, bool) {
-	if o == nil || o.CapHeight == nil {
-		return nil, false
-	}
-	return o.CapHeight, true
-}
-
-// HasCapHeight returns a boolean if a field has been set.
-func (o *BabylonStakingParams) HasCapHeight() bool {
-	if o != nil && o.CapHeight != nil {
-		return true
-	}
-
-	return false
-}
-
-// SetCapHeight gets a reference to the given int64 and assigns it to the CapHeight field.
-func (o *BabylonStakingParams) SetCapHeight(v int64) {
-	o.CapHeight = &v
-}
-
-// GetConfirmationDepth returns the ConfirmationDepth field value
-func (o *BabylonStakingParams) GetConfirmationDepth() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.ConfirmationDepth
-}
-
-// GetConfirmationDepthOk returns a tuple with the ConfirmationDepth field value
-// and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetConfirmationDepthOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.ConfirmationDepth, true
-}
-
-// SetConfirmationDepth sets field value
-func (o *BabylonStakingParams) SetConfirmationDepth(v int32) {
-	o.ConfirmationDepth = v
-}
-
-// GetCovenantPks returns the CovenantPks field value
-func (o *BabylonStakingParams) GetCovenantPks() []string {
+// GetCovenantPKs returns the CovenantPKs field value
+func (o *BabylonStakingParams) GetCovenantPKs() []string {
 	if o == nil {
 		var ret []string
 		return ret
 	}
-
-	return o.CovenantPks
+	return o.CovenantPKs
 }
 
-// GetCovenantPksOk returns a tuple with the CovenantPks field value
+// GetCovenantPKsOk returns a tuple with the CovenantPKs field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetCovenantPksOk() ([]string, bool) {
+func (o *BabylonStakingParams) GetCovenantPKsOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.CovenantPks, true
+	return o.CovenantPKs, true
 }
 
-// SetCovenantPks sets field value
-func (o *BabylonStakingParams) SetCovenantPks(v []string) {
-	o.CovenantPks = v
+// SetCovenantPKs sets field value
+func (o *BabylonStakingParams) SetCovenantPKs(v []string) {
+	o.CovenantPKs = v
 }
 
 // GetCovenantQuorum returns the CovenantQuorum field value
-func (o *BabylonStakingParams) GetCovenantQuorum() int32 {
+func (o *BabylonStakingParams) GetCovenantQuorum() int {
 	if o == nil {
-		var ret int32
+		var ret int
 		return ret
 	}
-
 	return o.CovenantQuorum
 }
 
 // GetCovenantQuorumOk returns a tuple with the CovenantQuorum field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetCovenantQuorumOk() (*int32, bool) {
+func (o *BabylonStakingParams) GetCovenantQuorumOk() (*int, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -220,279 +155,403 @@ func (o *BabylonStakingParams) GetCovenantQuorumOk() (*int32, bool) {
 }
 
 // SetCovenantQuorum sets field value
-func (o *BabylonStakingParams) SetCovenantQuorum(v int32) {
+func (o *BabylonStakingParams) SetCovenantQuorum(v int) {
 	o.CovenantQuorum = v
 }
 
-// GetMaxStakingAmount returns the MaxStakingAmount field value
-func (o *BabylonStakingParams) GetMaxStakingAmount() int64 {
+// GetMinStakingValueSat returns the MinStakingValueSat field value
+func (o *BabylonStakingParams) GetMinStakingValueSat() int64 {
 	if o == nil {
 		var ret int64
 		return ret
 	}
-
-	return o.MaxStakingAmount
+	return o.MinStakingValueSat
 }
 
-// GetMaxStakingAmountOk returns a tuple with the MaxStakingAmount field value
+// GetMinStakingValueSatOk returns a tuple with the MinStakingValueSat field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetMaxStakingAmountOk() (*int64, bool) {
+func (o *BabylonStakingParams) GetMinStakingValueSatOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.MaxStakingAmount, true
+	return &o.MinStakingValueSat, true
 }
 
-// SetMaxStakingAmount sets field value
-func (o *BabylonStakingParams) SetMaxStakingAmount(v int64) {
-	o.MaxStakingAmount = v
+// SetMinStakingValueSat sets field value
+func (o *BabylonStakingParams) SetMinStakingValueSat(v int64) {
+	o.MinStakingValueSat = v
 }
 
-// GetMaxStakingTime returns the MaxStakingTime field value
-func (o *BabylonStakingParams) GetMaxStakingTime() int32 {
-	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.MaxStakingTime
-}
-
-// GetMaxStakingTimeOk returns a tuple with the MaxStakingTime field value
-// and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetMaxStakingTimeOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.MaxStakingTime, true
-}
-
-// SetMaxStakingTime sets field value
-func (o *BabylonStakingParams) SetMaxStakingTime(v int32) {
-	o.MaxStakingTime = v
-}
-
-// GetMinStakingAmount returns the MinStakingAmount field value
-func (o *BabylonStakingParams) GetMinStakingAmount() int64 {
+// GetMaxStakingValueSat returns the MaxStakingValueSat field value
+func (o *BabylonStakingParams) GetMaxStakingValueSat() int64 {
 	if o == nil {
 		var ret int64
 		return ret
 	}
-
-	return o.MinStakingAmount
+	return o.MaxStakingValueSat
 }
 
-// GetMinStakingAmountOk returns a tuple with the MinStakingAmount field value
+// GetMaxStakingValueSatOk returns a tuple with the MaxStakingValueSat field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetMinStakingAmountOk() (*int64, bool) {
+func (o *BabylonStakingParams) GetMaxStakingValueSatOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.MinStakingAmount, true
+	return &o.MaxStakingValueSat, true
 }
 
-// SetMinStakingAmount sets field value
-func (o *BabylonStakingParams) SetMinStakingAmount(v int64) {
-	o.MinStakingAmount = v
+// SetMaxStakingValueSat sets field value
+func (o *BabylonStakingParams) SetMaxStakingValueSat(v int64) {
+	o.MaxStakingValueSat = v
 }
 
-// GetMinStakingTime returns the MinStakingTime field value
-func (o *BabylonStakingParams) GetMinStakingTime() int32 {
+// GetMinStakingTimeBlocks returns the MinStakingTimeBlocks field value
+func (o *BabylonStakingParams) GetMinStakingTimeBlocks() int64 {
 	if o == nil {
-		var ret int32
-		return ret
-	}
-
-	return o.MinStakingTime
-}
-
-// GetMinStakingTimeOk returns a tuple with the MinStakingTime field value
-// and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetMinStakingTimeOk() (*int32, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.MinStakingTime, true
-}
-
-// SetMinStakingTime sets field value
-func (o *BabylonStakingParams) SetMinStakingTime(v int32) {
-	o.MinStakingTime = v
-}
-
-// GetStakingCap returns the StakingCap field value if set, zero value otherwise.
-func (o *BabylonStakingParams) GetStakingCap() int64 {
-	if o == nil || o.StakingCap == nil {
 		var ret int64
 		return ret
 	}
-	return *o.StakingCap
+	return o.MinStakingTimeBlocks
 }
 
-// GetStakingCapOk returns a tuple with the StakingCap field value if set, nil otherwise
+// GetMinStakingTimeBlocksOk returns a tuple with the MinStakingTimeBlocks field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetStakingCapOk() (*int64, bool) {
-	if o == nil || o.StakingCap == nil {
+func (o *BabylonStakingParams) GetMinStakingTimeBlocksOk() (*int64, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.StakingCap, true
+	return &o.MinStakingTimeBlocks, true
 }
 
-// HasStakingCap returns a boolean if a field has been set.
-func (o *BabylonStakingParams) HasStakingCap() bool {
-	if o != nil && o.StakingCap != nil {
-		return true
+// SetMinStakingTimeBlocks sets field value
+func (o *BabylonStakingParams) SetMinStakingTimeBlocks(v int64) {
+	o.MinStakingTimeBlocks = v
+}
+
+// GetMaxStakingTimeBlocks returns the MaxStakingTimeBlocks field value
+func (o *BabylonStakingParams) GetMaxStakingTimeBlocks() int64 {
+	if o == nil {
+		var ret int64
+		return ret
 	}
-
-	return false
+	return o.MaxStakingTimeBlocks
 }
 
-// SetStakingCap gets a reference to the given int64 and assigns it to the StakingCap field.
-func (o *BabylonStakingParams) SetStakingCap(v int64) {
-	o.StakingCap = &v
+// GetMaxStakingTimeBlocksOk returns a tuple with the MaxStakingTimeBlocks field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetMaxStakingTimeBlocksOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MaxStakingTimeBlocks, true
 }
 
-// GetTag returns the Tag field value
-func (o *BabylonStakingParams) GetTag() string {
+// SetMaxStakingTimeBlocks sets field value
+func (o *BabylonStakingParams) SetMaxStakingTimeBlocks(v int64) {
+	o.MaxStakingTimeBlocks = v
+}
+
+// GetSlashingPKScript returns the SlashingPKScript field value
+func (o *BabylonStakingParams) GetSlashingPKScript() string {
 	if o == nil {
 		var ret string
 		return ret
 	}
-
-	return o.Tag
+	return o.SlashingPKScript
 }
 
-// GetTagOk returns a tuple with the Tag field value
+// GetSlashingPKScriptOk returns a tuple with the SlashingPKScript field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetTagOk() (*string, bool) {
+func (o *BabylonStakingParams) GetSlashingPKScriptOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Tag, true
+	return &o.SlashingPKScript, true
 }
 
-// SetTag sets field value
-func (o *BabylonStakingParams) SetTag(v string) {
-	o.Tag = v
+// SetSlashingPKScript sets field value
+func (o *BabylonStakingParams) SetSlashingPKScript(v string) {
+	o.SlashingPKScript = v
 }
 
-// GetUnbondingFee returns the UnbondingFee field value
-func (o *BabylonStakingParams) GetUnbondingFee() int64 {
+// GetMinSlashingTxFeeSat returns the MinSlashingTxFeeSat field value
+func (o *BabylonStakingParams) GetMinSlashingTxFeeSat() int64 {
 	if o == nil {
 		var ret int64
 		return ret
 	}
-
-	return o.UnbondingFee
+	return o.MinSlashingTxFeeSat
 }
 
-// GetUnbondingFeeOk returns a tuple with the UnbondingFee field value
+// GetMinSlashingTxFeeSatOk returns a tuple with the MinSlashingTxFeeSat field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetUnbondingFeeOk() (*int64, bool) {
+func (o *BabylonStakingParams) GetMinSlashingTxFeeSatOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.UnbondingFee, true
+	return &o.MinSlashingTxFeeSat, true
 }
 
-// SetUnbondingFee sets field value
-func (o *BabylonStakingParams) SetUnbondingFee(v int64) {
-	o.UnbondingFee = v
+// SetMinSlashingTxFeeSat sets field value
+func (o *BabylonStakingParams) SetMinSlashingTxFeeSat(v int64) {
+	o.MinSlashingTxFeeSat = v
 }
 
-// GetUnbondingTime returns the UnbondingTime field value
-func (o *BabylonStakingParams) GetUnbondingTime() int32 {
+// GetSlashingRate returns the SlashingRate field value
+func (o *BabylonStakingParams) GetSlashingRate() string {
 	if o == nil {
-		var ret int32
+		var ret string
 		return ret
 	}
-
-	return o.UnbondingTime
+	return o.SlashingRate
 }
 
-// GetUnbondingTimeOk returns a tuple with the UnbondingTime field value
+// GetSlashingRateOk returns a tuple with the SlashingRate field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetUnbondingTimeOk() (*int32, bool) {
+func (o *BabylonStakingParams) GetSlashingRateOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.UnbondingTime, true
+	return &o.SlashingRate, true
 }
 
-// SetUnbondingTime sets field value
-func (o *BabylonStakingParams) SetUnbondingTime(v int32) {
-	o.UnbondingTime = v
+// SetSlashingRate sets field value
+func (o *BabylonStakingParams) SetSlashingRate(v string) {
+	o.SlashingRate = v
 }
 
-// GetVersion returns the Version field value
-func (o *BabylonStakingParams) GetVersion() int32 {
+// GetUnbondingTimeBlocks returns the UnbondingTimeBlocks field value
+func (o *BabylonStakingParams) GetUnbondingTimeBlocks() int64 {
 	if o == nil {
-		var ret int32
+		var ret int64
 		return ret
 	}
-
-	return o.Version
+	return o.UnbondingTimeBlocks
 }
 
-// GetVersionOk returns a tuple with the Version field value
+// GetUnbondingTimeBlocksOk returns a tuple with the UnbondingTimeBlocks field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingParams) GetVersionOk() (*int32, bool) {
+func (o *BabylonStakingParams) GetUnbondingTimeBlocksOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Version, true
+	return &o.UnbondingTimeBlocks, true
 }
 
-// SetVersion sets field value
-func (o *BabylonStakingParams) SetVersion(v int32) {
-	o.Version = v
+// SetUnbondingTimeBlocks sets field value
+func (o *BabylonStakingParams) SetUnbondingTimeBlocks(v int64) {
+	o.UnbondingTimeBlocks = v
 }
 
+// GetUnbondingFeeSat returns the UnbondingFeeSat field value
+func (o *BabylonStakingParams) GetUnbondingFeeSat() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+	return o.UnbondingFeeSat
+}
+
+// GetUnbondingFeeSatOk returns a tuple with the UnbondingFeeSat field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetUnbondingFeeSatOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UnbondingFeeSat, true
+}
+
+// SetUnbondingFeeSat sets field value
+func (o *BabylonStakingParams) SetUnbondingFeeSat(v int64) {
+	o.UnbondingFeeSat = v
+}
+
+// GetMinCommissionRate returns the MinCommissionRate field value
+func (o *BabylonStakingParams) GetMinCommissionRate() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+	return o.MinCommissionRate
+}
+
+// GetMinCommissionRateOk returns a tuple with the MinCommissionRate field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetMinCommissionRateOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.MinCommissionRate, true
+}
+
+// SetMinCommissionRate sets field value
+func (o *BabylonStakingParams) SetMinCommissionRate(v string) {
+	o.MinCommissionRate = v
+}
+
+// GetDelegationCreationBaseGasFee returns the DelegationCreationBaseGasFee field value
+func (o *BabylonStakingParams) GetDelegationCreationBaseGasFee() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+	return o.DelegationCreationBaseGasFee
+}
+
+// GetDelegationCreationBaseGasFeeOk returns a tuple with the DelegationCreationBaseGasFee field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetDelegationCreationBaseGasFeeOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.DelegationCreationBaseGasFee, true
+}
+
+// SetDelegationCreationBaseGasFee sets field value
+func (o *BabylonStakingParams) SetDelegationCreationBaseGasFee(v int64) {
+	o.DelegationCreationBaseGasFee = v
+}
+
+// GetAllowListExpirationHeight returns the AllowListExpirationHeight field value
+func (o *BabylonStakingParams) GetAllowListExpirationHeight() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+	return o.AllowListExpirationHeight
+}
+
+// GetAllowListExpirationHeightOk returns a tuple with the AllowListExpirationHeight field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetAllowListExpirationHeightOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.AllowListExpirationHeight, true
+}
+
+// SetAllowListExpirationHeight sets field value
+func (o *BabylonStakingParams) SetAllowListExpirationHeight(v int64) {
+	o.AllowListExpirationHeight = v
+}
+
+// GetBTCActivationHeight returns the BTCActivationHeight field value
+func (o *BabylonStakingParams) GetBTCActivationHeight() int64 {
+	if o == nil {
+		var ret int64
+		return ret
+	}
+	return o.BTCActivationHeight
+}
+
+// GetBTCActivationHeightOk returns a tuple with the BTCActivationHeight field value
+// and a boolean to check if the value has been set.
+func (o *BabylonStakingParams) GetBTCActivationHeightOk() (*int64, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.BTCActivationHeight, true
+}
+
+// SetBTCActivationHeight sets field value
+func (o *BabylonStakingParams) SetBTCActivationHeight(v int64) {
+	o.BTCActivationHeight = v
+}
+
+// MarshalJSON marshals the BabylonStakingParams to JSON
 func (o BabylonStakingParams) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["activation_height"] = o.ActivationHeight
-	}
-	if o.CapHeight != nil {
-		toSerialize["cap_height"] = o.CapHeight
-	}
-	if true {
-		toSerialize["confirmation_depth"] = o.ConfirmationDepth
-	}
-	if true {
-		toSerialize["covenant_pks"] = o.CovenantPks
-	}
-	if true {
-		toSerialize["covenant_quorum"] = o.CovenantQuorum
-	}
-	if true {
-		toSerialize["max_staking_amount"] = o.MaxStakingAmount
-	}
-	if true {
-		toSerialize["max_staking_time"] = o.MaxStakingTime
-	}
-	if true {
-		toSerialize["min_staking_amount"] = o.MinStakingAmount
-	}
-	if true {
-		toSerialize["min_staking_time"] = o.MinStakingTime
-	}
-	if o.StakingCap != nil {
-		toSerialize["staking_cap"] = o.StakingCap
-	}
-	if true {
-		toSerialize["tag"] = o.Tag
-	}
-	if true {
-		toSerialize["unbonding_fee"] = o.UnbondingFee
-	}
-	if true {
-		toSerialize["unbonding_time"] = o.UnbondingTime
-	}
-	if true {
-		toSerialize["version"] = o.Version
-	}
+
+	toSerialize["covenant_pks"] = o.CovenantPKs
+	toSerialize["covenant_quorum"] = o.CovenantQuorum
+	toSerialize["min_staking_value_sat"] = o.MinStakingValueSat
+	toSerialize["max_staking_value_sat"] = o.MaxStakingValueSat
+	toSerialize["min_staking_time_blocks"] = o.MinStakingTimeBlocks
+	toSerialize["max_staking_time_blocks"] = o.MaxStakingTimeBlocks
+	toSerialize["slashing_pk_script"] = o.SlashingPKScript
+	toSerialize["min_slashing_tx_fee_sat"] = o.MinSlashingTxFeeSat
+	toSerialize["slashing_rate"] = o.SlashingRate
+	toSerialize["unbonding_time_blocks"] = o.UnbondingTimeBlocks
+	toSerialize["unbonding_fee_sat"] = o.UnbondingFeeSat
+	toSerialize["min_commission_rate"] = o.MinCommissionRate
+	toSerialize["delegation_creation_base_gas_fee"] = o.DelegationCreationBaseGasFee
+	toSerialize["allow_list_expiration_height"] = o.AllowListExpirationHeight
+	toSerialize["btc_activation_height"] = o.BTCActivationHeight
+
 	return json.Marshal(toSerialize)
+}
+
+// UnmarshalJSON unmarshals BabylonStakingParams from JSON
+func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
+	var temp map[string]interface{}
+	if err := json.Unmarshal(bytes, &temp); err != nil {
+		return err
+	}
+
+	if covenantPKs, ok := temp["covenant_pks"].([]interface{}); ok {
+		o.CovenantPKs = make([]string, len(covenantPKs))
+		for i, v := range covenantPKs {
+			o.CovenantPKs[i] = v.(string)
+		}
+	}
+
+	if covenantQuorum, ok := temp["covenant_quorum"].(float64); ok {
+		o.CovenantQuorum = int(covenantQuorum)
+	}
+
+	if minStakingValueSat, ok := temp["min_staking_value_sat"].(float64); ok {
+		o.MinStakingValueSat = int64(minStakingValueSat)
+	}
+
+	if maxStakingValueSat, ok := temp["max_staking_value_sat"].(float64); ok {
+		o.MaxStakingValueSat = int64(maxStakingValueSat)
+	}
+
+	if minStakingTimeBlocks, ok := temp["min_staking_time_blocks"].(float64); ok {
+		o.MinStakingTimeBlocks = int64(minStakingTimeBlocks)
+	}
+
+	if maxStakingTimeBlocks, ok := temp["max_staking_time_blocks"].(float64); ok {
+		o.MaxStakingTimeBlocks = int64(maxStakingTimeBlocks)
+	}
+
+	if slashingPKScript, ok := temp["slashing_pk_script"].(string); ok {
+		o.SlashingPKScript = slashingPKScript
+	}
+
+	if minSlashingTxFeeSat, ok := temp["min_slashing_tx_fee_sat"].(float64); ok {
+		o.MinSlashingTxFeeSat = int64(minSlashingTxFeeSat)
+	}
+
+	if slashingRate, ok := temp["slashing_rate"].(string); ok {
+		o.SlashingRate = slashingRate
+	}
+
+	if unbondingTimeBlocks, ok := temp["unbonding_time_blocks"].(float64); ok {
+		o.UnbondingTimeBlocks = int64(unbondingTimeBlocks)
+	}
+
+	if unbondingFeeSat, ok := temp["unbonding_fee_sat"].(float64); ok {
+		o.UnbondingFeeSat = int64(unbondingFeeSat)
+	}
+
+	if minCommissionRate, ok := temp["min_commission_rate"].(string); ok {
+		o.MinCommissionRate = minCommissionRate
+	}
+
+	if delegationCreationBaseGasFee, ok := temp["delegation_creation_base_gas_fee"].(float64); ok {
+		o.DelegationCreationBaseGasFee = int64(delegationCreationBaseGasFee)
+	}
+
+	if allowListExpirationHeight, ok := temp["allow_list_expiration_height"].(float64); ok {
+		o.AllowListExpirationHeight = int64(allowListExpirationHeight)
+	}
+
+	if btcActivationHeight, ok := temp["btc_activation_height"].(float64); ok {
+		o.BTCActivationHeight = int64(btcActivationHeight)
+	}
+
+	return nil
 }
 
 type NullableBabylonStakingParams struct {
