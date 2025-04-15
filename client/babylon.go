@@ -16,17 +16,15 @@ func (cli *Client) StakingBabylon(
 	request *v0.BabylonStakingRequest,
 	mfaId, mfaConfirmation *string,
 ) (*v0.BabylonStaking200Response, string, error) {
-	switch request.GetActualInstance().(type) {
-	case *v0.BabylonStakingDeposit:
+	switch request.Action {
+	case api.DepositAction:
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingEarlyUnbond:
+	case api.EarlyUnbondAction:
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingWithdrawal:
+	case api.WithdrawEarlyUnbondAction, api.WithdrawTimelockAction:
 		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingSlashDeposit:
-		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKING, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingSlashEarlyUnbond:
-		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKING, mfaId, mfaConfirmation)
+	case api.SlashDepositAction, api.SlashEarlyUnbondAction:
+		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGSLASH, mfaId, mfaConfirmation)
 	default:
 		return nil, "", errors.New("not implemented")
 	}

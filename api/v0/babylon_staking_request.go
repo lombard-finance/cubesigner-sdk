@@ -9,11 +9,9 @@ import (
 
 // BabylonStakingRequest - The actions possible via the Babylon Staking endpoint
 type BabylonStakingRequest struct {
-	BabylonStakingDeposit          *BabylonStakingDeposit
-	BabylonStakingEarlyUnbond      *BabylonStakingEarlyUnbond
-	BabylonStakingWithdrawal       *BabylonStakingWithdrawal
-	BabylonStakingSlashDeposit     *BabylonStakingSlashDeposit
-	BabylonStakingSlashEarlyUnbond *BabylonStakingSlashEarlyUnbond
+	BabylonStakingDeposit     *BabylonStakingDeposit
+	BabylonStakingEarlyUnbond *BabylonStakingEarlyUnbond
+	BabylonStakingWithdrawal  *BabylonStakingWithdrawal
 
 	Action api.BabylonStakingAction `json:"action"`
 }
@@ -22,6 +20,7 @@ type BabylonStakingRequest struct {
 func BabylonStakingDepositAsBabylonStakingRequest(v *BabylonStakingDeposit) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingDeposit: v,
+		Action:                api.DepositAction,
 	}
 }
 
@@ -29,27 +28,39 @@ func BabylonStakingDepositAsBabylonStakingRequest(v *BabylonStakingDeposit) Baby
 func BabylonStakingEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingEarlyUnbond: v,
+		Action:                    api.EarlyUnbondAction,
 	}
 }
 
-// BabylonStakingWithdrawalAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
-func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+// BabylonStakingWithdrawTimelockAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawTimelockAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawTimelockAction,
+	}
+}
+
+// BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawEarlyUnbondAction,
 	}
 }
 
 // BabylonStakingSlashDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashDeposit wrapped in BabylonStakingRequest
-func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingSlashDeposit) BabylonStakingRequest {
+func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
-		BabylonStakingSlashDeposit: v,
+		BabylonStakingEarlyUnbond: v,
+		Action:                    api.SlashDepositAction,
 	}
 }
 
 // BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashEarlyUnbond wrapped in BabylonStakingRequest
-func BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingSlashEarlyUnbond) BabylonStakingRequest {
+func BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
-		BabylonStakingSlashEarlyUnbond: v,
+		BabylonStakingEarlyUnbond: v,
+		Action:                    api.SlashEarlyUnbondAction,
 	}
 }
 
@@ -73,37 +84,23 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 	case api.DepositAction:
 		var deposit BabylonStakingDeposit
 		if err := json.Unmarshal(data, &deposit); err != nil {
-			return fmt.Errorf("failed to unmarshal BabylonStakingDeposit: %w", err)
+			return fmt.Errorf("failed to unmarshal BabylonStakingDeposit for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
 		dst.BabylonStakingDeposit = &deposit
 
-	case api.EarlyUnbondAction:
+	case api.EarlyUnbondAction, api.SlashDepositAction, api.SlashEarlyUnbondAction:
 		var earlyUnbond BabylonStakingEarlyUnbond
 		if err := json.Unmarshal(data, &earlyUnbond); err != nil {
-			return fmt.Errorf("failed to unmarshal BabylonStakingEarlyUnbond: %w", err)
+			return fmt.Errorf("failed to unmarshal BabylonStakingEarlyUnbond for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
 		dst.BabylonStakingEarlyUnbond = &earlyUnbond
 
 	case api.WithdrawTimelockAction, api.WithdrawEarlyUnbondAction:
 		var withdrawal BabylonStakingWithdrawal
 		if err := json.Unmarshal(data, &withdrawal); err != nil {
-			return fmt.Errorf("failed to unmarshal BabylonStakingWithdrawal: %w", err)
+			return fmt.Errorf("failed to unmarshal BabylonStakingWithdrawal for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
 		dst.BabylonStakingWithdrawal = &withdrawal
-
-	case api.SlashDepositAction:
-		var slashDeposit BabylonStakingSlashDeposit
-		if err := json.Unmarshal(data, &slashDeposit); err != nil {
-			return fmt.Errorf("failed to unmarshal BabylonStakingSlashDeposit: %w", err)
-		}
-		dst.BabylonStakingSlashDeposit = &slashDeposit
-
-	case api.SlashEarlyUnbondAction:
-		var slashEarlyUnbond BabylonStakingSlashEarlyUnbond
-		if err := json.Unmarshal(data, &slashEarlyUnbond); err != nil {
-			return fmt.Errorf("failed to unmarshal BabylonStakingSlashEarlyUnbond: %w", err)
-		}
-		dst.BabylonStakingSlashEarlyUnbond = &slashEarlyUnbond
 
 	default:
 		return fmt.Errorf("unknown BabylonStakingAction: %s", actionObj.Action)
@@ -128,14 +125,6 @@ func (src BabylonStakingRequest) MarshalJSON() ([]byte, error) {
 		toSerialize = src.BabylonStakingWithdrawal.Serialize()
 	}
 
-	if src.BabylonStakingSlashDeposit != nil {
-		toSerialize = src.BabylonStakingSlashDeposit.Serialize()
-	}
-
-	if src.BabylonStakingSlashEarlyUnbond != nil {
-		toSerialize = src.BabylonStakingSlashEarlyUnbond.Serialize()
-	}
-
 	toSerialize["action"] = src.Action
 
 	return json.Marshal(toSerialize)
@@ -158,13 +147,6 @@ func (obj *BabylonStakingRequest) GetActualInstance() interface{} {
 		return obj.BabylonStakingWithdrawal
 	}
 
-	if obj.BabylonStakingSlashDeposit != nil {
-		return obj.BabylonStakingSlashDeposit
-	}
-
-	if obj.BabylonStakingSlashEarlyUnbond != nil {
-		return obj.BabylonStakingSlashEarlyUnbond
-	}
 	// all schemas are nil
 	return nil
 }

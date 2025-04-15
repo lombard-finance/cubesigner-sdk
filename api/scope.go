@@ -27,6 +27,7 @@ const (
 	SIGNBABYLONSTAKINGDEPOSIT         Scope = "sign:babylon:staking:deposit"
 	SIGNBABYLONSTAKINGUNBOND          Scope = "sign:babylon:staking:unbond"
 	SIGNBABYLONSTAKINGWITHDRAW        Scope = "sign:babylon:staking:withdraw"
+	SIGNBABYLONSTAKINGSLASH           Scope = "sign:babylon:staking:slash"
 	SIGNEVM                           Scope = "sign:evm:*"
 	SIGNEVMTX                         Scope = "sign:evm:tx"
 	SIGNEVMEIP191                     Scope = "sign:evm:eip191"
