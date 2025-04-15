@@ -10,7 +10,7 @@ import (
 type BabylonStakingEarlyUnbond struct {
 	ExplicitParams api.NullableBabylonStakingParams `json:"explicit_params,omitempty"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
-	FinalityProviderPks []string `json:"finality_provider_pks"`
+	FinalityProviderPKS []string `json:"finality_provider_pks"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
 	LockTime int32                `json:"lock_time"`
 	Network  api.BabylonNetworkId `json:"network"`
@@ -34,9 +34,9 @@ type BabylonStakingEarlyUnbond struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBabylonStakingEarlyUnbond(finalityProviderPks []string, lockTime int32, network api.BabylonNetworkId, stakerPk string, txid string, value int64, vout int32) *BabylonStakingEarlyUnbond {
+func NewBabylonStakingEarlyUnbond(finalityProviderPKS []string, lockTime int32, network api.BabylonNetworkId, stakerPk string, txid string, value int64, vout int32) *BabylonStakingEarlyUnbond {
 	this := BabylonStakingEarlyUnbond{}
-	this.FinalityProviderPks = finalityProviderPks
+	this.FinalityProviderPKS = finalityProviderPKS
 	this.LockTime = lockTime
 	this.Network = network
 	this.StakerPk = stakerPk
@@ -97,28 +97,28 @@ func (o *BabylonStakingEarlyUnbond) UnsetExplicitParams() {
 	o.ExplicitParams.Unset()
 }
 
-// GetFinalityProviderPks returns the FinalityProviderPks field value
-func (o *BabylonStakingEarlyUnbond) GetFinalityProviderPks() []string {
+// GetFinalityProviderPKS returns the FinalityProviderPKS field value
+func (o *BabylonStakingEarlyUnbond) GetFinalityProviderPKS() []string {
 	if o == nil {
 		var ret []string
 		return ret
 	}
 
-	return o.FinalityProviderPks
+	return o.FinalityProviderPKS
 }
 
-// GetFinalityProviderPksOk returns a tuple with the FinalityProviderPks field value
+// GetFinalityProviderPKSOk returns a tuple with the FinalityProviderPKS field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingEarlyUnbond) GetFinalityProviderPksOk() ([]string, bool) {
+func (o *BabylonStakingEarlyUnbond) GetFinalityProviderPKsOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.FinalityProviderPks, true
+	return o.FinalityProviderPKS, true
 }
 
-// SetFinalityProviderPks sets field value
-func (o *BabylonStakingEarlyUnbond) SetFinalityProviderPks(v []string) {
-	o.FinalityProviderPks = v
+// SetFinalityProviderPKS sets field value
+func (o *BabylonStakingEarlyUnbond) SetFinalityProviderPKS(v []string) {
+	o.FinalityProviderPKS = v
 }
 
 // GetLockTime returns the LockTime field value
@@ -405,7 +405,7 @@ func (o BabylonStakingEarlyUnbond) Serialize() (toSerialize map[string]interface
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
 
-	toSerialize["finality_provider_pks"] = o.FinalityProviderPks
+	toSerialize["finality_provider_pks"] = o.FinalityProviderPKS
 	toSerialize["lock_time"] = o.LockTime
 	toSerialize["network"] = o.Network
 	toSerialize["staker_pk"] = o.StakerPk
