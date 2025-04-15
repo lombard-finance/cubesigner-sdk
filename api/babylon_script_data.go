@@ -6,7 +6,7 @@ import (
 
 // BabylonScriptData Data needed to create the Babylon deposit scripts
 type BabylonScriptData struct {
-	ExplicitParams NullableBabylonScriptDataExplicitParams `json:"explicit_params,omitempty"`
+	ExplicitParams NullableBabylonStakingParams `json:"explicit_params,omitempty"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
 	FinalityProviderPk string `json:"finality_provider_pk"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
@@ -40,9 +40,9 @@ func NewBabylonScriptDataWithDefaults() *BabylonScriptData {
 }
 
 // GetExplicitParams returns the ExplicitParams field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *BabylonScriptData) GetExplicitParams() BabylonScriptDataExplicitParams {
+func (o *BabylonScriptData) GetExplicitParams() BabylonStakingParams {
 	if o == nil || o.ExplicitParams.Get() == nil {
-		var ret BabylonScriptDataExplicitParams
+		var ret BabylonStakingParams
 		return ret
 	}
 	return *o.ExplicitParams.Get()
@@ -51,7 +51,7 @@ func (o *BabylonScriptData) GetExplicitParams() BabylonScriptDataExplicitParams 
 // GetExplicitParamsOk returns a tuple with the ExplicitParams field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *BabylonScriptData) GetExplicitParamsOk() (*BabylonScriptDataExplicitParams, bool) {
+func (o *BabylonScriptData) GetExplicitParamsOk() (*BabylonStakingParams, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *BabylonScriptData) HasExplicitParams() bool {
 	return false
 }
 
-// SetExplicitParams gets a reference to the given NullableBabylonScriptDataExplicitParams and assigns it to the ExplicitParams field.
-func (o *BabylonScriptData) SetExplicitParams(v BabylonScriptDataExplicitParams) {
+// SetExplicitParams gets a reference to the given NullableBabylonStakingParams and assigns it to the ExplicitParams field.
+func (o *BabylonScriptData) SetExplicitParams(v BabylonStakingParams) {
 	o.ExplicitParams.Set(&v)
 }
 
