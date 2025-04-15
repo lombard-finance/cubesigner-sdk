@@ -582,7 +582,7 @@ func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
 		o.BTCActivationHeight = int64(btcActivationHeight)
 	}
 
-	if version, ok := temp["version"].(int32); ok {
+	if version, ok := temp["version"].(float64); ok {
 		o.Version = int32(version)
 	}
 
