@@ -32,14 +32,6 @@ func BabylonStakingEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbo
 	}
 }
 
-// BabylonStakingWithdrawTimelockAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
-func BabylonStakingWithdrawTimelockAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
-	return BabylonStakingRequest{
-		BabylonStakingWithdrawal: v,
-		Action:                   api.WithdrawTimelockAction,
-	}
-}
-
 // BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
 func BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
 	return BabylonStakingRequest{
@@ -48,7 +40,23 @@ func BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest(v *BabylonSt
 	}
 }
 
-// BabylonStakingSlashDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashDeposit wrapped in BabylonStakingRequest
+// BabylonStakingWithdrawTimelockAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawTimelockAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawTimelockAction,
+	}
+}
+
+// BabylonStakingWithdrawSlashingAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawSlashingAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawSlashing,
+	}
+}
+
+// BabylonStakingSlashDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingEarlyUnbond wrapped in BabylonStakingRequest
 func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingEarlyUnbond: v,
@@ -56,7 +64,7 @@ func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingEarlyUnb
 	}
 }
 
-// BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest is a convenience function that returns BabylonStakingSlashEarlyUnbond wrapped in BabylonStakingRequest
+// BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest is a convenience function that returns BabylonStakingEarlyUnbond wrapped in BabylonStakingRequest
 func BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingEarlyUnbond: v,
@@ -95,7 +103,7 @@ func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
 		}
 		dst.BabylonStakingEarlyUnbond = &earlyUnbond
 
-	case api.WithdrawTimelockAction, api.WithdrawEarlyUnbondAction:
+	case api.WithdrawTimelockAction, api.WithdrawEarlyUnbondAction, api.WithdrawSlashing:
 		var withdrawal BabylonStakingWithdrawal
 		if err := json.Unmarshal(data, &withdrawal); err != nil {
 			return fmt.Errorf("failed to unmarshal BabylonStakingWithdrawal for BabylonStakingAction %s: %w", actionObj.Action, err)
