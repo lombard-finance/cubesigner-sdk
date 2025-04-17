@@ -480,32 +480,26 @@ func (o BabylonStakingWithdrawal) MarshalJSON() ([]byte, error) {
 
 func (o BabylonStakingWithdrawal) Serialize() (toSerialize map[string]interface{}) {
 	toSerialize = make(map[string]interface{})
-
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
-
 	toSerialize["finality_provider_pks"] = o.FinalityProviderPKs
 	toSerialize["lock_time"] = o.LockTime
 	toSerialize["network"] = o.Network
 	toSerialize["staker_pk"] = o.StakerPk
-
 	if o.Version.IsSet() {
 		toSerialize["version"] = o.Version.Get()
 	}
 	if o.AsBase64.IsSet() {
 		toSerialize["as_base64"] = o.AsBase64.Get()
 	}
-
 	toSerialize["fee"] = o.Fee
 	toSerialize["fee_type"] = o.FeeType
 	toSerialize["recipient"] = o.Recipient
 	toSerialize["txid"] = o.Txid
-
 	if o.TxnLockHeight.IsSet() {
 		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
 	}
-
 	toSerialize["value"] = o.Value
 	toSerialize["vout"] = o.Vout
 	return

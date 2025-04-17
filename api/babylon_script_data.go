@@ -226,18 +226,10 @@ func (o BabylonScriptData) MarshalJSON() ([]byte, error) {
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
-	if true {
-		toSerialize["finality_provider_pks"] = o.FinalityProviderPKs
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
+	toSerialize["finality_provider_pks"] = o.FinalityProviderPKs
+	toSerialize["lock_time"] = o.LockTime
+	toSerialize["network"] = o.Network
+	toSerialize["staker_pk"] = o.StakerPk
 	if o.Version.IsSet() {
 		toSerialize["version"] = o.Version.Get()
 	}
