@@ -23,7 +23,7 @@ type IBabylonStakingParams interface {
 	// GetMaxStakingTimeBlocks returns the maximum staking time in blocks
 	GetMaxStakingTimeBlocks() int64
 
-	// GetSlashingPKScript returns the slashing PK script
+	// GetSlashingPKScript returns the Base64-encoded slashing PK script
 	GetSlashingPKScript() string
 
 	// GetMinSlashingTxFeeSat returns the minimum slashing transaction fee in satoshis
