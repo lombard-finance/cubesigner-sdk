@@ -227,7 +227,7 @@ func (o BabylonScriptData) MarshalJSON() ([]byte, error) {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
 	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPKs
+		toSerialize["finality_provider_pks"] = o.FinalityProviderPKs
 	}
 	if true {
 		toSerialize["lock_time"] = o.LockTime

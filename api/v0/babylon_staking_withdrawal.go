@@ -18,6 +18,8 @@ type BabylonStakingWithdrawal struct {
 	StakerPk string `json:"staker_pk"`
 	// The parameter version to use. If `None`, uses the latest version.
 	Version api.NullableInt32 `json:"version,omitempty"`
+	// If `true`, the resulting PSBT is encoded as a base64 string. Otherwise, it is encoded as a hex string.
+	AsBase64 api.NullableBool `json:"as_base64"`
 	// The transaction fee value. The `fee_type` field determines whether this is a fixed fee in sats or a rate in sats per (estimated) virtual byte of transaction weight (i.e., sats per vb).
 	Fee     int64       `json:"fee"`
 	FeeType api.FeeType `json:"fee_type"`
@@ -242,6 +244,49 @@ func (o *BabylonStakingWithdrawal) UnsetVersion() {
 	o.Version.Unset()
 }
 
+// GetAsBase64 returns the Base64 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BabylonStakingWithdrawal) GetAsBase64() bool {
+	if o == nil || o.Version.Get() == nil {
+		var ret bool
+		return ret
+	}
+	return *o.AsBase64.Get()
+}
+
+// GetAsBase64Ok returns a tuple with the AsBase64 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BabylonStakingWithdrawal) GetAsBase64Ok() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AsBase64.Get(), o.AsBase64.IsSet()
+}
+
+// HasAsBase64 returns a boolean if a field has been set.
+func (o *BabylonStakingWithdrawal) HasAsBase64() bool {
+	if o != nil && o.AsBase64.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAsBase64 gets a reference to the given NullableBool and assigns it to the AsBase64 field.
+func (o *BabylonStakingWithdrawal) SetAsBase64(v bool) {
+	o.AsBase64.Set(&v)
+}
+
+// SetAsBase64Nil sets the value for AsBase64 to be an explicit nil
+func (o *BabylonStakingWithdrawal) SetAsBase64Nil() {
+	o.AsBase64.Set(nil)
+}
+
+// UnsetAsBase64 ensures that no value is present for Base64, not even an explicit nil
+func (o *BabylonStakingWithdrawal) UnsetAsBase64() {
+	o.AsBase64.Unset()
+}
+
 // GetFee returns the Fee field value
 func (o *BabylonStakingWithdrawal) GetFee() int64 {
 	if o == nil {
@@ -439,42 +484,30 @@ func (o BabylonStakingWithdrawal) Serialize() (toSerialize map[string]interface{
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
-	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPKs
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
+
+	toSerialize["finality_provider_pks"] = o.FinalityProviderPKs
+	toSerialize["lock_time"] = o.LockTime
+	toSerialize["network"] = o.Network
+	toSerialize["staker_pk"] = o.StakerPk
+
 	if o.Version.IsSet() {
 		toSerialize["version"] = o.Version.Get()
 	}
-	if true {
-		toSerialize["fee"] = o.Fee
+	if o.AsBase64.IsSet() {
+		toSerialize["as_base64"] = o.AsBase64.Get()
 	}
-	if true {
-		toSerialize["fee_type"] = o.FeeType
-	}
-	if true {
-		toSerialize["recipient"] = o.Recipient
-	}
-	if true {
-		toSerialize["txid"] = o.Txid
-	}
+
+	toSerialize["fee"] = o.Fee
+	toSerialize["fee_type"] = o.FeeType
+	toSerialize["recipient"] = o.Recipient
+	toSerialize["txid"] = o.Txid
+
 	if o.TxnLockHeight.IsSet() {
 		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
 	}
-	if true {
-		toSerialize["value"] = o.Value
-	}
-	if true {
-		toSerialize["vout"] = o.Vout
-	}
+
+	toSerialize["value"] = o.Value
+	toSerialize["vout"] = o.Vout
 	return
 }
 
