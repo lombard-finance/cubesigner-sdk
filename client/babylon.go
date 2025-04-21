@@ -108,8 +108,6 @@ func (cli *Client) SignBabylonRegistration(
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	// TODO: what is endpoint?
 	endpoint := strings.Replace("/v0/org/:org_id/babylon/registration/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
