@@ -85,7 +85,7 @@ func (cli *Client) SignBabylonRegistration(
 ) (*v0.BabylonRegistration200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign babylon registration",
-		Scopes:  []api.Scope{api.SIGNBABYLONSTAKING},
+		Scopes:  []api.Scope{api.SIGNBABYLONREGISTRATION},
 	}, roleId)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "create role token")

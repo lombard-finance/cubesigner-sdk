@@ -23,6 +23,7 @@ const (
 	SIGNBABYLONEOTS                   Scope = "sign:babylon:eots:*"
 	SIGNBABYLONEOTSNONCES             Scope = "sign:babylon:eots:nonces"
 	SIGNBABYLONEOTSSIGN               Scope = "sign:babylon:eots:sign"
+	SIGNBABYLONREGISTRATION           Scope = "sign:babylon:registration"
 	SIGNBABYLONSTAKING                Scope = "sign:babylon:staking:*"
 	SIGNBABYLONSTAKINGDEPOSIT         Scope = "sign:babylon:staking:deposit"
 	SIGNBABYLONSTAKINGUNBOND          Scope = "sign:babylon:staking:unbond"
