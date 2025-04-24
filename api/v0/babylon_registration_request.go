@@ -19,10 +19,10 @@ type BabylonRegistrationRequest struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBabylonRegistrationRequest(bbnAddress string, finalityProviderPk string, lockTime int32, network api.BabylonNetworkId, stakerPk string, change string, fee int64, feeType api.FeeType, psbt string, value int64) *BabylonRegistrationRequest {
+func NewBabylonRegistrationRequest(bbnAddress string, finalityProviderPks []string, lockTime int32, network api.BabylonNetworkId, stakerPk string, change string, fee int64, feeType api.FeeType, psbt string, value int64) *BabylonRegistrationRequest {
 	this := BabylonRegistrationRequest{}
 	this.BbnAddress = bbnAddress
-	this.FinalityProviderPk = finalityProviderPk
+	this.FinalityProviderPks = finalityProviderPks
 	this.LockTime = lockTime
 	this.Network = network
 	this.StakerPk = stakerPk
