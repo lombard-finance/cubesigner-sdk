@@ -3,6 +3,7 @@ package v0
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -19,6 +20,7 @@ type BabylonStakingRequest struct {
 func BabylonStakingDepositAsBabylonStakingRequest(v *BabylonStakingDeposit) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingDeposit: v,
+		Action:                api.DepositAction,
 	}
 }
 
@@ -26,71 +28,93 @@ func BabylonStakingDepositAsBabylonStakingRequest(v *BabylonStakingDeposit) Baby
 func BabylonStakingEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingEarlyUnbond: v,
+		Action:                    api.EarlyUnbondAction,
 	}
 }
 
-// BabylonStakingWithdrawalAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
-func BabylonStakingWithdrawalAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+// BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawEarlyUnbondActionAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
 	return BabylonStakingRequest{
 		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawEarlyUnbondAction,
+	}
+}
+
+// BabylonStakingWithdrawTimelockAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawTimelockAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawTimelockAction,
+	}
+}
+
+// BabylonStakingWithdrawSlashingAsBabylonStakingRequest is a convenience function that returns BabylonStakingWithdrawal wrapped in BabylonStakingRequest
+func BabylonStakingWithdrawSlashingAsBabylonStakingRequest(v *BabylonStakingWithdrawal) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingWithdrawal: v,
+		Action:                   api.WithdrawSlashing,
+	}
+}
+
+// BabylonStakingSlashDepositAsBabylonStakingRequest is a convenience function that returns BabylonStakingEarlyUnbond wrapped in BabylonStakingRequest
+func BabylonStakingSlashDepositAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingEarlyUnbond: v,
+		Action:                    api.SlashDepositAction,
+	}
+}
+
+// BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest is a convenience function that returns BabylonStakingEarlyUnbond wrapped in BabylonStakingRequest
+func BabylonStakingSlashEarlyUnbondAsBabylonStakingRequest(v *BabylonStakingEarlyUnbond) BabylonStakingRequest {
+	return BabylonStakingRequest{
+		BabylonStakingEarlyUnbond: v,
+		Action:                    api.SlashEarlyUnbondAction,
 	}
 }
 
 // Unmarshal JSON data into one of the pointers in the struct
 func (dst *BabylonStakingRequest) UnmarshalJSON(data []byte) error {
-	var err error
-	match := 0
-	// try to unmarshal data into BabylonStakingDeposit
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingDeposit)
-	if err == nil {
-		jsonBabylonStakingDeposit, _ := json.Marshal(dst.BabylonStakingDeposit)
-		if string(jsonBabylonStakingDeposit) == "{}" { // empty struct
-			dst.BabylonStakingDeposit = nil
-		} else {
-			match++
+	// Create a temporary struct to parse the action field
+	type ActionOnly struct {
+		Action api.BabylonStakingAction `json:"action"`
+	}
+
+	var actionObj ActionOnly
+	if err := json.Unmarshal(data, &actionObj); err != nil {
+		return fmt.Errorf("failed to unmarshal BabylonStakingRequest action: %w", err)
+	}
+
+	// Set the action field in the destination
+	dst.Action = actionObj.Action
+
+	// Based on the action type, unmarshal into the appropriate struct
+	switch actionObj.Action {
+	case api.DepositAction:
+		var deposit BabylonStakingDeposit
+		if err := json.Unmarshal(data, &deposit); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingDeposit for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
-	} else {
-		dst.BabylonStakingDeposit = nil
-	}
+		dst.BabylonStakingDeposit = &deposit
 
-	// try to unmarshal data into BabylonStakingEarlyUnbond
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingEarlyUnbond)
-	if err == nil {
-		jsonBabylonStakingEarlyUnbond, _ := json.Marshal(dst.BabylonStakingEarlyUnbond)
-		if string(jsonBabylonStakingEarlyUnbond) == "{}" { // empty struct
-			dst.BabylonStakingEarlyUnbond = nil
-		} else {
-			match++
+	case api.EarlyUnbondAction, api.SlashDepositAction, api.SlashEarlyUnbondAction:
+		var earlyUnbond BabylonStakingEarlyUnbond
+		if err := json.Unmarshal(data, &earlyUnbond); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingEarlyUnbond for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
-	} else {
-		dst.BabylonStakingEarlyUnbond = nil
-	}
+		dst.BabylonStakingEarlyUnbond = &earlyUnbond
 
-	// try to unmarshal data into BabylonStakingWithdrawal
-	err = api.NewStrictDecoder(data).Decode(&dst.BabylonStakingWithdrawal)
-	if err == nil {
-		jsonBabylonStakingWithdrawal, _ := json.Marshal(dst.BabylonStakingWithdrawal)
-		if string(jsonBabylonStakingWithdrawal) == "{}" { // empty struct
-			dst.BabylonStakingWithdrawal = nil
-		} else {
-			match++
+	case api.WithdrawTimelockAction, api.WithdrawEarlyUnbondAction, api.WithdrawSlashing:
+		var withdrawal BabylonStakingWithdrawal
+		if err := json.Unmarshal(data, &withdrawal); err != nil {
+			return fmt.Errorf("failed to unmarshal BabylonStakingWithdrawal for BabylonStakingAction %s: %w", actionObj.Action, err)
 		}
-	} else {
-		dst.BabylonStakingWithdrawal = nil
+		dst.BabylonStakingWithdrawal = &withdrawal
+
+	default:
+		return fmt.Errorf("unknown BabylonStakingAction: %s", actionObj.Action)
 	}
 
-	if match > 1 { // more than 1 match
-		// reset to nil
-		dst.BabylonStakingDeposit = nil
-		dst.BabylonStakingEarlyUnbond = nil
-		dst.BabylonStakingWithdrawal = nil
-
-		return fmt.Errorf("Data matches more than one schema in oneOf(BabylonStakingRequest)")
-	} else if match == 1 {
-		return nil // exactly one match
-	} else { // no match
-		return fmt.Errorf("Data failed to match schemas in oneOf(BabylonStakingRequest)")
-	}
+	return nil
 }
 
 // Marshal data from the first non-nil pointers in the struct to JSON

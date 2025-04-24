@@ -2,6 +2,7 @@ package v0
 
 import (
 	"encoding/json"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -9,7 +10,7 @@ import (
 type BabylonStakingWithdrawal struct {
 	ExplicitParams api.NullableBabylonStakingParams `json:"explicit_params,omitempty"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
-	FinalityProviderPk string `json:"finality_provider_pk"`
+	FinalityProviderPks []string `json:"finality_provider_pks"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
 	LockTime int32                `json:"lock_time"`
 	Network  api.BabylonNetworkId `json:"network"`
@@ -17,6 +18,8 @@ type BabylonStakingWithdrawal struct {
 	StakerPk string `json:"staker_pk"`
 	// The parameter version to use. If `None`, uses the latest version.
 	Version api.NullableInt32 `json:"version,omitempty"`
+	// If `true`, the resulting PSBT is encoded as a base64 string. Otherwise, it is encoded as a hex string.
+	AsBase64 api.NullableBool `json:"as_base64"`
 	// The transaction fee value. The `fee_type` field determines whether this is a fixed fee in sats or a rate in sats per (estimated) virtual byte of transaction weight (i.e., sats per vb).
 	Fee     int64       `json:"fee"`
 	FeeType api.FeeType `json:"fee_type"`
@@ -36,9 +39,9 @@ type BabylonStakingWithdrawal struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBabylonStakingWithdrawal(finalityProviderPk string, lockTime int32, network api.BabylonNetworkId, stakerPk string, fee int64, feeType api.FeeType, recipient string, txid string, value int64, vout int32) *BabylonStakingWithdrawal {
+func NewBabylonStakingWithdrawal(finalityProviderPks []string, lockTime int32, network api.BabylonNetworkId, stakerPk string, fee int64, feeType api.FeeType, recipient string, txid string, value int64, vout int32) *BabylonStakingWithdrawal {
 	this := BabylonStakingWithdrawal{}
-	this.FinalityProviderPk = finalityProviderPk
+	this.FinalityProviderPks = finalityProviderPks
 	this.LockTime = lockTime
 	this.Network = network
 	this.StakerPk = stakerPk
@@ -102,28 +105,28 @@ func (o *BabylonStakingWithdrawal) UnsetExplicitParams() {
 	o.ExplicitParams.Unset()
 }
 
-// GetFinalityProviderPk returns the FinalityProviderPk field value
-func (o *BabylonStakingWithdrawal) GetFinalityProviderPk() string {
+// GetFinalityProviderPks returns the FinalityProviderPks field value
+func (o *BabylonStakingWithdrawal) GetFinalityProviderPks() []string {
 	if o == nil {
-		var ret string
+		var ret []string
 		return ret
 	}
 
-	return o.FinalityProviderPk
+	return o.FinalityProviderPks
 }
 
-// GetFinalityProviderPkOk returns a tuple with the FinalityProviderPk field value
+// GetFinalityProviderPksOk returns a tuple with the FinalityProviderPks field value
 // and a boolean to check if the value has been set.
-func (o *BabylonStakingWithdrawal) GetFinalityProviderPkOk() (*string, bool) {
+func (o *BabylonStakingWithdrawal) GetFinalityProviderPksOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.FinalityProviderPk, true
+	return o.FinalityProviderPks, true
 }
 
-// SetFinalityProviderPk sets field value
-func (o *BabylonStakingWithdrawal) SetFinalityProviderPk(v string) {
-	o.FinalityProviderPk = v
+// SetFinalityProviderPks sets field value
+func (o *BabylonStakingWithdrawal) SetFinalityProviderPks(v []string) {
+	o.FinalityProviderPks = v
 }
 
 // GetLockTime returns the LockTime field value
@@ -239,6 +242,49 @@ func (o *BabylonStakingWithdrawal) SetVersionNil() {
 // UnsetVersion ensures that no value is present for Version, not even an explicit nil
 func (o *BabylonStakingWithdrawal) UnsetVersion() {
 	o.Version.Unset()
+}
+
+// GetAsBase64 returns the Base64 field value if set, zero value otherwise (both if not set or set to explicit null).
+func (o *BabylonStakingWithdrawal) GetAsBase64() bool {
+	if o == nil || o.Version.Get() == nil {
+		var ret bool
+		return ret
+	}
+	return *o.AsBase64.Get()
+}
+
+// GetAsBase64Ok returns a tuple with the AsBase64 field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+// NOTE: If the value is an explicit nil, `nil, true` will be returned
+func (o *BabylonStakingWithdrawal) GetAsBase64Ok() (*bool, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.AsBase64.Get(), o.AsBase64.IsSet()
+}
+
+// HasAsBase64 returns a boolean if a field has been set.
+func (o *BabylonStakingWithdrawal) HasAsBase64() bool {
+	if o != nil && o.AsBase64.IsSet() {
+		return true
+	}
+
+	return false
+}
+
+// SetAsBase64 gets a reference to the given NullableBool and assigns it to the AsBase64 field.
+func (o *BabylonStakingWithdrawal) SetAsBase64(v bool) {
+	o.AsBase64.Set(&v)
+}
+
+// SetAsBase64Nil sets the value for AsBase64 to be an explicit nil
+func (o *BabylonStakingWithdrawal) SetAsBase64Nil() {
+	o.AsBase64.Set(nil)
+}
+
+// UnsetAsBase64 ensures that no value is present for Base64, not even an explicit nil
+func (o *BabylonStakingWithdrawal) UnsetAsBase64() {
+	o.AsBase64.Unset()
 }
 
 // GetFee returns the Fee field value
@@ -434,46 +480,28 @@ func (o BabylonStakingWithdrawal) MarshalJSON() ([]byte, error) {
 
 func (o BabylonStakingWithdrawal) Serialize() (toSerialize map[string]interface{}) {
 	toSerialize = make(map[string]interface{})
-
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
-	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
+	toSerialize["finality_provider_pks"] = o.FinalityProviderPks
+	toSerialize["lock_time"] = o.LockTime
+	toSerialize["network"] = o.Network
+	toSerialize["staker_pk"] = o.StakerPk
 	if o.Version.IsSet() {
 		toSerialize["version"] = o.Version.Get()
 	}
-	if true {
-		toSerialize["fee"] = o.Fee
+	if o.AsBase64.IsSet() {
+		toSerialize["as_base64"] = o.AsBase64.Get()
 	}
-	if true {
-		toSerialize["fee_type"] = o.FeeType
-	}
-	if true {
-		toSerialize["recipient"] = o.Recipient
-	}
-	if true {
-		toSerialize["txid"] = o.Txid
-	}
+	toSerialize["fee"] = o.Fee
+	toSerialize["fee_type"] = o.FeeType
+	toSerialize["recipient"] = o.Recipient
+	toSerialize["txid"] = o.Txid
 	if o.TxnLockHeight.IsSet() {
 		toSerialize["txn_lock_height"] = o.TxnLockHeight.Get()
 	}
-	if true {
-		toSerialize["value"] = o.Value
-	}
-	if true {
-		toSerialize["vout"] = o.Vout
-	}
+	toSerialize["value"] = o.Value
+	toSerialize["vout"] = o.Vout
 	return
 }
 

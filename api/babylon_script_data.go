@@ -6,9 +6,9 @@ import (
 
 // BabylonScriptData Data needed to create the Babylon deposit scripts
 type BabylonScriptData struct {
-	ExplicitParams NullableBabylonScriptDataExplicitParams `json:"explicit_params,omitempty"`
+	ExplicitParams NullableBabylonStakingParams `json:"explicit_params,omitempty"`
 	// The Schnorr public key (i.e., 32-byte X-coordinate) of the finality provider to which the stake is delegated.
-	FinalityProviderPk string `json:"finality_provider_pk"`
+	FinalityProviderPks []string `json:"finality_provider_pks"`
 	// The lock time used for the withdrawal output in the staking deposit transaction
 	LockTime int32            `json:"lock_time"`
 	Network  BabylonNetworkId `json:"network"`
@@ -22,9 +22,9 @@ type BabylonScriptData struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewBabylonScriptData(finalityProviderPk string, lockTime int32, network BabylonNetworkId, stakerPk string) *BabylonScriptData {
+func NewBabylonScriptData(finalityProviderPks []string, lockTime int32, network BabylonNetworkId, stakerPk string) *BabylonScriptData {
 	this := BabylonScriptData{}
-	this.FinalityProviderPk = finalityProviderPk
+	this.FinalityProviderPks = finalityProviderPks
 	this.LockTime = lockTime
 	this.Network = network
 	this.StakerPk = stakerPk
@@ -40,9 +40,9 @@ func NewBabylonScriptDataWithDefaults() *BabylonScriptData {
 }
 
 // GetExplicitParams returns the ExplicitParams field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *BabylonScriptData) GetExplicitParams() BabylonScriptDataExplicitParams {
+func (o *BabylonScriptData) GetExplicitParams() BabylonStakingParams {
 	if o == nil || o.ExplicitParams.Get() == nil {
-		var ret BabylonScriptDataExplicitParams
+		var ret BabylonStakingParams
 		return ret
 	}
 	return *o.ExplicitParams.Get()
@@ -51,7 +51,7 @@ func (o *BabylonScriptData) GetExplicitParams() BabylonScriptDataExplicitParams 
 // GetExplicitParamsOk returns a tuple with the ExplicitParams field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *BabylonScriptData) GetExplicitParamsOk() (*BabylonScriptDataExplicitParams, bool) {
+func (o *BabylonScriptData) GetExplicitParamsOk() (*BabylonStakingParams, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -67,8 +67,8 @@ func (o *BabylonScriptData) HasExplicitParams() bool {
 	return false
 }
 
-// SetExplicitParams gets a reference to the given NullableBabylonScriptDataExplicitParams and assigns it to the ExplicitParams field.
-func (o *BabylonScriptData) SetExplicitParams(v BabylonScriptDataExplicitParams) {
+// SetExplicitParams gets a reference to the given NullableBabylonStakingParams and assigns it to the ExplicitParams field.
+func (o *BabylonScriptData) SetExplicitParams(v BabylonStakingParams) {
 	o.ExplicitParams.Set(&v)
 }
 
@@ -82,28 +82,28 @@ func (o *BabylonScriptData) UnsetExplicitParams() {
 	o.ExplicitParams.Unset()
 }
 
-// GetFinalityProviderPk returns the FinalityProviderPk field value
-func (o *BabylonScriptData) GetFinalityProviderPk() string {
+// GetFinalityProviderPks returns the FinalityProviderPks field value
+func (o *BabylonScriptData) GetFinalityProviderPks() []string {
 	if o == nil {
-		var ret string
+		var ret []string
 		return ret
 	}
 
-	return o.FinalityProviderPk
+	return o.FinalityProviderPks
 }
 
-// GetFinalityProviderPkOk returns a tuple with the FinalityProviderPk field value
+// GetFinalityProviderPksOk returns a tuple with the FinalityProviderPks field value
 // and a boolean to check if the value has been set.
-func (o *BabylonScriptData) GetFinalityProviderPkOk() (*string, bool) {
+func (o *BabylonScriptData) GetFinalityProviderPksOk() ([]string, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.FinalityProviderPk, true
+	return o.FinalityProviderPks, true
 }
 
-// SetFinalityProviderPk sets field value
-func (o *BabylonScriptData) SetFinalityProviderPk(v string) {
-	o.FinalityProviderPk = v
+// SetFinalityProviderPks sets field value
+func (o *BabylonScriptData) SetFinalityProviderPks(v []string) {
+	o.FinalityProviderPks = v
 }
 
 // GetLockTime returns the LockTime field value
@@ -226,18 +226,10 @@ func (o BabylonScriptData) MarshalJSON() ([]byte, error) {
 	if o.ExplicitParams.IsSet() {
 		toSerialize["explicit_params"] = o.ExplicitParams.Get()
 	}
-	if true {
-		toSerialize["finality_provider_pk"] = o.FinalityProviderPk
-	}
-	if true {
-		toSerialize["lock_time"] = o.LockTime
-	}
-	if true {
-		toSerialize["network"] = o.Network
-	}
-	if true {
-		toSerialize["staker_pk"] = o.StakerPk
-	}
+	toSerialize["finality_provider_pks"] = o.FinalityProviderPks
+	toSerialize["lock_time"] = o.LockTime
+	toSerialize["network"] = o.Network
+	toSerialize["staker_pk"] = o.StakerPk
 	if o.Version.IsSet() {
 		toSerialize["version"] = o.Version.Get()
 	}

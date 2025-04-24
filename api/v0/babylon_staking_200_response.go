@@ -81,12 +81,8 @@ func (o *BabylonStaking200Response) SetPsbt(v string) {
 
 func (o BabylonStaking200Response) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
-	if true {
-		toSerialize["fee"] = o.Fee
-	}
-	if true {
-		toSerialize["psbt"] = o.Psbt
-	}
+	toSerialize["fee"] = o.Fee
+	toSerialize["psbt"] = o.Psbt
 	return json.Marshal(toSerialize)
 }
 

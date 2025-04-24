@@ -11,29 +11,25 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) StakingBabylon(
+func (cli *Client) SignBabylonStaking(
 	roleId, pubkey string,
 	request *v0.BabylonStakingRequest,
 	mfaId, mfaConfirmation *string,
 ) (*v0.BabylonStaking200Response, string, error) {
-	switch request.GetActualInstance().(type) {
-	case *v0.BabylonStakingDeposit:
-		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGDEPOSIT, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingEarlyUnbond:
-		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGUNBOND, mfaId, mfaConfirmation)
-	case *v0.BabylonStakingWithdrawal:
-		return cli.stakingBabylon(roleId, pubkey, request, api.SIGNBABYLONSTAKINGWITHDRAW, mfaId, mfaConfirmation)
+	var scope api.Scope
+	switch request.Action {
+	case api.DepositAction:
+		scope = api.SIGNBABYLONSTAKINGDEPOSIT
+	case api.EarlyUnbondAction:
+		scope = api.SIGNBABYLONSTAKINGUNBOND
+	case api.WithdrawEarlyUnbondAction, api.WithdrawTimelockAction:
+		scope = api.SIGNBABYLONSTAKINGWITHDRAW
+	case api.SlashDepositAction, api.SlashEarlyUnbondAction, api.WithdrawSlashing:
+		scope = api.SIGNBABYLONSTAKINGSLASH
 	default:
 		return nil, "", errors.New("not implemented")
 	}
-}
 
-func (cli *Client) stakingBabylon(
-	roleId, pubkey string,
-	request *v0.BabylonStakingRequest,
-	scope api.Scope,
-	mfaId, mfaConfirmation *string,
-) (*v0.BabylonStaking200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign babylon staking",
 		Scopes:  []api.Scope{scope},
@@ -76,6 +72,58 @@ func (cli *Client) stakingBabylon(
 	}
 
 	decoded, err := decodeJSONResponse[v0.BabylonStaking200Response](response)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "decode")
+	}
+	return &decoded, "", nil
+}
+
+func (cli *Client) SignBabylonRegistration(
+	roleId, pubkey string,
+	request *v0.BabylonRegistrationRequest,
+	mfaId, mfaConfirmation *string,
+) (*v0.BabylonRegistration200Response, string, error) {
+	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
+		Purpose: "sign babylon registration",
+		Scopes:  []api.Scope{api.SIGNBABYLONREGISTRATION},
+	}, roleId)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "create role token")
+	}
+
+	headers := map[string]string{
+		"Authorization": authResp.GetToken(),
+	}
+
+	// add mfa headers
+	if mfaConfirmation != nil && *mfaConfirmation != "" {
+		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
+		for k, v := range mfaHeaders {
+			headers[k] = v
+		}
+	}
+
+	encoded, err := encodeJSONRequest(request)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "encode")
+	}
+
+	endpoint := strings.Replace("/v0/org/:org_id/babylon/registration/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
+
+	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "request SignBabylonRegistration")
+	}
+
+	if statusCode == http.StatusAccepted {
+		mfaId, err := decodeAcceptedResponse(response)
+		if err != nil {
+			return nil, "", errors.Wrap(err, "decode accepted response")
+		}
+		return nil, mfaId, nil
+	}
+
+	decoded, err := decodeJSONResponse[v0.BabylonRegistration200Response](response)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "decode")
 	}

@@ -3,7 +3,7 @@ package v0
 // MfaRequestInfo struct returned for GetMfaRequest and ApproveMfaRequest
 type MfaRequestInfo struct {
 	// DateTime measured in seconds since unix epoch. A wrapper type for serialization that encodes a `SystemTime` as a `u64` representing the number of seconds since `SystemTime::UNIX_EPOCH`.
-	ExpiresAt int64 `json:"timestamp"`
+	ExpiresAt uint64 `json:"expires_at"`
 	// Approval request ID.
 	Id string `json:"id"`
 	// Receipt that an MFA request was approved.
@@ -36,9 +36,9 @@ func NewMfaRequestInfoWithDefaults() *MfaRequestInfo {
 }
 
 // GetExpiresAt returns the ExpiresAt field value
-func (o *MfaRequestInfo) GetExpiresAt() int64 {
+func (o *MfaRequestInfo) GetExpiresAt() uint64 {
 	if o == nil {
-		var ret int64
+		var ret uint64
 		return ret
 	}
 
@@ -47,7 +47,7 @@ func (o *MfaRequestInfo) GetExpiresAt() int64 {
 
 // GetExpiresAtOk returns a tuple with the ExpiresAt field value
 // and a boolean to check if the value has been set.
-func (o *MfaRequestInfo) GetExpiresAtOk() (*int64, bool) {
+func (o *MfaRequestInfo) GetExpiresAtOk() (*uint64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -55,7 +55,7 @@ func (o *MfaRequestInfo) GetExpiresAtOk() (*int64, bool) {
 }
 
 // SetExpiresAt sets the ExpiresAt field value
-func (o *MfaRequestInfo) SetExpiresAt(v int64) {
+func (o *MfaRequestInfo) SetExpiresAt(v uint64) {
 	o.ExpiresAt = v
 }
 
