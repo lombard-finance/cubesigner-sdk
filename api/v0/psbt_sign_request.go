@@ -13,6 +13,8 @@ type PsbtSignRequest struct {
 	Psbt string `json:"psbt"`
 	// When true, unconditionally sign every input to the PSBT controlled by a script spend. Otherwise (false, the default), this endpoint uses a heuristic to decide whether the script controlling a given UTXO requires a signature from this key.
 	SignAllScripts *bool `json:"sign_all_scripts,omitempty"`
+	// 	 Optional metadata. Passing additional information as metadata can be used to make reviewing of pending MFA requests and/or historical key transactions more transparent. It can also be used e.g., to carry additional data to WebHook policies.
+	Metadata *string `json:"metadata,omitempty"`
 }
 
 // NewPsbtSignRequest instantiates a new PsbtSignRequest object
@@ -89,6 +91,38 @@ func (o *PsbtSignRequest) SetSignAllScripts(v bool) {
 	o.SignAllScripts = &v
 }
 
+// GetMetadata returns the Metadata field value if set, zero value otherwise.
+func (o *PsbtSignRequest) GetMetadata() string {
+	if o == nil || o.Metadata == nil {
+		var ret string
+		return ret
+	}
+	return *o.Metadata
+}
+
+// GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *PsbtSignRequest) GetMetadataOk() (*string, bool) {
+	if o == nil || o.Metadata == nil {
+		return nil, false
+	}
+	return o.Metadata, true
+}
+
+// HasMetadata returns a boolean if a field has been set.
+func (o *PsbtSignRequest) HasMetadata() bool {
+	if o != nil && o.Metadata != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetMetadata gets a reference to the given string and assigns it to the Metadata field.
+func (o *PsbtSignRequest) SetMetadata(v string) {
+	o.Metadata = &v
+}
+
 func (src PsbtSignRequest) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 
@@ -98,14 +132,19 @@ func (src PsbtSignRequest) MarshalJSON() ([]byte, error) {
 		toSerialize["sign_all_scripts"] = src.SignAllScripts
 	}
 
+	if src.Metadata != nil {
+		toSerialize["metadata"] = src.Metadata
+	}
+
 	return json.Marshal(toSerialize)
 }
 
 func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
 	// Use an anonymous struct to avoid recursive UnmarshalJSON calls
 	var temp struct {
-		Psbt           string `json:"psbt"`
-		SignAllScripts *bool  `json:"sign_all_scripts,omitempty"`
+		Psbt           string  `json:"psbt"`
+		SignAllScripts *bool   `json:"sign_all_scripts,omitempty"`
+		Metadata       *string `json:"metadata,omitempty"`
 	}
 
 	decoder := api.NewStrictDecoder(data)
@@ -121,6 +160,7 @@ func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
 	// Populate the destination struct with the decoded values
 	dst.Psbt = temp.Psbt
 	dst.SignAllScripts = temp.SignAllScripts
+	dst.Metadata = temp.Metadata
 	return nil
 }
 
