@@ -318,10 +318,9 @@ func (v *NullableTime) UnmarshalJSON(src []byte) error {
 	return json.Unmarshal(src, &v.value)
 }
 
-// A wrapper for strict JSON decoding
-func NewStrictDecoder(data []byte) *json.Decoder {
+// A wrapper for JSON decoding
+func NewDecoder(data []byte) *json.Decoder {
 	dec := json.NewDecoder(bytes.NewBuffer(data))
-	dec.DisallowUnknownFields()
 	return dec
 }
 

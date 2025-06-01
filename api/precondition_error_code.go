@@ -30,7 +30,7 @@ func (dst *PreconditionErrorCode) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into PolicyErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.PolicyErrorCode)
+	err = NewDecoder(data).Decode(&dst.PolicyErrorCode)
 	if err == nil && !IsEmptyStruct(dst.PolicyErrorCode) {
 		match++
 	} else {
@@ -38,7 +38,7 @@ func (dst *PreconditionErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into PreconditionErrorOwnCodes
-	err = NewStrictDecoder(data).Decode(&dst.PreconditionErrorOwnCodes)
+	err = NewDecoder(data).Decode(&dst.PreconditionErrorOwnCodes)
 	if err == nil && !IsEmptyStruct(dst.PreconditionErrorOwnCodes) {
 		match++
 	} else {

@@ -32,7 +32,7 @@ func (dst *TypedDataDomainSalt) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into ArrayOfFloat32
-	err = api.NewStrictDecoder(data).Decode(&dst.ArrayOfFloat32)
+	err = api.NewDecoder(data).Decode(&dst.ArrayOfFloat32)
 	if err == nil {
 		jsonArrayOfFloat32, _ := json.Marshal(dst.ArrayOfFloat32)
 		if string(jsonArrayOfFloat32) == "{}" { // empty struct
@@ -45,7 +45,7 @@ func (dst *TypedDataDomainSalt) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into String
-	err = api.NewStrictDecoder(data).Decode(&dst.String)
+	err = api.NewDecoder(data).Decode(&dst.String)
 	if err == nil {
 		jsonString, _ := json.Marshal(dst.String)
 		if string(jsonString) == "{}" { // empty struct

@@ -30,7 +30,7 @@ func (dst *PrevOutputs) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into PrevOutputsOneOf
-	err = NewStrictDecoder(data).Decode(&dst.PrevOutputsOneOf)
+	err = NewDecoder(data).Decode(&dst.PrevOutputsOneOf)
 	if err == nil && !IsEmptyStruct(dst.PrevOutputsOneOf) {
 		match++
 	} else {
@@ -38,7 +38,7 @@ func (dst *PrevOutputs) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into PrevOutputsOneOf1
-	err = NewStrictDecoder(data).Decode(&dst.PrevOutputsOneOf1)
+	err = NewDecoder(data).Decode(&dst.PrevOutputsOneOf1)
 	if err == nil && !IsEmptyStruct(dst.PrevOutputsOneOf1) {
 		match++
 	} else {

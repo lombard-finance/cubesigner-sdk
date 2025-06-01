@@ -22,7 +22,7 @@ func (dst *BtcSignatureKind) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into BtcSignatureKindOneOf
-	err = NewStrictDecoder(data).Decode(&dst.BtcSignatureKindOneOf)
+	err = NewDecoder(data).Decode(&dst.BtcSignatureKindOneOf)
 	if err == nil && !IsEmptyStruct(dst.BtcSignatureKindOneOf) {
 		match++
 	} else {
