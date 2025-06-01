@@ -48,7 +48,7 @@ func (dst *MfaType) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into MfaTypeOneOf
-	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf)
+	err = api.NewDecoder(data).Decode(&dst.MfaTypeOneOf)
 	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf) {
 		match++
 	} else {
@@ -56,7 +56,7 @@ func (dst *MfaType) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into MfaTypeOneOf1
-	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf1)
+	err = api.NewDecoder(data).Decode(&dst.MfaTypeOneOf1)
 	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf1) {
 		match++
 	} else {
@@ -64,7 +64,7 @@ func (dst *MfaType) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into MfaTypeOneOf2
-	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf2)
+	err = api.NewDecoder(data).Decode(&dst.MfaTypeOneOf2)
 	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf2) {
 		match++
 	} else {
@@ -72,7 +72,7 @@ func (dst *MfaType) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into MfaTypeOneOf3
-	err = api.NewStrictDecoder(data).Decode(&dst.MfaTypeOneOf3)
+	err = api.NewDecoder(data).Decode(&dst.MfaTypeOneOf3)
 	if err == nil && !api.IsEmptyStruct(dst.MfaTypeOneOf3) {
 		match++
 	} else {

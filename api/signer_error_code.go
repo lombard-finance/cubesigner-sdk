@@ -86,7 +86,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
 	// try to unmarshal data into AcceptedValueCode
-	err = NewStrictDecoder(data).Decode(&dst.AcceptedValueCode)
+	err = NewDecoder(data).Decode(&dst.AcceptedValueCode)
 	if err == nil && !IsEmptyStruct(dst.AcceptedValueCode) {
 		match++
 	} else {
@@ -94,7 +94,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into BadGatewayErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.BadGatewayErrorCode)
+	err = NewDecoder(data).Decode(&dst.BadGatewayErrorCode)
 	if err == nil && !IsEmptyStruct(dst.BadGatewayErrorCode) {
 		match++
 	} else {
@@ -102,7 +102,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into BadRequestErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.BadRequestErrorCode)
+	err = NewDecoder(data).Decode(&dst.BadRequestErrorCode)
 	if err == nil && !IsEmptyStruct(dst.BadRequestErrorCode) {
 		match++
 	} else {
@@ -110,7 +110,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into ForbiddenErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.ForbiddenErrorCode)
+	err = NewDecoder(data).Decode(&dst.ForbiddenErrorCode)
 	if err == nil && !IsEmptyStruct(dst.ForbiddenErrorCode) {
 		match++
 	} else {
@@ -118,7 +118,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into InternalErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.InternalErrorCode)
+	err = NewDecoder(data).Decode(&dst.InternalErrorCode)
 	if err == nil && !IsEmptyStruct(dst.InternalErrorCode) {
 		match++
 	} else {
@@ -126,7 +126,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into NotFoundErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.NotFoundErrorCode)
+	err = NewDecoder(data).Decode(&dst.NotFoundErrorCode)
 	if err == nil && !IsEmptyStruct(dst.NotFoundErrorCode) {
 		match++
 	} else {
@@ -134,7 +134,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into PreconditionErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.PreconditionErrorCode)
+	err = NewDecoder(data).Decode(&dst.PreconditionErrorCode)
 	if err == nil && !IsEmptyStruct(dst.PreconditionErrorCode) {
 		match++
 	} else {
@@ -142,7 +142,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into SignerErrorOwnCodes
-	err = NewStrictDecoder(data).Decode(&dst.SignerErrorOwnCodes)
+	err = NewDecoder(data).Decode(&dst.SignerErrorOwnCodes)
 	if err == nil && !IsEmptyStruct(dst.SignerErrorOwnCodes) {
 		match++
 	} else {
@@ -150,7 +150,7 @@ func (dst *SignerErrorCode) UnmarshalJSON(data []byte) error {
 	}
 
 	// try to unmarshal data into UnauthorizedErrorCode
-	err = NewStrictDecoder(data).Decode(&dst.UnauthorizedErrorCode)
+	err = NewDecoder(data).Decode(&dst.UnauthorizedErrorCode)
 	if err == nil && !IsEmptyStruct(dst.UnauthorizedErrorCode) {
 		match++
 	} else {

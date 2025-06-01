@@ -147,7 +147,7 @@ func (dst *PsbtSignRequest) UnmarshalJSON(data []byte) error {
 		Metadata       *string `json:"metadata,omitempty"`
 	}
 
-	decoder := api.NewStrictDecoder(data)
+	decoder := api.NewDecoder(data)
 	if err := decoder.Decode(&temp); err != nil {
 		return err
 	}

@@ -43,7 +43,7 @@ func (dst *ConfiguredMfa) UnmarshalJSON(data []byte) error {
 		switch mfaType {
 		case "totp", "":
 			// If type is "totp" or empty, it should match ConfiguredMfaOneOf
-			err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
+			err = api.NewDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
 			if err == nil {
 				match++
 			} else {
@@ -51,7 +51,7 @@ func (dst *ConfiguredMfa) UnmarshalJSON(data []byte) error {
 			}
 		case "fido":
 			// If type is "fido", it should match ConfiguredMfaOneOf1
-			err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf1)
+			err = api.NewDecoder(data).Decode(&dst.ConfiguredMfaOneOf1)
 			if err == nil {
 				match++
 			} else {
@@ -63,7 +63,7 @@ func (dst *ConfiguredMfa) UnmarshalJSON(data []byte) error {
 		}
 	} else {
 		// If "type" is missing, treat it as an empty string
-		err = api.NewStrictDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
+		err = api.NewDecoder(data).Decode(&dst.ConfiguredMfaOneOf)
 		if err == nil {
 			match++
 		} else {
