@@ -9,7 +9,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignRequest, mfaId *string, mfaConfirmation *string) (*v0.TaprootSignResponse, string, error) {
+func (cli *Client) SignTaproot(
+	roleId, pubkey string,
+	request *v0.TaprootSignRequest,
+	mfaHeaders *MfaHeaders,
+) (*v0.TaprootSignResponse, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign taproot",
 		Scopes:  []api.Scope{api.SIGNBTCTAPROOT},
@@ -22,10 +26,8 @@ func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignReq
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -60,7 +62,11 @@ func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignReq
 	return &decoded, "", nil
 }
 
-func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest, mfaId *string, mfaConfirmation *string) (*v0.BtcSign200Response, string, error) {
+func (cli *Client) SignSegWit(
+	roleId, pubkey string,
+	request *v0.BtcSignRequest,
+	mfaHeaders *MfaHeaders,
+) (*v0.BtcSign200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign segwit",
 		Scopes:  []api.Scope{api.SIGNBTCSEGWIT},
@@ -73,10 +79,8 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -111,7 +115,11 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 	return &decoded, "", nil
 }
 
-func (cli *Client) SignPsbt(roleId, pubkey string, request *v0.PsbtSignRequest, mfaId, mfaConfirmation *string) (*v0.PsbtSign200Response, string, error) {
+func (cli *Client) SignPsbt(
+	roleId, pubkey string,
+	request *v0.PsbtSignRequest,
+	mfaHeaders *MfaHeaders,
+) (*v0.PsbtSign200Response, string, error) {
 	// This follows the convention of other Sign*() functions, minting a new token per request
 	// TODO: session management improvements (here and elsewhere)
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
@@ -126,10 +134,8 @@ func (cli *Client) SignPsbt(roleId, pubkey string, request *v0.PsbtSignRequest, 
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}

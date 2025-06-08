@@ -61,10 +61,9 @@ func TestClient_SignEip712(t *testing.T) {
 	domainChainIdString := fmt.Sprintf("%v", DomainChainId)
 
 	type args struct {
-		pubkey          string
-		request         *v0.Eip712SignRequest
-		mfaId           *string
-		mfaConfirmation *string
+		pubkey     string
+		request    *v0.Eip712SignRequest
+		mfaHeaders *MfaHeaders
 	}
 	tests := []struct {
 		name       string
@@ -142,7 +141,7 @@ func TestClient_SignEip712(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cli, err := New(tt.clientArgs.address, tt.clientArgs.orgID, tt.clientArgs.token, tt.clientArgs.logger, tt.clientArgs.timeout)
 			require.NoError(t, err)
-			got, got1, err := cli.SignEip712(tt.args.pubkey, tt.args.request, tt.args.mfaId, tt.args.mfaConfirmation)
+			got, got1, err := cli.SignEip712(tt.args.pubkey, tt.args.request, tt.args.mfaHeaders)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("SignEip712() error = %v, wantErr %v", err, tt.wantErr)
 				t.Errorf("Did you set the '\"AllowEip712Signing\"' policy on Key#%v ?\n", pubkey)

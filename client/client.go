@@ -29,9 +29,9 @@ type Client struct {
 	token string
 }
 
-type Params struct {
-	Logger  *logrus.Entry
-	Timeout time.Duration
+type MfaHeaders struct {
+	Id           string
+	Confirmation string
 }
 
 // New creates a new client, connecting with a standard HTTP.
@@ -236,4 +236,12 @@ func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Rea
 // close closes the client, freeing up resources.
 // TODO
 func (cli *Client) close() {
+}
+
+func (cli *Client) getMfaHeaders(mfaHeaders MfaHeaders) map[string]string {
+	return map[string]string{
+		"x-cubist-mfa-id":           mfaHeaders.Id,
+		"x-cubist-mfa-org-id":       cli.orgID,
+		"x-cubist-mfa-confirmation": mfaHeaders.Confirmation,
+	}
 }

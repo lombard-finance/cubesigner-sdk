@@ -7,13 +7,14 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) SignEip712(pubkey string, request *v0.Eip712SignRequest, mfaId, mfaConfirmation *string) (*v0.EvmSignResponse, string, error) {
+func (cli *Client) SignEip712(
+	pubkey string,
+	request *v0.Eip712SignRequest,
+	mfaHeaders *MfaHeaders,
+) (*v0.EvmSignResponse, string, error) {
 	headers := map[string]string{}
-
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
