@@ -6,10 +6,16 @@ import (
 )
 
 func (cli *Client) AboutMeLegacy() (*v0.AboutMeLegacy200Response, error) {
-	response, err := cli.get("/v0/about_me", nil, nil)
+	endpoint, err := cli.BuildFullEndpoint(AboutMeLegacy, nil, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, err := cli.get(endpoint, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AboutMeLegacy")
 	}
+
 	decoded, err := decodeJSONResponse[v0.AboutMeLegacy200Response](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")
@@ -18,10 +24,16 @@ func (cli *Client) AboutMeLegacy() (*v0.AboutMeLegacy200Response, error) {
 }
 
 func (cli *Client) AboutMe() (*v0.AboutMeLegacy200Response, error) {
-	response, err := cli.get("/v0/org/:org_id/user/me", nil, nil)
+	endpoint, err := cli.BuildFullEndpoint(AboutMe, nil, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, err := cli.get(endpoint, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AboutMe")
 	}
+
 	decoded, err := decodeJSONResponse[v0.AboutMeLegacy200Response](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")

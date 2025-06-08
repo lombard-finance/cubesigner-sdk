@@ -1,10 +1,7 @@
 package client
 
 import (
-	"fmt"
 	"github.com/lombard-finance/cubesigner-sdk/api"
-	"net/url"
-
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
 )
@@ -14,7 +11,13 @@ func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, _, err := cli.post("/v0/org/:org_id/keys", encoded, nil, nil)
+
+	endpoint, err := cli.BuildFullEndpoint(CreateKey, nil, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, _, err := cli.post(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}
@@ -26,7 +29,13 @@ func (cli *Client) CreateKeyRequest(request *v0.CreateKeyRequest) (*v0.DeriveKey
 }
 
 func (cli *Client) GetKeyInOrg(key string) (*v0.GetKeyInOrg200Response, error) {
-	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", url.PathEscape(key)), nil, nil)
+	endpoint, err := cli.BuildFullEndpoint(GetKeyInOrg, map[string]interface{}{ParamKeyID: key}, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, err := cli.get(endpoint, nil, nil)
+
 	if err != nil {
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}
@@ -50,7 +59,12 @@ func (cli *Client) GetKeyInOrgForRole(key, role string) (*v0.GetKeyInOrg200Respo
 		"Authorization": authResp.GetToken(),
 	}
 
-	response, err := cli.get(fmt.Sprintf("/v0/org/:org_id/keys/%s", url.PathEscape(key)), headers, nil)
+	endpoint, err := cli.BuildFullEndpoint(GetKeyInOrg, map[string]interface{}{ParamKeyID: key}, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, err := cli.get(endpoint, headers, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request GetKeyInOrg")
 	}

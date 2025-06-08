@@ -1,10 +1,9 @@
 package client
 
 import (
-	"github.com/lombard-finance/cubesigner-sdk/api"
 	"net/http"
-	"net/url"
-	"strings"
+
+	"github.com/lombard-finance/cubesigner-sdk/api"
 
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
@@ -36,8 +35,10 @@ func (cli *Client) SignTaproot(roleId, pubkey string, request *v0.TaprootSignReq
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/btc/taproot/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBtcTaproot, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
@@ -85,8 +86,10 @@ func (cli *Client) SignSegWit(roleId, pubkey string, request *v0.BtcSignRequest,
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/btc/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBtcSegWit, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
@@ -136,8 +139,10 @@ func (cli *Client) SignPsbt(roleId, pubkey string, request *v0.PsbtSignRequest, 
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/btc/psbt/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBtcPsbt, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

@@ -2,8 +2,6 @@ package client
 
 import (
 	"net/http"
-	"net/url"
-	"strings"
 
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
@@ -25,8 +23,10 @@ func (cli *Client) SignEip712(pubkey string, request *v0.Eip712SignRequest, mfaI
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/evm/eip712/sign/:pubkey", ":pubkey", url.PathEscape(pubkey), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignEvmEip712, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

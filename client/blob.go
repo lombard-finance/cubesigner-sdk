@@ -1,11 +1,10 @@
 package client
 
 import (
+	"net/http"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
-	"net/http"
-	"net/url"
-	"strings"
 
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
@@ -37,8 +36,10 @@ func (cli *Client) SignBlob(roleId, key string, request *v1.BlobSignRequest, mfa
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v1/org/:org_id/blob/sign/:key_id", ":key_id", url.PathEscape(key), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBlob, map[string]interface{}{ParamKeyID: key}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

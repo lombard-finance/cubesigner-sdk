@@ -2,8 +2,6 @@ package client
 
 import (
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/lombard-finance/cubesigner-sdk/api"
 
@@ -55,8 +53,10 @@ func (cli *Client) SignBabylonStaking(
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/babylon/staking/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBabylonStaking, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
@@ -108,7 +108,10 @@ func (cli *Client) SignBabylonRegistration(
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	endpoint := strings.Replace("/v0/org/:org_id/babylon/registration/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBabylonRegistration, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

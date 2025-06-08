@@ -10,10 +10,17 @@ func (cli *Client) RefreshToken(request *v1.AuthData) (*v1.OidcAuth200Response, 
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	response, _, err := cli.patch("/v1/org/:org_id/token/refresh", encoded, nil, nil)
+
+	endpoint, err := cli.BuildFullEndpoint(RefreshToken, nil, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
+	response, _, err := cli.patch(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateKeyRequest")
 	}
+
 	decoded, err := decodeJSONResponse[v1.OidcAuth200Response](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")

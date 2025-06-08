@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strings"
 	"time"
 
@@ -93,37 +92,32 @@ func (cli *Client) addExtraHeaders(req *http.Request) {
 	}
 }
 
-func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page *Page) (io.Reader, error) {
-	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
-		WithField("address", cli.address).
-		WithField("endpoint", endpoint)
-	log.Trace("GET request")
+func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, page *Page) (io.Reader, error) {
+	log := cli.logger.WithFields(logrus.Fields{
+		"id":       fmt.Sprintf("%02x", rand.Int31()),
+		"address":  cli.address,
+		"endpoint": endpoint.String(),
+		"method":   http.MethodGet,
+	})
 
-	// replace known path variables
-	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
-
-	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
-	if err != nil {
-		return nil, errors.Wrap(err, "invalid endpoint")
-	}
+	log.Trace("request")
 
 	if page != nil {
-		page.Apply(requestEndpoint)
-		log.WithField("query", requestEndpoint.Query().Encode())
+		page.Apply(endpoint)
+		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
 	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
-	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, requestEndpoint.String(), nil)
+	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
 		cancel()
 		return nil, errors.Wrap(err, "failed to create GET request")
 	}
 
 	cli.addExtraHeaders(req)
-	if overrideHeaders != nil {
-		for key, value := range overrideHeaders {
-			req.Header.Set(key, value)
-		}
+
+	for key, value := range overrideHeaders {
+		req.Header.Set(key, value)
 	}
 
 	resp, err := cli.client.Do(req)
@@ -148,32 +142,32 @@ func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
 		cancel()
-		log.Trace("status_code", resp.StatusCode)
-		log.Trace("data", string(data))
-		log.Trace("GET failed")
-		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s, Data: %s", http.MethodGet, resp.StatusCode, endpoint, data)
+		log.WithFields(logrus.Fields{
+			"status_code": resp.StatusCode,
+			"data":        string(data),
+		}).Trace("GET failed")
+		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s", http.MethodGet, resp.StatusCode, endpoint)
 	}
-	cancel()
 
-	log.Trace("response", string(data))
-	log.Trace("GET response")
+	cancel()
+	log.WithField("response", string(data)).Trace("response")
 
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
+func (cli *Client) post(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders, page)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
+func (cli *Client) put(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders, page)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
+func (cli *Client) patch(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders, page)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
+func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	// copy body if not nil
 	var buf bytes.Buffer
 	var tee io.Reader
@@ -188,31 +182,22 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 		}
 	}
 
-	// replace path variables
-	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
-
-	log := cli.logger.WithFields(map[string]interface{}{
+	log := cli.logger.WithFields(logrus.Fields{
 		"address":  cli.address,
-		"endpoint": endpoint,
+		"endpoint": endpoint.String(),
 		"method":   method,
 	})
 
-	// build url
-	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
-	if err != nil {
-		return nil, 0, errors.Wrap(err, "invalid endpoint")
-	}
-
 	if page != nil {
-		page.Apply(requestEndpoint)
-		log.WithField("query", requestEndpoint.Query().Encode())
+		page.Apply(endpoint)
+		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
 	// build request
 	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), &buf)
+	req, err := http.NewRequestWithContext(opCtx, method, endpoint.String(), &buf)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "create request with context")
 	}
@@ -222,10 +207,8 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	req.Header.Set("Content-type", "application/json")
 	//req.Header.Set("Accept", "application/json")
 
-	if overrideHeaders != nil {
-		for key, value := range overrideHeaders {
-			req.Header.Set(key, value)
-		}
+	for key, value := range overrideHeaders {
+		req.Header.Set(key, value)
 	}
 
 	// do the request
@@ -235,7 +218,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 	}
 	defer resp.Body.Close()
 
-	responseData, err := io.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "read response")
 	}
@@ -244,36 +227,13 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		return nil, 0, errors.Errorf("%s request with status code: %d, message: %s", method, resp.StatusCode, string(responseData))
+		log.Trace("failed")
+		return nil, 0, errors.Errorf("Method: %s, StatusCode: %d, Endpoint: %s", method, resp.StatusCode, endpoint)
 	}
-	return bytes.NewReader(responseData), resp.StatusCode, nil
+	return bytes.NewReader(data), resp.StatusCode, nil
 }
 
 // close closes the client, freeing up resources.
 // TODO
 func (cli *Client) close() {
-}
-
-// parameterToString convert interface{} parameters to string, using a delimiter if format is provided.
-func parameterToString(obj interface{}, collectionFormat string) string {
-	var delimiter string
-
-	switch collectionFormat {
-	case "pipes":
-		delimiter = "|"
-	case "ssv":
-		delimiter = " "
-	case "tsv":
-		delimiter = "\t"
-	case "csv":
-		delimiter = ","
-	}
-
-	if reflect.TypeOf(obj).Kind() == reflect.Slice {
-		return strings.Trim(strings.Replace(fmt.Sprint(obj), " ", delimiter, -1), "[]")
-	} else if t, ok := obj.(time.Time); ok {
-		return t.Format(time.RFC3339)
-	}
-
-	return fmt.Sprintf("%v", obj)
 }

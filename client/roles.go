@@ -1,9 +1,6 @@
 package client
 
 import (
-	"net/url"
-	"strings"
-
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"github.com/pkg/errors"
@@ -14,11 +11,17 @@ func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/tokens", ":role_id", url.PathEscape(roleId), -1)
+
+	endpoint, err := cli.BuildFullEndpoint(CreateRoleToken, map[string]interface{}{ParamRoleID: roleId}, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
 	response, _, err := cli.post(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request CreateRoleToken")
 	}
+
 	decoded, err := decodeJSONResponse[v1.OidcAuth200Response](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")
@@ -31,11 +34,17 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 	if err != nil {
 		return nil, errors.Wrap(err, "encode")
 	}
-	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/add_keys", ":role_id", url.PathEscape(roleId), -1)
+
+	endpoint, err := cli.BuildFullEndpoint(AddKeysToRole, map[string]interface{}{ParamRoleID: roleId}, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
+
 	response, _, err := cli.put(endpoint, encoded, nil, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "request AddKeysToRole")
 	}
+
 	decoded, err := decodeJSONResponse[v0.AddKeysToRole200Rsponse](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")
@@ -44,12 +53,16 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 }
 
 func (cli *Client) GetKeysInRole(roleId string, page *Page) (*v0.ListRoleKeys200Response, error) {
-	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/keys", ":role_id", url.PathEscape(roleId), -1)
+	endpoint, err := cli.BuildFullEndpoint(GetKeysInRole, map[string]interface{}{ParamRoleID: roleId}, nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "build endpoint")
+	}
 
 	response, err := cli.get(endpoint, nil, page)
 	if err != nil {
-		return nil, errors.Wrap(err, "request ListRoleKeys")
+		return nil, errors.Wrap(err, "request GetKeysInRole")
 	}
+
 	decoded, err := decodeJSONResponse[v0.ListRoleKeys200Response](response)
 	if err != nil {
 		return nil, errors.Wrap(err, "decode")
