@@ -1,12 +1,12 @@
 package client
 
 import (
-	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
-	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
-	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
-	"github.com/pkg/errors"
 	"net/url"
 	"strings"
+
+	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
+	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
+	"github.com/pkg/errors"
 )
 
 func (cli *Client) CreateRoleToken(request *v0.CreateTokenRequest, roleId string) (*v1.OidcAuth200Response, error) {
@@ -43,7 +43,7 @@ func (cli *Client) AddKeysToRole(request *v0.AddKeysToRoleRequest, roleId string
 	return &decoded, err
 }
 
-func (cli *Client) GetKeysInRole(roleId string, page *pagination.Page) (*v0.ListRoleKeys200Response, error) {
+func (cli *Client) GetKeysInRole(roleId string, page *Page) (*v0.ListRoleKeys200Response, error) {
 	endpoint := strings.Replace("/v0/org/:org_id/roles/:role_id/keys", ":role_id", url.PathEscape(roleId), -1)
 
 	response, err := cli.get(endpoint, nil, page)

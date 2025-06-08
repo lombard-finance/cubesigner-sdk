@@ -1,4 +1,4 @@
-package pagination
+package client
 
 import (
 	"net/url"
@@ -10,7 +10,7 @@ type Page struct {
 	start *string
 }
 
-func New() *Page {
+func NewPage() *Page {
 	return &Page{}
 }
 

@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -94,7 +93,7 @@ func (cli *Client) addExtraHeaders(req *http.Request) {
 	}
 }
 
-func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
+func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page *Page) (io.Reader, error) {
 	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
 		WithField("address", cli.address).
 		WithField("endpoint", endpoint)
@@ -162,19 +161,19 @@ func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page 
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders, page)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders, page)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders, page)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	// copy body if not nil
 	var buf bytes.Buffer
 	var tee io.Reader
@@ -251,6 +250,7 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 }
 
 // close closes the client, freeing up resources.
+// TODO
 func (cli *Client) close() {
 }
 
