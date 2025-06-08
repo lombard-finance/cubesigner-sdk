@@ -27,7 +27,7 @@ func (cli *Client) SignBlob(
 	}
 
 	if mfaHeaders != nil {
-		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}

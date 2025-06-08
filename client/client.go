@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -27,6 +28,11 @@ type Client struct {
 
 	orgID string
 	token string
+
+	// Context-based cancellation
+	ctx       context.Context
+	cancel    context.CancelFunc
+	closeOnce sync.Once
 }
 
 type MfaHeaders struct {
@@ -36,6 +42,7 @@ type MfaHeaders struct {
 
 // New creates a new client, connecting with a standard HTTP.
 func New(address, orgID, token string, logger *logrus.Entry, timeout time.Duration) (*Client, error) {
+	ctx, cancel := context.WithCancel(context.Background())
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -52,6 +59,7 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 		Jar:           nil,
 		Timeout:       timeout,
 	}
+
 	if !strings.HasPrefix(address, "https") {
 		address = fmt.Sprintf("https://%s", address)
 	}
@@ -60,8 +68,10 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 	}
 	base, err := url.Parse(address)
 	if err != nil {
+		cancel()
 		return nil, errors.Wrap(err, "invalid URL")
 	}
+
 	return &Client{
 		logger:  logger.WithField("client", "cubist"),
 		base:    base,
@@ -73,6 +83,8 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 		extraHeaders: map[string]string{
 			"Authorization": token,
 		},
+		ctx:    ctx,
+		cancel: cancel,
 	}, nil
 }
 
@@ -86,13 +98,12 @@ func (cli *Client) Address() string {
 	return cli.address
 }
 
-func (cli *Client) addExtraHeaders(req *http.Request) {
-	for k, v := range cli.extraHeaders {
-		req.Header.Add(k, v)
-	}
-}
-
 func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, page *Page) (io.Reader, error) {
+	// Check if client is closed
+	if cli.isClosed() {
+		return nil, errors.New("client is closed")
+	}
+
 	log := cli.logger.WithFields(logrus.Fields{
 		"id":       fmt.Sprintf("%02x", rand.Int31()),
 		"address":  cli.address,
@@ -107,41 +118,43 @@ func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, pag
 		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
-	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
+	// Use client context as parent - auto-cancels if client is closed
+	opCtx, cancel := context.WithTimeout(cli.ctx, cli.timeout)
+	defer cancel()
+
 	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to create GET request")
+		return nil, errors.Wrap(err, "create GET request")
 	}
 
+	// Add headers
 	cli.addExtraHeaders(req)
-
 	for key, value := range overrideHeaders {
 		req.Header.Set(key, value)
 	}
 
+	// Do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to call GET endpoint")
+		if cli.isClosed() {
+			return nil, errors.New("client was closed during request")
+		}
+		return nil, errors.Wrap(err, "call GET endpoint")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
 		// Nothing found.  This is not an error, so we return nil on both counts.
-		cancel()
 		return nil, nil
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to read GET response")
+		return nil, errors.Wrap(err, "read GET response")
 	}
 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		cancel()
 		log.WithFields(logrus.Fields{
 			"status_code": resp.StatusCode,
 			"data":        string(data),
@@ -149,7 +162,6 @@ func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, pag
 		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s", http.MethodGet, resp.StatusCode, endpoint)
 	}
 
-	cancel()
 	log.WithField("response", string(data)).Trace("response")
 
 	return bytes.NewReader(data), nil
@@ -168,18 +180,9 @@ func (cli *Client) patch(endpoint *url.URL, body io.Reader, overrideHeaders map[
 }
 
 func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
-	// copy body if not nil
-	var buf bytes.Buffer
-	var tee io.Reader
-	if body != nil {
-		tee = io.TeeReader(body, &buf)
-
-		bodyBytes, err := io.ReadAll(tee)
-		if err != nil {
-			cli.logger.WithError(err).Warn("failed to read request body")
-		} else {
-			cli.logger.Tracef("request body: %s", bodyBytes)
-		}
+	// Check if client is closed
+	if cli.isClosed() {
+		return nil, 0, errors.New("client is closed")
 	}
 
 	log := cli.logger.WithFields(logrus.Fields{
@@ -188,13 +191,27 @@ func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Rea
 		"method":   method,
 	})
 
+	// Copy body if not nil
+	var buf bytes.Buffer
+	var tee io.Reader
+	if body != nil {
+		tee = io.TeeReader(body, &buf)
+
+		bodyBytes, err := io.ReadAll(tee)
+		if err != nil {
+			log.WithError(err).Warn("read request body")
+		} else {
+			log.Tracef("request body: %s", bodyBytes)
+		}
+	}
+
 	if page != nil {
 		page.Apply(endpoint)
 		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
-	// build request
-	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
+	// Use client context as parent - auto-cancels if client is closed
+	opCtx, cancel := context.WithTimeout(cli.ctx, cli.timeout)
 	defer cancel()
 
 	req, err := http.NewRequestWithContext(opCtx, method, endpoint.String(), &buf)
@@ -202,18 +219,20 @@ func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Rea
 		return nil, 0, errors.Wrap(err, "create request with context")
 	}
 
-	// add headers
+	// Add headers
 	cli.addExtraHeaders(req)
 	req.Header.Set("Content-type", "application/json")
 	//req.Header.Set("Accept", "application/json")
-
 	for key, value := range overrideHeaders {
 		req.Header.Set(key, value)
 	}
 
-	// do the request
+	// Do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
+		if cli.isClosed() {
+			return nil, 0, errors.New("client was closed during request")
+		}
 		return nil, 0, errors.Wrap(err, "do request")
 	}
 	defer resp.Body.Close()
@@ -230,18 +249,41 @@ func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Rea
 		log.Trace("failed")
 		return nil, 0, errors.Errorf("Method: %s, StatusCode: %d, Endpoint: %s", method, resp.StatusCode, endpoint)
 	}
+
 	return bytes.NewReader(data), resp.StatusCode, nil
 }
 
-// close closes the client, freeing up resources.
-// TODO
-func (cli *Client) close() {
+// Close closes the client, freeing up resources and cancelling all operations
+func (cli *Client) Close() {
+	cli.closeOnce.Do(func() {
+		cli.logger.Debug("closing client")
+
+		// Cancel all ongoing and future operations
+		cli.cancel()
+
+		// Close idle connections
+		if cli.client != nil && cli.client.Transport != nil {
+			if transport, ok := cli.client.Transport.(*http.Transport); ok {
+				transport.CloseIdleConnections()
+			}
+		}
+
+		// Clear sensitive data
+		cli.token = ""
+		if cli.extraHeaders != nil {
+			delete(cli.extraHeaders, "Authorization")
+		}
+
+		cli.logger.Debug("client closed")
+	})
 }
 
-func (cli *Client) getMfaHeaders(mfaHeaders MfaHeaders) map[string]string {
-	return map[string]string{
-		"x-cubist-mfa-id":           mfaHeaders.Id,
-		"x-cubist-mfa-org-id":       cli.orgID,
-		"x-cubist-mfa-confirmation": mfaHeaders.Confirmation,
+// isClosed returns true if the client has been closed
+func (cli *Client) isClosed() bool {
+	select {
+	case <-cli.ctx.Done():
+		return true
+	default:
+		return false
 	}
 }

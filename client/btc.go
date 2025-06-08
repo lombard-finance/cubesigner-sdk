@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/lombard-finance/cubesigner-sdk/api"
-
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
 )
@@ -27,7 +26,7 @@ func (cli *Client) SignTaproot(
 	}
 
 	if mfaHeaders != nil {
-		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -80,7 +79,7 @@ func (cli *Client) SignSegWit(
 	}
 
 	if mfaHeaders != nil {
-		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -135,7 +134,7 @@ func (cli *Client) SignPsbt(
 	}
 
 	if mfaHeaders != nil {
-		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}

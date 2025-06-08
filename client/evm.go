@@ -14,7 +14,7 @@ func (cli *Client) SignEip712(
 ) (*v0.EvmSignResponse, string, error) {
 	headers := map[string]string{}
 	if mfaHeaders != nil {
-		for k, v := range cli.getMfaHeaders(*mfaHeaders) {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
