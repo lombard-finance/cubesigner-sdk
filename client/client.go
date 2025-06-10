@@ -159,7 +159,8 @@ func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, pag
 			"status_code": resp.StatusCode,
 			"data":        string(data),
 		}).Trace("GET failed")
-		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s", http.MethodGet, resp.StatusCode, endpoint)
+		// TODO: parse the error
+		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s, Message: %s", http.MethodGet, resp.StatusCode, endpoint, string(data))
 	}
 
 	log.WithField("response", string(data)).Trace("response")
@@ -247,7 +248,8 @@ func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Rea
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
 		log.Trace("failed")
-		return nil, 0, errors.Errorf("Method: %s, StatusCode: %d, Endpoint: %s", method, resp.StatusCode, endpoint)
+		// TODO: parse the error
+		return nil, 0, errors.Errorf("Method: %s, StatusCode: %d, Endpoint: %s, Message: %s", method, resp.StatusCode, endpoint, string(data))
 	}
 
 	return bytes.NewReader(data), resp.StatusCode, nil
