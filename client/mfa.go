@@ -54,7 +54,7 @@ func (cli *Client) ApproveOrRejectMfaRequest(mfaId string, mfaVote v0.MfaVote) (
 		return nil, errors.New("invalid MfaVote value")
 	}
 
-	endpoint, err := cli.BuildFullEndpoint(SignBabylonRegistration, map[string]interface{}{ParamMfaID: mfaId}, map[string]interface{}{QueryParamVote: mfaVote})
+	endpoint, err := cli.BuildFullEndpoint(MfaRequest, map[string]interface{}{ParamMfaID: mfaId}, map[string]interface{}{QueryParamVote: mfaVote})
 	if err != nil {
 		return nil, errors.Wrap(err, "build endpoint")
 	}
