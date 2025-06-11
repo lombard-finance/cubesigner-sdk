@@ -13,51 +13,51 @@ import (
 
 // Parameter names
 const (
-	ParamOrgID     = "org_id"
-	ParamPubkey    = "pubkey"
-	ParamKeyID     = "key_id"
-	ParamMfaID     = "mfa_id"
-	ParamRoleID    = "role_id"
-	ParamAddress   = "address"
+	ParamOrgID     = ":org_id"
+	ParamPubkey    = ":pubkey"
+	ParamKeyID     = ":key_id"
+	ParamMfaID     = ":mfa_id"
+	ParamRoleID    = ":role_id"
+	ParamAddress   = ":address"
 	QueryParamVote = "mfa_vote"
 )
 
 // Endpoint patterns
 var (
 	// Babylon endpoints
-	SignBabylonStaking      = fmt.Sprintf("/v0/org/{%s}/babylon/staking/{%s}", ParamOrgID, ParamPubkey)
-	SignBabylonRegistration = fmt.Sprintf("/v0/org/{%s}/babylon/registration/{%s}", ParamOrgID, ParamPubkey)
+	SignBabylonStaking      = fmt.Sprintf("/v0/org/%s/babylon/staking/%s", ParamOrgID, ParamPubkey)
+	SignBabylonRegistration = fmt.Sprintf("/v0/org/%s/babylon/registration/%s", ParamOrgID, ParamPubkey)
 
 	// Blob endpoints
-	SignBlob = fmt.Sprintf("/v1/org/{%s}/blob/sign/{%s}", ParamOrgID, ParamKeyID)
+	SignBlob = fmt.Sprintf("/v1/org/%s/blob/sign/%s", ParamOrgID, ParamKeyID)
 
 	// BTC endpoints
-	SignBtcTaproot = fmt.Sprintf("/v0/org/{%s}/btc/taproot/sign/{%s}", ParamOrgID, ParamPubkey)
-	SignBtcSegWit  = fmt.Sprintf("/v0/org/{%s}/btc/sign/{%s}", ParamOrgID, ParamPubkey)
-	SignBtcPsbt    = fmt.Sprintf("/v0/org/{%s}/btc/psbt/sign/{%s}", ParamOrgID, ParamPubkey)
+	SignBtcTaproot = fmt.Sprintf("/v0/org/%s/btc/taproot/sign/%s", ParamOrgID, ParamPubkey)
+	SignBtcSegWit  = fmt.Sprintf("/v0/org/%s/btc/sign/%s", ParamOrgID, ParamPubkey)
+	SignBtcPsbt    = fmt.Sprintf("/v0/org/%s/btc/psbt/sign/%s", ParamOrgID, ParamPubkey)
 
 	// EVM endpoints
-	SignEvmEip712 = fmt.Sprintf("/v0/org/{%s}/evm/eip712/sign/{%s}", ParamOrgID, ParamPubkey)
+	SignEvmEip712 = fmt.Sprintf("/v0/org/%s/evm/eip712/sign/%s", ParamOrgID, ParamPubkey)
 
 	// Key endpoints
-	CreateKey   = fmt.Sprintf("/v0/org/{%s}/keys", ParamOrgID)
-	GetKeyInOrg = fmt.Sprintf("/v0/org/{%s}/keys/{%s}", ParamOrgID, ParamKeyID)
+	CreateKey   = fmt.Sprintf("/v0/org/%s/keys", ParamOrgID)
+	GetKeyInOrg = fmt.Sprintf("/v0/org/%s/keys/%s", ParamOrgID, ParamKeyID)
 
 	// MFA endpoints
-	ListMfaRequests = fmt.Sprintf("/v0/org/{%s}/mfa", ParamOrgID)
-	MfaRequest      = fmt.Sprintf("/v0/org/{%s}/mfa/{%s}", ParamOrgID, ParamMfaID)
+	ListMfaRequests = fmt.Sprintf("/v0/org/%s/mfa", ParamOrgID)
+	MfaRequest      = fmt.Sprintf("/v0/org/%s/mfa/%s", ParamOrgID, ParamMfaID)
 
 	// Role endpoints
-	CreateRoleToken = fmt.Sprintf("/v0/org/{%s}/roles/{%s}/tokens", ParamOrgID, ParamRoleID)
-	AddKeysToRole   = fmt.Sprintf("/v0/org/{%s}/roles/{%s}/add_keys", ParamOrgID, ParamRoleID)
-	GetKeysInRole   = fmt.Sprintf("/v0/org/{%s}/roles/{%s}/keys", ParamOrgID, ParamRoleID)
+	CreateRoleToken = fmt.Sprintf("/v0/org/%s/roles/%s/tokens", ParamOrgID, ParamRoleID)
+	AddKeysToRole   = fmt.Sprintf("/v0/org/%s/roles/%s/add_keys", ParamOrgID, ParamRoleID)
+	GetKeysInRole   = fmt.Sprintf("/v0/org/%s/roles/%s/keys", ParamOrgID, ParamRoleID)
 
 	// Signer session endpoints
-	RefreshToken = fmt.Sprintf("/v1/org/{%s}/token/refresh", ParamOrgID)
+	RefreshToken = fmt.Sprintf("/v1/org/%s/token/refresh", ParamOrgID)
 
 	// User endpoints
 	AboutMeLegacy = "/v0/about_me"
-	AboutMe       = fmt.Sprintf("/v0/org/{%s}/user/me", ParamOrgID)
+	AboutMe       = fmt.Sprintf("/v0/org/%s/user/me", ParamOrgID)
 )
 
 // buildEndpoint replaces path parameters in endpoint patterns
@@ -138,12 +138,14 @@ func parameterToString(obj interface{}, collectionFormat string) string {
 	return fmt.Sprintf("%v", obj)
 }
 
-// MatchesEndpoint checks if an actual path matches an endpoint pattern
 func MatchesEndpoint(actualPath, endpointPattern string) bool {
-	// Convert endpoint pattern to regex pattern
-	// /v0/org/{org_id}/btc/sign/{pubkey} -> ^/v0/org/[^/]+/btc/sign/[^/]+$
+	// Escape special regex characters first
 	pattern := regexp.QuoteMeta(endpointPattern)
-	pattern = regexp.MustCompile(`\{[^}]+\}`).ReplaceAllString(pattern, `[^/]+`)
+
+	// Replace :param with regex pattern for non-slash characters
+	pattern = regexp.MustCompile(`:[a-zA-Z_]+`).ReplaceAllString(pattern, `[^/]+`)
+
+	// Add anchors on start and end
 	pattern = "^" + pattern + "$"
 
 	matched, _ := regexp.MatchString(pattern, actualPath)
