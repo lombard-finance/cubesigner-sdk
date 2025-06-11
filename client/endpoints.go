@@ -68,10 +68,9 @@ func buildEndpoint(pattern string, params map[string]interface{}) string {
 
 	result := pattern
 	for key, value := range params {
-		placeholder := "{" + key + "}"
 		stringValue := parameterToString(value, "")
 		escapedValue := url.PathEscape(stringValue)
-		result = strings.ReplaceAll(result, placeholder, escapedValue)
+		result = strings.ReplaceAll(result, key, escapedValue)
 	}
 	return result
 }
