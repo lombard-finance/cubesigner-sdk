@@ -2,11 +2,8 @@ package client
 
 import (
 	"net/http"
-	"net/url"
-	"strings"
 
 	"github.com/lombard-finance/cubesigner-sdk/api"
-
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
 	"github.com/pkg/errors"
 )
@@ -14,7 +11,7 @@ import (
 func (cli *Client) SignBabylonStaking(
 	roleId, pubkey string,
 	request *v0.BabylonStakingRequest,
-	mfaId, mfaConfirmation *string,
+	mfaHeaders *MfaHeaders,
 ) (*v0.BabylonStaking200Response, string, error) {
 	var scope api.Scope
 	switch request.Action {
@@ -42,10 +39,8 @@ func (cli *Client) SignBabylonStaking(
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -55,8 +50,10 @@ func (cli *Client) SignBabylonStaking(
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v0/org/:org_id/babylon/staking/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBabylonStaking, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {
@@ -81,7 +78,7 @@ func (cli *Client) SignBabylonStaking(
 func (cli *Client) SignBabylonRegistration(
 	roleId, pubkey string,
 	request *v0.BabylonRegistrationRequest,
-	mfaId, mfaConfirmation *string,
+	mfaHeaders *MfaHeaders,
 ) (*v0.BabylonRegistration200Response, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign babylon registration",
@@ -95,10 +92,8 @@ func (cli *Client) SignBabylonRegistration(
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
@@ -108,7 +103,10 @@ func (cli *Client) SignBabylonRegistration(
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	endpoint := strings.Replace("/v0/org/:org_id/babylon/registration/:pubkey", ":pubkey", url.PathEscape(parameterToString(pubkey, "")), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBabylonRegistration, map[string]interface{}{ParamPubkey: pubkey}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

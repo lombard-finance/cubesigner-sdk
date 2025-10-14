@@ -1,17 +1,19 @@
 package client
 
 import (
-	"github.com/lombard-finance/cubesigner-sdk/api"
-	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"net/http"
-	"net/url"
-	"strings"
 
+	"github.com/lombard-finance/cubesigner-sdk/api"
 	v0 "github.com/lombard-finance/cubesigner-sdk/api/v0"
+	v1 "github.com/lombard-finance/cubesigner-sdk/api/v1"
 	"github.com/pkg/errors"
 )
 
-func (cli *Client) SignBlob(roleId, key string, request *v1.BlobSignRequest, mfaId *string, mfaConfirmation *string) (*v1.BlobSignResponse, string, error) {
+func (cli *Client) SignBlob(
+	roleId, key string,
+	request *v1.BlobSignRequest,
+	mfaHeaders *MfaHeaders,
+) (*v1.BlobSignResponse, string, error) {
 	authResp, err := cli.CreateRoleToken(&v0.CreateTokenRequest{
 		Purpose: "sign blob",
 		Scopes:  []api.Scope{api.SIGNBLOB},
@@ -24,21 +26,20 @@ func (cli *Client) SignBlob(roleId, key string, request *v1.BlobSignRequest, mfa
 		"Authorization": authResp.GetToken(),
 	}
 
-	// add mfa headers
-	if mfaConfirmation != nil && *mfaConfirmation != "" {
-		mfaHeaders := getMfaHeaders(*mfaId, *mfaConfirmation, cli.orgID)
-		for k, v := range mfaHeaders {
+	if mfaHeaders != nil {
+		for k, v := range cli.buildMfaHeaders(*mfaHeaders) {
 			headers[k] = v
 		}
 	}
-
 	encoded, err := encodeJSONRequest(request)
 	if err != nil {
 		return nil, "", errors.Wrap(err, "encode")
 	}
 
-	// replace path variables
-	endpoint := strings.Replace("/v1/org/:org_id/blob/sign/:key_id", ":key_id", url.PathEscape(key), -1)
+	endpoint, err := cli.BuildFullEndpoint(SignBlob, map[string]interface{}{ParamKeyID: key}, nil)
+	if err != nil {
+		return nil, "", errors.Wrap(err, "build endpoint")
+	}
 
 	response, statusCode, err := cli.post(endpoint, encoded, headers, nil)
 	if err != nil {

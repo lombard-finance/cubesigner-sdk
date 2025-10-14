@@ -9,11 +9,10 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"reflect"
 	"strings"
+	"sync"
 	"time"
 
-	"github.com/lombard-finance/cubesigner-sdk/client/pagination"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -29,15 +28,21 @@ type Client struct {
 
 	orgID string
 	token string
+
+	// Context-based cancellation
+	ctx       context.Context
+	cancel    context.CancelFunc
+	closeOnce sync.Once
 }
 
-type Params struct {
-	Logger  *logrus.Entry
-	Timeout time.Duration
+type MfaHeaders struct {
+	Id           string
+	Confirmation string
 }
 
 // New creates a new client, connecting with a standard HTTP.
 func New(address, orgID, token string, logger *logrus.Entry, timeout time.Duration) (*Client, error) {
+	ctx, cancel := context.WithCancel(context.Background())
 
 	client := &http.Client{
 		Transport: &http.Transport{
@@ -54,6 +59,7 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 		Jar:           nil,
 		Timeout:       timeout,
 	}
+
 	if !strings.HasPrefix(address, "https") {
 		address = fmt.Sprintf("https://%s", address)
 	}
@@ -62,8 +68,10 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 	}
 	base, err := url.Parse(address)
 	if err != nil {
+		cancel()
 		return nil, errors.Wrap(err, "invalid URL")
 	}
+
 	return &Client{
 		logger:  logger.WithField("client", "cubist"),
 		base:    base,
@@ -75,6 +83,8 @@ func New(address, orgID, token string, logger *logrus.Entry, timeout time.Durati
 		extraHeaders: map[string]string{
 			"Authorization": token,
 		},
+		ctx:    ctx,
+		cancel: cancel,
 	}, nil
 }
 
@@ -88,94 +98,101 @@ func (cli *Client) Address() string {
 	return cli.address
 }
 
-func (cli *Client) addExtraHeaders(req *http.Request) {
-	for k, v := range cli.extraHeaders {
-		req.Header.Add(k, v)
+func (cli *Client) get(endpoint *url.URL, overrideHeaders map[string]string, page *Page) (io.Reader, error) {
+	// Check if client is closed
+	if cli.isClosed() {
+		return nil, errors.New("client is closed")
 	}
-}
 
-func (cli *Client) get(endpoint string, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, error) {
-	log := cli.logger.WithField("id", fmt.Sprintf("%02x", rand.Int31())).
-		WithField("address", cli.address).
-		WithField("endpoint", endpoint)
-	log.Trace("GET request")
+	log := cli.logger.WithFields(logrus.Fields{
+		"id":       fmt.Sprintf("%02x", rand.Int31()),
+		"address":  cli.address,
+		"endpoint": endpoint.String(),
+		"method":   http.MethodGet,
+	})
 
-	// replace known path variables
-	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
-
-	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
-	if err != nil {
-		return nil, errors.Wrap(err, "invalid endpoint")
-	}
+	log.Trace("request")
 
 	if page != nil {
-		page.Apply(requestEndpoint)
-		log.WithField("query", requestEndpoint.Query().Encode())
+		page.Apply(endpoint)
+		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
-	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
-	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, requestEndpoint.String(), nil)
+	// Use client context as parent - auto-cancels if client is closed
+	opCtx, cancel := context.WithTimeout(cli.ctx, cli.timeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(opCtx, http.MethodGet, endpoint.String(), nil)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to create GET request")
+		return nil, errors.Wrap(err, "create GET request")
 	}
 
+	// Add headers
 	cli.addExtraHeaders(req)
-	if overrideHeaders != nil {
-		for key, value := range overrideHeaders {
-			req.Header.Set(key, value)
-		}
+	for key, value := range overrideHeaders {
+		req.Header.Set(key, value)
 	}
 
+	// Do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to call GET endpoint")
+		if cli.isClosed() {
+			return nil, errors.New("client was closed during request")
+		}
+		return nil, errors.Wrap(err, "call GET endpoint")
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
 		// Nothing found.  This is not an error, so we return nil on both counts.
-		cancel()
 		return nil, nil
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		cancel()
-		return nil, errors.Wrap(err, "failed to read GET response")
+		return nil, errors.Wrap(err, "read GET response")
 	}
 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		cancel()
-		log.Trace("status_code", resp.StatusCode)
-		log.Trace("data", string(data))
-		log.Trace("GET failed")
-		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s, Data: %s", http.MethodGet, resp.StatusCode, endpoint, data)
+		log.WithFields(logrus.Fields{
+			"status_code": resp.StatusCode,
+			"data":        string(data),
+		}).Trace("GET failed")
+		// TODO: parse the error
+		return nil, errors.Errorf("Method %s, StatusCode: %d, Endpoint: %s, Message: %s", http.MethodGet, resp.StatusCode, endpoint, string(data))
 	}
-	cancel()
 
-	log.Trace("response", string(data))
-	log.Trace("GET response")
+	log.WithField("response", string(data)).Trace("response")
 
 	return bytes.NewReader(data), nil
 }
 
-func (cli *Client) post(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) post(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPost, body, overrideHeaders, page)
 }
 
-func (cli *Client) put(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) put(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPut, body, overrideHeaders, page)
 }
 
-func (cli *Client) patch(endpoint string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
+func (cli *Client) patch(endpoint *url.URL, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
 	return cli.requestWithBody(endpoint, http.MethodPatch, body, overrideHeaders, page)
 }
 
-func (cli *Client) requestWithBody(endpoint string, method string, body io.Reader, overrideHeaders map[string]string, page *pagination.Page) (io.Reader, int, error) {
-	// copy body if not nil
+func (cli *Client) requestWithBody(endpoint *url.URL, method string, body io.Reader, overrideHeaders map[string]string, page *Page) (io.Reader, int, error) {
+	// Check if client is closed
+	if cli.isClosed() {
+		return nil, 0, errors.New("client is closed")
+	}
+
+	log := cli.logger.WithFields(logrus.Fields{
+		"address":  cli.address,
+		"endpoint": endpoint.String(),
+		"method":   method,
+	})
+
+	// Copy body if not nil
 	var buf bytes.Buffer
 	var tee io.Reader
 	if body != nil {
@@ -183,60 +200,45 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 		bodyBytes, err := io.ReadAll(tee)
 		if err != nil {
-			cli.logger.WithError(err).Warn("failed to read request body")
+			log.WithError(err).Warn("read request body")
 		} else {
-			cli.logger.Tracef("request body: %s", bodyBytes)
+			log.Tracef("request body: %s", bodyBytes)
 		}
 	}
 
-	// replace path variables
-	endpoint = strings.Replace(endpoint, ":org_id", url.PathEscape(cli.orgID), -1)
-
-	log := cli.logger.WithFields(map[string]interface{}{
-		"address":  cli.address,
-		"endpoint": endpoint,
-		"method":   method,
-	})
-
-	// build url
-	requestEndpoint, err := url.Parse(fmt.Sprintf("%s%s", strings.TrimSuffix(cli.base.String(), "/"), endpoint))
-	if err != nil {
-		return nil, 0, errors.Wrap(err, "invalid endpoint")
-	}
-
 	if page != nil {
-		page.Apply(requestEndpoint)
-		log.WithField("query", requestEndpoint.Query().Encode())
+		page.Apply(endpoint)
+		log = log.WithField("query", endpoint.Query().Encode())
 	}
 
-	// build request
-	opCtx, cancel := context.WithTimeout(context.Background(), cli.timeout)
+	// Use client context as parent - auto-cancels if client is closed
+	opCtx, cancel := context.WithTimeout(cli.ctx, cli.timeout)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(opCtx, method, requestEndpoint.String(), &buf)
+	req, err := http.NewRequestWithContext(opCtx, method, endpoint.String(), &buf)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "create request with context")
 	}
 
-	// add headers
+	// Add headers
 	cli.addExtraHeaders(req)
 	req.Header.Set("Content-type", "application/json")
 	//req.Header.Set("Accept", "application/json")
-
-	if overrideHeaders != nil {
-		for key, value := range overrideHeaders {
-			req.Header.Set(key, value)
-		}
+	for key, value := range overrideHeaders {
+		req.Header.Set(key, value)
 	}
 
-	// do the request
+	// Do the request
 	resp, err := cli.client.Do(req)
 	if err != nil {
+		if cli.isClosed() {
+			return nil, 0, errors.New("client was closed during request")
+		}
 		return nil, 0, errors.Wrap(err, "do request")
 	}
 	defer resp.Body.Close()
 
-	responseData, err := io.ReadAll(resp.Body)
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, 0, errors.Wrap(err, "read response")
 	}
@@ -245,35 +247,45 @@ func (cli *Client) requestWithBody(endpoint string, method string, body io.Reade
 
 	statusFamily := resp.StatusCode / 100
 	if statusFamily != 2 {
-		return nil, 0, errors.Errorf("%s request with status code: %d, message: %s", method, resp.StatusCode, string(responseData))
+		log.Trace("failed")
+		// TODO: parse the error
+		return nil, 0, errors.Errorf("Method: %s, StatusCode: %d, Endpoint: %s, Message: %s", method, resp.StatusCode, endpoint, string(data))
 	}
-	return bytes.NewReader(responseData), resp.StatusCode, nil
+
+	return bytes.NewReader(data), resp.StatusCode, nil
 }
 
-// close closes the client, freeing up resources.
-func (cli *Client) close() {
+// Close closes the client, freeing up resources and cancelling all operations
+func (cli *Client) Close() {
+	cli.closeOnce.Do(func() {
+		cli.logger.Debug("closing client")
+
+		// Cancel all ongoing and future operations
+		cli.cancel()
+
+		// Close idle connections
+		if cli.client != nil && cli.client.Transport != nil {
+			if transport, ok := cli.client.Transport.(*http.Transport); ok {
+				transport.CloseIdleConnections()
+			}
+		}
+
+		// Clear sensitive data
+		cli.token = ""
+		if cli.extraHeaders != nil {
+			delete(cli.extraHeaders, "Authorization")
+		}
+
+		cli.logger.Debug("client closed")
+	})
 }
 
-// parameterToString convert interface{} parameters to string, using a delimiter if format is provided.
-func parameterToString(obj interface{}, collectionFormat string) string {
-	var delimiter string
-
-	switch collectionFormat {
-	case "pipes":
-		delimiter = "|"
-	case "ssv":
-		delimiter = " "
-	case "tsv":
-		delimiter = "\t"
-	case "csv":
-		delimiter = ","
+// isClosed returns true if the client has been closed
+func (cli *Client) isClosed() bool {
+	select {
+	case <-cli.ctx.Done():
+		return true
+	default:
+		return false
 	}
-
-	if reflect.TypeOf(obj).Kind() == reflect.Slice {
-		return strings.Trim(strings.Replace(fmt.Sprint(obj), " ", delimiter, -1), "[]")
-	} else if t, ok := obj.(time.Time); ok {
-		return t.Format(time.RFC3339)
-	}
-
-	return fmt.Sprintf("%v", obj)
 }

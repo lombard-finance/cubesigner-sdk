@@ -7,7 +7,7 @@ type AddKeysToRoleRequest struct {
 	// A list of keys to add to a role
 	KeyIds []string `json:"key_ids"`
 	// Optional policies to apply for each key
-	Policy []map[string]interface{} `json:"policy,omitempty"`
+	Policy any `json:"policy,omitempty"`
 }
 
 // NewAddKeysToRoleRequest instantiates a new AddKeysToRoleRequest object
@@ -53,7 +53,7 @@ func (o *AddKeysToRoleRequest) SetKeyIds(v []string) {
 }
 
 // GetPolicy returns the Policy field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *AddKeysToRoleRequest) GetPolicy() []map[string]interface{} {
+func (o *AddKeysToRoleRequest) GetPolicy() any {
 	if o == nil {
 		var ret []map[string]interface{}
 		return ret
@@ -64,7 +64,7 @@ func (o *AddKeysToRoleRequest) GetPolicy() []map[string]interface{} {
 // GetPolicyOk returns a tuple with the Policy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *AddKeysToRoleRequest) GetPolicyOk() ([]map[string]interface{}, bool) {
+func (o *AddKeysToRoleRequest) GetPolicyOk() (any, bool) {
 	if o == nil || o.Policy == nil {
 		return nil, false
 	}

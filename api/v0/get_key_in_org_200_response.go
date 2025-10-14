@@ -2,6 +2,7 @@ package v0
 
 import (
 	"encoding/json"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -25,7 +26,7 @@ type GetKeyInOrg200Response struct {
 	// Owner of the key
 	Owner string `json:"owner"`
 	// Key policy
-	Policy []map[string]interface{} `json:"policy"`
+	Policy any `json:"policy"`
 	// Hex-encoded, serialized public key. The format used depends on the key type: - Secp256k1 keys use 65-byte uncompressed SECG format; - Stark keys use 33-byte compressed SECG format; - BLS keys use 48-byte compressed BLS12-381 (ZCash) format; - Ed25519 keys use the canonical 32-byte encoding specified in RFC 8032.
 	PublicKey string `json:"public_key"`
 	// The purpose for which the key can be used (e.g., chain id for which the key is allowed to sign messages)
@@ -36,7 +37,7 @@ type GetKeyInOrg200Response struct {
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewGetKeyInOrg200Response(enabled bool, keyId string, keyType api.KeyType, materialId string, owner string, policy []map[string]interface{}, publicKey string, purpose string) *GetKeyInOrg200Response {
+func NewGetKeyInOrg200Response(enabled bool, keyId string, keyType api.KeyType, materialId string, owner string, policy any, publicKey string, purpose string) *GetKeyInOrg200Response {
 	this := GetKeyInOrg200Response{}
 	this.Enabled = enabled
 	this.KeyId = keyId
@@ -404,7 +405,7 @@ func (o *GetKeyInOrg200Response) SetOwner(v string) {
 }
 
 // GetPolicy returns the Policy field value
-func (o *GetKeyInOrg200Response) GetPolicy() []map[string]interface{} {
+func (o *GetKeyInOrg200Response) GetPolicy() any {
 	if o == nil {
 		var ret []map[string]interface{}
 		return ret
@@ -415,7 +416,7 @@ func (o *GetKeyInOrg200Response) GetPolicy() []map[string]interface{} {
 
 // GetPolicyOk returns a tuple with the Policy field value
 // and a boolean to check if the value has been set.
-func (o *GetKeyInOrg200Response) GetPolicyOk() ([]map[string]interface{}, bool) {
+func (o *GetKeyInOrg200Response) GetPolicyOk() (any, bool) {
 	if o == nil {
 		return nil, false
 	}
