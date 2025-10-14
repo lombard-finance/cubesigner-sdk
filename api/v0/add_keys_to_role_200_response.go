@@ -9,8 +9,8 @@ type AddKeysToRole200Rsponse struct {
 	// All keys in a role
 	KeysIDs []string `json:"key_ids,omitempty"`
 	// Policies that are checked before key in role is used
-	Policy []map[string]interface{} `json:"policy,omitempty"`
-	Status string                   `json:"status,omitempty"`
+	Policy any    `json:"policy,omitempty"`
+	Status string `json:"status,omitempty"`
 }
 
 func (o *AddKeysToRole200Rsponse) GetKeyIDs() []string {
@@ -34,7 +34,7 @@ func (o *AddKeysToRole200Rsponse) SetKeyIDs(v []string) {
 }
 
 // GetPolicy returns the Policy field value
-func (o *AddKeysToRole200Rsponse) GetPolicy() []map[string]interface{} {
+func (o *AddKeysToRole200Rsponse) GetPolicy() any {
 	if o == nil {
 		var ret []map[string]interface{}
 		return ret
@@ -45,7 +45,7 @@ func (o *AddKeysToRole200Rsponse) GetPolicy() []map[string]interface{} {
 
 // GetPolicyOk returns a tuple with the Policy field value
 // and a boolean to check if the value has been set.
-func (o *AddKeysToRole200Rsponse) GetPolicyOk() ([]map[string]interface{}, bool) {
+func (o *AddKeysToRole200Rsponse) GetPolicyOk() (any, bool) {
 	if o == nil {
 		return nil, false
 	}

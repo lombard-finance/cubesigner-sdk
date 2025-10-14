@@ -9,7 +9,7 @@ type KeyInRoleInfo struct {
 	// Key ID
 	KeyId string `json:"key_id"`
 	// Policies that are checked before this key is used on behalf of this role
-	Policy []map[string]interface{} `json:"policy,omitempty"`
+	Policy any `json:"policy,omitempty"`
 	// Role ID
 	RoleId string `json:"role_id"`
 }
@@ -58,7 +58,7 @@ func (o *KeyInRoleInfo) SetKeyId(v string) {
 }
 
 // GetPolicy returns the Policy field value if set, zero value otherwise.
-func (o *KeyInRoleInfo) GetPolicy() []map[string]interface{} {
+func (o *KeyInRoleInfo) GetPolicy() any {
 	if o == nil || o.Policy == nil {
 		var ret []map[string]interface{}
 		return ret
@@ -68,7 +68,7 @@ func (o *KeyInRoleInfo) GetPolicy() []map[string]interface{} {
 
 // GetPolicyOk returns a tuple with the Policy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *KeyInRoleInfo) GetPolicyOk() ([]map[string]interface{}, bool) {
+func (o *KeyInRoleInfo) GetPolicyOk() (any, bool) {
 	if o == nil || o.Policy == nil {
 		return nil, false
 	}

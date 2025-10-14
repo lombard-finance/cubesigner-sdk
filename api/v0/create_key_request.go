@@ -2,6 +2,7 @@ package v0
 
 import (
 	"encoding/json"
+
 	"github.com/lombard-finance/cubesigner-sdk/api"
 )
 
@@ -13,7 +14,7 @@ type CreateKeyRequest struct {
 	// Specify a user other than themselves to be the (potentially new) owner of the key. The specified owner must be an existing user who is a member of the same org.
 	Owner api.NullableString `json:"owner,omitempty"`
 	// Set this key's policies. For an existing key, this overwrites all its policies.
-	Policy []map[string]interface{} `json:"policy,omitempty"`
+	Policy any `json:"policy,omitempty"`
 	// Chain id for which the key is allowed to sign messages
 	ChainId api.NullableInt64 `json:"chain_id,omitempty"`
 	// Number of keys to create
@@ -160,7 +161,7 @@ func (o *CreateKeyRequest) UnsetOwner() {
 }
 
 // GetPolicy returns the Policy field value if set, zero value otherwise (both if not set or set to explicit null).
-func (o *CreateKeyRequest) GetPolicy() []map[string]interface{} {
+func (o *CreateKeyRequest) GetPolicy() any {
 	if o == nil {
 		var ret []map[string]interface{}
 		return ret
@@ -171,7 +172,7 @@ func (o *CreateKeyRequest) GetPolicy() []map[string]interface{} {
 // GetPolicyOk returns a tuple with the Policy field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 // NOTE: If the value is an explicit nil, `nil, true` will be returned
-func (o *CreateKeyRequest) GetPolicyOk() ([]map[string]interface{}, bool) {
+func (o *CreateKeyRequest) GetPolicyOk() (any, bool) {
 	if o == nil || o.Policy == nil {
 		return nil, false
 	}
