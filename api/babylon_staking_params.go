@@ -58,19 +58,19 @@ type IBabylonStakingParams interface {
 type BabylonStakingParams struct {
 	CovenantPks                  []string `json:"covenant_pks"`
 	CovenantQuorum               uint32   `json:"covenant_quorum"`
-	MinStakingValueSat           int64    `json:"min_staking_value_sat"`
-	MaxStakingValueSat           int64    `json:"max_staking_value_sat"`
-	MinStakingTimeBlocks         uint32   `json:"min_staking_time_blocks"`
-	MaxStakingTimeBlocks         uint32   `json:"max_staking_time_blocks"`
+	MinStakingValueSat           int64    `json:"min_staking_amount"`
+	MaxStakingValueSat           int64    `json:"max_staking_amount"`
+	MinStakingTimeBlocks         uint32   `json:"min_staking_time"`
+	MaxStakingTimeBlocks         uint32   `json:"max_staking_time"`
 	SlashingPkScript             string   `json:"slashing_pk_script"`
-	MinSlashingTxFeeSat          int64    `json:"min_slashing_tx_fee_sat"`
+	MinSlashingTxFeeSat          int64    `json:"slashing_fee,omitempty"`
 	SlashingRate                 string   `json:"slashing_rate"`
-	UnbondingTimeBlocks          uint32   `json:"unbonding_time_blocks"`
-	UnbondingFeeSat              int64    `json:"unbonding_fee_sat"`
+	UnbondingTimeBlocks          uint32   `json:"unbonding_time"`
+	UnbondingFeeSat              int64    `json:"unbonding_fee"`
 	MinCommissionRate            string   `json:"min_commission_rate"`
 	DelegationCreationBaseGasFee uint64   `json:"delegation_creation_base_gas_fee"`
 	AllowListExpirationHeight    uint64   `json:"allow_list_expiration_height"`
-	BTCActivationHeight          uint32   `json:"btc_activation_height"`
+	BTCActivationHeight          uint32   `json:"activation_height"`
 	Version                      int32    `json:"version"`
 }
 
@@ -488,31 +488,40 @@ func (o *BabylonStakingParams) SetVersion(v int32) {
 	o.Version = v
 }
 
-// MarshalJSON marshals the BabylonStakingParams to JSON
+// MarshalJSON marshals the BabylonStakingParams to JSON using CubeSigner's
+// GlobalParams field names (activation_height, min_staking_amount, ...).
+// Approvers and the Cubist API expect this schema; chain-param names
+// (btc_activation_height, min_staking_value_sat, ...) are not accepted.
 func (o BabylonStakingParams) MarshalJSON() ([]byte, error) {
 	toSerialize := map[string]interface{}{}
 
 	toSerialize["covenant_pks"] = o.CovenantPks
 	toSerialize["covenant_quorum"] = o.CovenantQuorum
-	toSerialize["min_staking_value_sat"] = o.MinStakingValueSat
-	toSerialize["max_staking_value_sat"] = o.MaxStakingValueSat
-	toSerialize["min_staking_time_blocks"] = o.MinStakingTimeBlocks
-	toSerialize["max_staking_time_blocks"] = o.MaxStakingTimeBlocks
-	toSerialize["slashing_pk_script"] = o.SlashingPkScript
-	toSerialize["min_slashing_tx_fee_sat"] = o.MinSlashingTxFeeSat
-	toSerialize["slashing_rate"] = o.SlashingRate
-	toSerialize["unbonding_time_blocks"] = o.UnbondingTimeBlocks
-	toSerialize["unbonding_fee_sat"] = o.UnbondingFeeSat
-	toSerialize["min_commission_rate"] = o.MinCommissionRate
-	toSerialize["delegation_creation_base_gas_fee"] = o.DelegationCreationBaseGasFee
-	toSerialize["allow_list_expiration_height"] = o.AllowListExpirationHeight
-	toSerialize["btc_activation_height"] = o.BTCActivationHeight
+	toSerialize["min_staking_amount"] = o.MinStakingValueSat
+	toSerialize["max_staking_amount"] = o.MaxStakingValueSat
+	toSerialize["min_staking_time"] = o.MinStakingTimeBlocks
+	toSerialize["max_staking_time"] = o.MaxStakingTimeBlocks
+	toSerialize["unbonding_time"] = o.UnbondingTimeBlocks
+	toSerialize["unbonding_fee"] = o.UnbondingFeeSat
+	toSerialize["activation_height"] = o.BTCActivationHeight
 	toSerialize["version"] = o.Version
+
+	// Optional Cubist GlobalParams fields.
+	if o.SlashingPkScript != "" {
+		toSerialize["slashing_pk_script"] = o.SlashingPkScript
+	}
+	if o.SlashingRate != "" {
+		toSerialize["slashing_rate"] = o.SlashingRate
+	}
+	if o.MinSlashingTxFeeSat != 0 {
+		toSerialize["slashing_fee"] = o.MinSlashingTxFeeSat
+	}
 
 	return json.Marshal(toSerialize)
 }
 
-// UnmarshalJSON unmarshals BabylonStakingParams from JSON
+// UnmarshalJSON unmarshals BabylonStakingParams from JSON.
+// Accepts CubeSigner GlobalParams keys and legacy chain-param keys.
 func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
 	var temp map[string]interface{}
 	if err := json.Unmarshal(bytes, &temp); err != nil {
@@ -530,56 +539,52 @@ func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
 		o.CovenantQuorum = uint32(covenantQuorum)
 	}
 
-	if minStakingValueSat, ok := temp["min_staking_value_sat"].(float64); ok {
-		o.MinStakingValueSat = int64(minStakingValueSat)
+	if v, ok := firstFloat(temp, "min_staking_amount", "min_staking_value_sat"); ok {
+		o.MinStakingValueSat = int64(v)
 	}
-
-	if maxStakingValueSat, ok := temp["max_staking_value_sat"].(float64); ok {
-		o.MaxStakingValueSat = int64(maxStakingValueSat)
+	if v, ok := firstFloat(temp, "max_staking_amount", "max_staking_value_sat"); ok {
+		o.MaxStakingValueSat = int64(v)
 	}
-
-	if minStakingTimeBlocks, ok := temp["min_staking_time_blocks"].(float64); ok {
-		o.MinStakingTimeBlocks = uint32(minStakingTimeBlocks)
+	if v, ok := firstFloat(temp, "min_staking_time", "min_staking_time_blocks"); ok {
+		o.MinStakingTimeBlocks = uint32(v)
 	}
-
-	if maxStakingTimeBlocks, ok := temp["max_staking_time_blocks"].(float64); ok {
-		o.MaxStakingTimeBlocks = uint32(maxStakingTimeBlocks)
+	if v, ok := firstFloat(temp, "max_staking_time", "max_staking_time_blocks"); ok {
+		o.MaxStakingTimeBlocks = uint32(v)
 	}
 
 	if slashingPKScript, ok := temp["slashing_pk_script"].(string); ok {
 		o.SlashingPkScript = slashingPKScript
 	}
 
-	if minSlashingTxFeeSat, ok := temp["min_slashing_tx_fee_sat"].(float64); ok {
-		o.MinSlashingTxFeeSat = int64(minSlashingTxFeeSat)
+	if v, ok := firstFloat(temp, "slashing_fee", "min_slashing_tx_fee_sat"); ok {
+		o.MinSlashingTxFeeSat = int64(v)
 	}
 
 	if slashingRate, ok := temp["slashing_rate"].(string); ok {
 		o.SlashingRate = slashingRate
 	}
 
-	if unbondingTimeBlocks, ok := temp["unbonding_time_blocks"].(float64); ok {
-		o.UnbondingTimeBlocks = uint32(unbondingTimeBlocks)
+	if v, ok := firstFloat(temp, "unbonding_time", "unbonding_time_blocks"); ok {
+		o.UnbondingTimeBlocks = uint32(v)
 	}
-
-	if unbondingFeeSat, ok := temp["unbonding_fee_sat"].(float64); ok {
-		o.UnbondingFeeSat = int64(unbondingFeeSat)
+	if v, ok := firstFloat(temp, "unbonding_fee", "unbonding_fee_sat"); ok {
+		o.UnbondingFeeSat = int64(v)
 	}
 
 	if minCommissionRate, ok := temp["min_commission_rate"].(string); ok {
 		o.MinCommissionRate = minCommissionRate
 	}
 
-	if delegationCreationBaseGasFee, ok := temp["delegation_creation_base_gas_fee"].(float64); ok {
-		o.DelegationCreationBaseGasFee = uint64(delegationCreationBaseGasFee)
+	if v, ok := temp["delegation_creation_base_gas_fee"].(float64); ok {
+		o.DelegationCreationBaseGasFee = uint64(v)
 	}
 
-	if allowListExpirationHeight, ok := temp["allow_list_expiration_height"].(float64); ok {
-		o.AllowListExpirationHeight = uint64(allowListExpirationHeight)
+	if v, ok := temp["allow_list_expiration_height"].(float64); ok {
+		o.AllowListExpirationHeight = uint64(v)
 	}
 
-	if btcActivationHeight, ok := temp["btc_activation_height"].(float64); ok {
-		o.BTCActivationHeight = uint32(btcActivationHeight)
+	if v, ok := firstFloat(temp, "activation_height", "btc_activation_height"); ok {
+		o.BTCActivationHeight = uint32(v)
 	}
 
 	if version, ok := temp["version"].(float64); ok {
@@ -587,6 +592,15 @@ func (o *BabylonStakingParams) UnmarshalJSON(bytes []byte) error {
 	}
 
 	return nil
+}
+
+func firstFloat(m map[string]interface{}, keys ...string) (float64, bool) {
+	for _, k := range keys {
+		if v, ok := m[k].(float64); ok {
+			return v, true
+		}
+	}
+	return 0, false
 }
 
 type NullableBabylonStakingParams struct {
